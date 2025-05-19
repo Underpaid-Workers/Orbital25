@@ -4,7 +4,8 @@ export const colors = {
   icon: '#000000',
   tab:'#475756',
   tabSelected:"#000000",
-  tabBar: '#60BB7E'
+  tabBar: '#60BB7E',
+  primary:'#4DB46A'
 };
 
 //use this template to enable light,dark mode colors
