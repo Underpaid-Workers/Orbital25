@@ -11,76 +11,72 @@ export default function TabBar({
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  //temporary workaround for hiding "entry" folder from TabBar.
+  //change this if changing tab routes!
+  const tabs = ["social", "maps", "camera", "inventory", "events"];
   return (
     <View style={styles.tabBar}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label = options.title !== undefined ? options.title : route.name;
+      {state.routes
+        .filter((x) => tabs.includes(x.name))
+        .map((route, index) => {
+          const { options } = descriptors[route.key];
+          const isSelected = state.index === index;
 
-        const isFocused = state.index === index;
+          //hook to change color of tab on selection
+          const onFocusColour = () =>
+            isSelected ? colors.tabSelected : colors.tab;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
+            if (!isSelected && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: "tabLongPress",
-            target: route.key,
-          });
-        };
-
-        //special Touchable for Camera tab
-        return route.name === "camera" ? (
-          <TouchableOpacity
-            key={index}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={styles.cameraTab}
-          >
-            {options.tabBarIcon &&
-              options.tabBarIcon({
-                focused: isFocused,
-                color: "white",
-                size: 40,
-              })}
-          </TouchableOpacity>
-        ) : (
-          //default Touchable for tabs
-          <TouchableOpacity
-            key={index}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={styles.tab}
-          >
-            {options.tabBarIcon &&
-              options.tabBarIcon({
-                focused: isFocused,
-                color: isFocused ? colors.tabSelected : colors.tab,
-                size: 24,
-              })}
-            <Text
-              style={{ color: isFocused ? colors.tabSelected : colors.tab }}
+          //special Touchable for Camera tab
+          return route.name === "camera" ? (
+            <TouchableOpacity
+              key={index}
+              onPress={onPress}
+              style={styles.cameraTab}
             >
-              {label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+              {options.tabBarIcon &&
+                options.tabBarIcon({
+                  focused: isSelected,
+                  color: "white",
+                  size: 40,
+                })}
+            </TouchableOpacity>
+          ) : (
+            //default Touchable for tabs
+            <TouchableOpacity
+              key={index}
+              onPress={onPress}
+              style={{
+                height: "100%",
+                width: 90,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: isSelected
+                  ? colors.tabSelectedBackground
+                  : "transparent",
+              }}
+            >
+              {options.tabBarIcon &&
+                options.tabBarIcon({
+                  focused: isSelected,
+                  color: onFocusColour(),
+                  size: 24,
+                })}
+              <Text style={{ color: onFocusColour() }}>{options.title}</Text>
+            </TouchableOpacity>
+          );
+        })}
     </View>
   );
 }
@@ -89,32 +85,24 @@ const styles = StyleSheet.create({
   tabBar: {
     //styling of whole tab bar
     flexDirection: "row",
-    backgroundColor: colors.tabBar,
-    overflowX: "hidden",
-    height: 60,
-    bottom: 10,
-    marginHorizontal: 16,
-    borderRadius: 15,
-    borderCurve: "continuous",
+    backgroundColor: colors.primary,
+    height: 70,
+    alignItems: "center",
+    justifyContent: "center",
+    borderTopWidth: 2,
   },
   tab: {
     //default styling of tabs
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.tabBar,
-    borderRadius: 15,
-    borderCurve: "continuous",
   },
   cameraTab: {
     //specific styling of Camera tab
-    flex: 1,
     bottom: 35,
-    width: 100,
-    height: 80,
+    width: 90,
+    height: 90,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 100,
+    borderCurve: "circular",
     backgroundColor: "black",
   },
 });

@@ -1,4 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import colors from "../theme/colors";
@@ -18,8 +19,12 @@ function formatNumber(input: string): string {
 
 export default function EntryCard({ id, name }: entry) {
   const image = require("../testData/WeirdBird.jpg");
+  const router = useRouter();
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.navigate("/(tabs)/entry/viewEntry")}
+    >
       <LinearGradient
         colors={[colors.primary, "#1E7744"]}
         end={{ x: 1, y: 0 }}
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   index: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
     color: "grey",
   },

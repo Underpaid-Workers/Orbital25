@@ -4,6 +4,7 @@ export const colors = {
   icon: '#000000',
   tab:'#475756',
   tabSelected:"#000000",
+  tabSelectedBackground:"#6CE288",
   tabBar: '#60BB7E',
   primary:'#4DB46A'
 };

@@ -11,7 +11,10 @@ import data from "../testData/data";
 import colors from "../theme/colors";
 
 export default function inventory() {
+  //temporary setting for loading state
   const [loading, setLoading] = useState(false);
+
+  //temporary setting for error state
   const [error, setError] = useState(false);
   const errorMessage = <Text>Error : Unable to load</Text>;
 
@@ -30,9 +33,7 @@ export default function inventory() {
           data={data}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View>
-              <EntryCard id={item.id} name={item.name} path="" />
-            </View>
+            <EntryCard id={item.id} name={item.name} path="" />
           )}
         />
       )}
@@ -43,8 +44,7 @@ export default function inventory() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: 16,
     justifyContent: "center",
   },
 });
