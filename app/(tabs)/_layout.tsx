@@ -1,26 +1,27 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
+import HeaderBar from "../components/HeaderBar";
 import TabBar from "../components/TabBar";
 
 //one tab for each page
 //name is the name of the tab file. Eg. name="social" would path to social.tsx
 //options -> headershowm: false by default to remove the pesky header text at the top of page. change to true to see what it looks like
-const _layout = () => {
+export default function _layout() {
   return (
     <Tabs
       //set initial route as Inventory page
       initialRouteName="inventory"
+      backBehavior="history"
       //custom TabBar used in place of pre-defined Tab
       tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
-        animation: "shift", //enable sliding animation when switching tabs
+        header: (props) => <HeaderBar {...props} />,
       }}
     >
       <Tabs.Screen
         name="social"
         options={{
-          headerShown: false,
           title: "Social",
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="user" size={size} color={color} />
@@ -30,7 +31,6 @@ const _layout = () => {
       <Tabs.Screen
         name="maps"
         options={{
-          headerShown: false,
           title: "Maps",
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="map" size={size} color={color} />
@@ -50,7 +50,6 @@ const _layout = () => {
       <Tabs.Screen
         name="inventory"
         options={{
-          headerShown: false,
           title: "Inventory",
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="archive" size={size} color={color} />
@@ -60,15 +59,15 @@ const _layout = () => {
       <Tabs.Screen
         name="events"
         options={{
-          headerShown: false,
           title: "Events",
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="calendar-o" size={size} color={color} />
           ),
         }}
       />
+      {/* custom settings for submit and view entry to remove default header tab. A different header tab is used */}
+      <Tabs.Screen name="entry/submitEntry" options={{ headerShown: false }} />
+      <Tabs.Screen name="entry/viewEntry" options={{ headerShown: false }} />
     </Tabs>
   );
-};
-
-export default _layout;
+}
