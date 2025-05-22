@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 const social = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>social</Text>
     </View>
   );
@@ -11,4 +11,10 @@ const social = () => {
 
 export default social;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
