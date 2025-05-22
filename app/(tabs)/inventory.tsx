@@ -6,13 +6,14 @@ import {
   Text,
   View,
 } from "react-native";
-import EntryCard from "../components/EntryCard";
-import data from "../testData/data";
+import EntryCard from "../components/entry/EntryCard";
+import useEntryDataContext from "../hooks/useEntryDataContext";
 import colors from "../theme/colors";
 
 export default function inventory() {
   //temporary setting for loading state
   const [loading, setLoading] = useState(false);
+  const entryData = useEntryDataContext();
 
   //temporary setting for error state
   const [error, setError] = useState(false);
@@ -30,10 +31,10 @@ export default function inventory() {
         errorMessage
       ) : (
         <FlatList
-          data={data}
+          data={entryData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <EntryCard id={item.id} name={item.name} path="" />
+            <EntryCard id={item.id} name={item.name} image={item.image} />
           )}
         />
       )}

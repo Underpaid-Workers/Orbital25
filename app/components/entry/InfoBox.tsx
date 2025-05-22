@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import colors from "../theme/colors";
+import colors from "../../theme/colors";
 
 interface info {
   title: string;
@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     width: "100%",
+    paddingVertical: 8,
     borderRadius: 15,
     borderCurve: "continuous",
     justifyContent: "flex-start",

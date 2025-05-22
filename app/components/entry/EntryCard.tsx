@@ -1,13 +1,20 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import colors from "../theme/colors";
+import {
+  Image,
+  ImageURISource,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import colors from "../../theme/colors";
 
 interface entry {
   id: string;
   name: string;
-  path: string;
+  image: ImageURISource;
 }
 
 //function to format id as single number string into "#XXX"
@@ -17,13 +24,17 @@ function formatNumber(input: string): string {
   return `#${padded}`;
 }
 
-export default function EntryCard({ id, name }: entry) {
-  const image = require("../testData/WeirdBird.jpg");
+export default function EntryCard({ id, name, image }: entry) {
   const router = useRouter();
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.navigate("/(tabs)/entry/viewEntry")}
+      onPress={() => {
+        router.navigate({
+          pathname: "/(tabs)/entry/[id]",
+          params: { id },
+        });
+      }}
     >
       <LinearGradient
         colors={[colors.primary, "#1E7744"]}

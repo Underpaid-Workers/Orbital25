@@ -1,8 +1,8 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import HeaderBar from "../components/HeaderBar";
-import TabBar from "../components/TabBar";
+import HeaderBar from "../components/main/HeaderBar";
+import TabBar from "../components/main/TabBar";
 
 //one tab for each page
 //name is the name of the tab file. Eg. name="social" would path to social.tsx
@@ -67,7 +67,7 @@ export default function _layout() {
       />
       {/* custom settings for submit and view entry to remove default header tab. A different header tab is used */}
       <Tabs.Screen name="entry/submitEntry" options={{ headerShown: false }} />
-      <Tabs.Screen name="entry/viewEntry" options={{ headerShown: false }} />
+      <Tabs.Screen name="entry/[id]" options={{ headerShown: false }} />
     </Tabs>
   );
 }
