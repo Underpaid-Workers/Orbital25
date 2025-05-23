@@ -1,10 +1,15 @@
+import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 
 export default function login() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
-      <Text>login</Text>
+      <Button
+        title="Login Button"
+        onPress={() => router.navigate("/(tabs)/inventory")}
+      />
     </View>
   );
 }
