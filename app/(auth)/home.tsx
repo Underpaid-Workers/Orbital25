@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 32,
     fontWeight: 'bold',
+    color: "4EB46B",
   },
 
   loginImage: {
