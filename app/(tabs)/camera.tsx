@@ -4,14 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 
-import {
-  Button,
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CameraPreview from "../components/entry/CameraPreview";
 import useEntryCountContext from "../hooks/useEntryCountContext";
 import colors from "../theme/colors";
@@ -35,7 +28,7 @@ export default function camera() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       allowsEditing: true,
-      aspect: [3, 4],
+      aspect: [9, 16],
       quality: 1,
     });
 
@@ -116,15 +109,18 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   camera: {
+    position: "absolute",
     flex: 1,
     width: "100%",
+    height: "100%",
     paddingHorizontal: 16,
+    alignItems: "center",
   },
   textContainer: {
     position: "absolute",
     top: 40,
     height: 80,
-    minWidth: Dimensions.get("window").width,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
@@ -133,8 +129,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 40,
     height: 80,
-    minWidth: Dimensions.get("window").width,
-    paddingHorizontal: 60,
+    width: "80%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

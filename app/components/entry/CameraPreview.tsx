@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import colors from "../../theme/colors";
 
 export default function CameraPreview({
@@ -37,10 +37,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
     alignSelf: "center",
+    width: "75%",
     bottom: 40,
     height: 80,
-    minWidth: Dimensions.get("window").width,
-    paddingHorizontal: 60,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

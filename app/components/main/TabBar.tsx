@@ -59,7 +59,7 @@ export default function TabBar({
               onPress={onPress}
               style={{
                 height: "100%",
-                width: 90,
+                flex: 0.5,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: isSelected
@@ -90,9 +90,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderTopWidth: 2,
-  },
-  tab: {
-    //default styling of tabs
   },
   cameraTab: {
     //specific styling of Camera tab
