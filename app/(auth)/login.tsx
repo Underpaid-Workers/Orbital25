@@ -1,18 +1,28 @@
 import { Link, useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function signup() {
   const router = useRouter();
   return (
-    <View style = {styles.container}>
-      <Image source={require("../../assets/custom icons/LogoTransparent.png")} style={styles.logoTransparent} />
-      <Text style = {styles.ecodexText}>EcoDex</Text>
+    <View style={styles.container}>
+      <Image
+        source={require("../../assets/custom icons/LogoTransparent.png")}
+        style={styles.logoTransparent}
+      />
+      <Text style={styles.ecodexText}>EcoDex</Text>
 
-      <Text style = {styles.welcomeText}>Welcome Back!</Text>
-      
-      <View style = {styles.inputContainer}>
-        <Text style = {styles.headerText}>Email</Text>
+      <Text style={styles.welcomeText}>Welcome Back!</Text>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.headerText}>Email</Text>
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -20,8 +30,8 @@ export default function signup() {
         />
       </View>
 
-      <View style = {styles.inputContainer}>
-        <Text style = {styles.headerText}>Password</Text>
+      <View style={styles.inputContainer}>
+        <Text style={styles.headerText}>Password</Text>
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -30,14 +40,14 @@ export default function signup() {
       </View>
 
       <TouchableOpacity
-        style = {styles.button}
-        onPress={() => router.navigate("../(tabs)/entry/inventory.tsx")}
+        style={styles.button}
+        onPress={() => router.push("../(tabs)/inventory")}
       >
-        <Text style = {styles.buttonText}>Log In</Text>
+        <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
 
-      <Link href = "/(auth)/signup">
-        <Text style = {{textDecorationLine: 'underline'}}>
+      <Link href="/(auth)/signup">
+        <Text style={{ textDecorationLine: "underline" }}>
           Don't have an account? Sign up here.
         </Text>
       </Link>
@@ -62,26 +72,25 @@ const styles = StyleSheet.create({
 
   ecodexText: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '4EB46B',
+    fontWeight: "bold",
+    color: "4EB46B",
     marginBottom: 30,
   },
 
   welcomeText: {
     fontSize: 24,
-    fontWeight: 'semibold',
+    fontWeight: "semibold",
     marginBottom: 30,
-
   },
 
   inputContainer: {
     paddingHorizontal: 20,
     paddingVertical: 5,
-    alignItems: 'center'
+    alignItems: "center",
   },
 
-  headerText:{
-    alignSelf: 'flex-start',
+  headerText: {
+    alignSelf: "flex-start",
     fontSize: 18,
     fontWeight: "semibold",
     marginBottom: 5,
@@ -91,13 +100,13 @@ const styles = StyleSheet.create({
   input: {
     width: 350,
     height: 70,
-    backgroundColor: 'white',
-    borderColor: '#4EB46B', // Green outline
+    backgroundColor: "white",
+    borderColor: "#4EB46B", // Green outline
     borderWidth: 2,
     borderRadius: 10,
     paddingHorizontal: 5,
     fontSize: 16,
-    color: 'black',
+    color: "black",
   },
 
   button: {
@@ -105,8 +114,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 273,
     height: 47,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10,
     marginTop: 40,
   },
@@ -114,8 +123,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "black",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-
-  
 });

@@ -7,22 +7,28 @@ export default function home() {
   const router = useRouter();
   return (
     <>
-    <View style={styles.container}>
-      <Image source={require("../../assets/custom icons/LogoTransparent.png")} style={styles.logoTransparent} />
-      <Text style = {styles.text}>EcoDex</Text>
-      <Image source={require("../../assets/images/LoginImage.png")} style={styles.loginImage} />
-      <TouchableOpacity
-        style = {styles.button}
-        onPress={() => router.navigate("/(auth)/login")}
-      >
-        <Text style = {styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
-      <Link href = "/(auth)/signup">
-        <Text style = {{textDecorationLine: 'underline'}}>
-          Don't have an account? Sign up here
-        </Text>
-      </Link>
-    </View>
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/custom icons/LogoTransparent.png")}
+          style={styles.logoTransparent}
+        />
+        <Text style={styles.text}>EcoDex</Text>
+        <Image
+          source={require("../../assets/images/LoginImage.png")}
+          style={styles.loginImage}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(auth)/login")}
+        >
+          <Text style={styles.buttonText}>Log In</Text>
+        </TouchableOpacity>
+        <Link href="/(auth)/signup">
+          <Text style={{ textDecorationLine: "underline" }}>
+            Don't have an account? Sign up here
+          </Text>
+        </Link>
+      </View>
     </>
   );
 }
@@ -44,7 +50,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: "4EB46B",
   },
 
@@ -58,14 +64,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 273,
     height: 47,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10,
   },
 
   buttonText: {
     color: "black",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
