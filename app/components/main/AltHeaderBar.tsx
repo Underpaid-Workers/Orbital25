@@ -16,6 +16,7 @@ export default function AltHeaderTab({ onBack }: any) {
 
 const styles = StyleSheet.create({
   headerTab: {
+    width: "100%",
     backgroundColor: colors.primary,
     flexDirection: "row",
     paddingHorizontal: 16,
