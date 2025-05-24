@@ -46,7 +46,7 @@ export default function signup() {
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
 
-      <Link href="/(auth)/signup">
+      <Link replace href="/(auth)/signup">
         <Text style={{ textDecorationLine: "underline" }}>
           Don't have an account? Sign up here.
         </Text>
