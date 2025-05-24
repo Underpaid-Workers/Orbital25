@@ -9,7 +9,12 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 export default function submitEntry() {
   const [simulateLoading, setSimulateLoading] = useState(true);
   const router = useRouter();
-  const onBack = () => router.back;
+  const onBack = () => {
+    if (router.canGoBack && router.canGoBack()) {
+      router.back();
+  } else {
+      router.replace("/(tabs)/camera"); 
+  }};
   const { photo, dateTime } = useLocalSearchParams<{
     photo: string;
     dateTime: string;

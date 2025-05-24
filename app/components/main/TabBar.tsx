@@ -14,6 +14,12 @@ export default function TabBar({
   //temporary workaround for hiding "entry" folder from TabBar.
   //change this if changing tab routes!
   const tabs = ["social", "maps", "camera", "inventory", "events"];
+  const hiddenRoutes = ["camera", "entry/submitEntry", "entry/[id]"];
+
+  if (hiddenRoutes.includes(state.routes[state.index].name)) {
+    return null;
+  }
+
   return (
     <View style={styles.tabBar}>
       {state.routes

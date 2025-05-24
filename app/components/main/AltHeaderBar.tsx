@@ -6,7 +6,7 @@ import colors from "../../theme/colors";
 export default function AltHeaderTab({ onBack }: any) {
   return (
     <View style={styles.headerTab}>
-      <TouchableOpacity style={styles.backButton} onPress={onBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={onBack}>
         <MaterialIcons name="arrow-left" size={24} />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>

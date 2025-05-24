@@ -1,3 +1,4 @@
+import AltHeaderTab from "@/app/components/main/AltHeaderBar";
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { ImageManipulator } from "expo-image-manipulator";
@@ -11,6 +12,7 @@ import useEntryCountContext from "../hooks/useEntryCountContext";
 import colors from "../theme/colors";
 
 export default function camera() {
+  
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<string | undefined>(undefined);
   const [photoCaptureTime, setPhotoCaptureTime] = useState<string>("");
@@ -18,6 +20,13 @@ export default function camera() {
   const cameraRef = useRef<CameraView>(null);
   const router = useRouter();
   const id = useEntryCountContext();
+  const onBack = () => {
+    if (router.canGoBack && router.canGoBack()) {
+      router.back();
+  } else {
+    router.replace("/(tabs)/inventory");
+  }};
+
 
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
@@ -98,15 +107,18 @@ export default function camera() {
 
   if (photo)
     return (
+    <View style = {styles.preview}>
       <CameraPreview
         photo={photo}
         retakePicture={resetPhoto}
         savePicture={savePicture}
       />
+    </View>
     );
 
   return (
     <View style={styles.container}>
+      <AltHeaderTab onBack={onBack} />
       <CameraView
         style={styles.camera}
         facing={facing}
@@ -141,6 +153,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingBottom: 10,
   },
+  preview: {
+    flex: 1,
+  },
   camera: {
     position: "absolute",
     flex: 1,
@@ -148,6 +163,7 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingHorizontal: 16,
     alignItems: "center",
+    marginTop: 42,
   },
   textContainer: {
     position: "absolute",
