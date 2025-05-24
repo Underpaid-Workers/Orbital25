@@ -1,9 +1,10 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { ImageManipulator } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import moment from "moment";
 import React, { useRef, useState } from "react";
-
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CameraPreview from "../components/entry/CameraPreview";
 import useEntryCountContext from "../hooks/useEntryCountContext";
@@ -12,6 +13,7 @@ import colors from "../theme/colors";
 export default function camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<string | undefined>(undefined);
+  const [photoCaptureTime, setPhotoCaptureTime] = useState<string>("");
   const [facing, setFacing] = useState<CameraType>("back");
   const cameraRef = useRef<CameraView>(null);
   const router = useRouter();
@@ -21,7 +23,15 @@ export default function camera() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
-  const retakePicture = () => setPhoto(undefined);
+  //returns the current datetime at the time of this function call
+  //outputs in the format eg. "1, 5, 2025, 1:30 PM"
+  const getNowDateTimeFormatted = () => moment().format("D,M,YYYY,h:mm A");
+
+  //reset photo
+  const resetPhoto = () => {
+    setPhoto(undefined);
+    setPhotoCaptureTime(getNowDateTimeFormatted());
+  };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -33,22 +43,40 @@ export default function camera() {
     });
 
     if (!result.canceled) {
-      setPhoto(result.assets[0].uri);
+      // dummy fixing ImagePicker bug in EXPO
+      //TODO remove this bugfix when bug fixed
+      const image = await (
+        await ImageManipulator.manipulate(result.assets[0].uri).renderAsync()
+      ).saveAsync();
+      //end of dummy fix...
+
+      setPhoto(image.uri);
+      setPhotoCaptureTime(getNowDateTimeFormatted());
     }
   };
 
   const takePicture = async () => {
     const takenPhoto = await cameraRef.current?.takePictureAsync({
       quality: 0.5,
-      exif: true, //TODO: check exif information required
     });
-    setPhoto(takenPhoto?.uri);
+
+    // dummy fixing ImagePicker bug in EXPO
+    //TODO remove this bugfix when bug fixed
+    const image = await (
+      await ImageManipulator.manipulate(takenPhoto?.uri!).renderAsync()
+    ).saveAsync();
+    //end of dummy fix...
+
+    setPhoto(image.uri);
+    setPhotoCaptureTime(getNowDateTimeFormatted());
   };
 
   //TODO : complete savePicture functionality -> require storage permission?
   const savePicture = () => {
-    // router.navigate({ pathname: "/(tabs)/entry/submitEntry", params: { id } });
-    router.navigate("/(tabs)/entry/identifyEntry");
+    router.navigate({
+      pathname: "/(tabs)/entry/submitEntry",
+      params: { id: id, photo: photo, dateTime: photoCaptureTime },
+    });
   };
 
   if (!permission) {
@@ -61,9 +89,9 @@ export default function camera() {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need your permission to show the camera
+          We need your permission to show the camera.
         </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
@@ -72,14 +100,19 @@ export default function camera() {
     return (
       <CameraPreview
         photo={photo}
-        retakePicture={retakePicture}
+        retakePicture={resetPhoto}
         savePicture={savePicture}
       />
     );
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+      <CameraView
+        style={styles.camera}
+        facing={facing}
+        ref={cameraRef}
+        animateShutter={false}
+      >
         <View style={styles.textContainer}>
           <Text style={styles.text}>Capture a species!</Text>
         </View>

@@ -1,3 +1,4 @@
+import useFormatNumber from "@/app/hooks/useFormatNumber";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -15,13 +16,6 @@ interface entry {
   id: string;
   name: string;
   image: ImageURISource;
-}
-
-//function to format id as single number string into "#XXX"
-function formatNumber(input: string): string {
-  // Pad with leading zeros up to 3 characters, then prefix "#"
-  const padded = input.padStart(3, "0");
-  return `#${padded}`;
 }
 
 export default function EntryCard({ id, name, image }: entry) {
@@ -43,7 +37,7 @@ export default function EntryCard({ id, name, image }: entry) {
       >
         {/* Id Number + Entry Name */}
         <View style={styles.textContent}>
-          <Text style={styles.index}>{formatNumber(id)}</Text>
+          <Text style={styles.index}>{useFormatNumber(id)}</Text>
           <Text style={styles.name}>{name}</Text>
         </View>
 
