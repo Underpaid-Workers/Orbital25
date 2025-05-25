@@ -1,8 +1,7 @@
+import colors from "@/app/theme/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import colors from "../../theme/colors";
 
 export default function CameraPreview({
   photo,

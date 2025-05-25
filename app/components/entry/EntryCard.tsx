@@ -1,7 +1,7 @@
 import useFormatNumber from "@/app/hooks/useFormatNumber";
+import colors from "@/app/theme/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React from "react";
 import {
   Image,
   ImageURISource,
@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import colors from "../../theme/colors";
 
 interface entry {
   id: string;

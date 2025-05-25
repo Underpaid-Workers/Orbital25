@@ -1,7 +1,6 @@
+import colors from "@/app/theme/colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import colors from "../../theme/colors";
 
 //returns a custom TabBar
 //

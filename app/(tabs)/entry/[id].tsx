@@ -1,15 +1,11 @@
 import InfoBox from "@/app/components/entry/InfoBox";
-import AltHeaderTab from "@/app/components/main/AltHeaderBar";
 import useEntryDataContext from "@/app/hooks/useEntryDataContext";
 import colors from "@/app/theme/colors";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function viewEntry() {
-  const router = useRouter();
-  const onBack = () => router.back;
-
   //Allows this file to get respective id of EntryCard clicked through Expo router
   const { id } = useLocalSearchParams();
 
@@ -18,7 +14,6 @@ export default function viewEntry() {
   const entry = entryData.find((item) => item.id == id);
   return entry ? (
     <ScrollView style={styles.container}>
-      <AltHeaderTab onBack={onBack} />
       <View style={styles.entryContainer}>
         <Text style={styles.entryTitle}>{entry.name}</Text>
         <Text style={styles.entryText}>

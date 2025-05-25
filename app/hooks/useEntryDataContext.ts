@@ -1,5 +1,5 @@
+import data from "@/app/testData/data";
 import { createContext, useContext } from "react";
-import data from "../testData/data";
 
 //TODO : temp context hook used for testData retrieval across the app.
 //usage is const data = useEntryDataContext()

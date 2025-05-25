@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import EntryCard from "@/app/components/entry/EntryCard";
+import useEntryDataContext from "@/app/hooks/useEntryDataContext";
+import colors from "@/app/theme/colors";
+import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,9 +9,6 @@ import {
   Text,
   View,
 } from "react-native";
-import EntryCard from "../components/entry/EntryCard";
-import useEntryDataContext from "../hooks/useEntryDataContext";
-import colors from "../theme/colors";
 
 export default function inventory() {
   //temporary setting for loading state

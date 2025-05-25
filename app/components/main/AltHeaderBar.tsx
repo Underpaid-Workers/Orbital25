@@ -1,13 +1,13 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React from "react";
+import colors from "@/app/theme/colors";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import colors from "../../theme/colors";
 
-export default function AltHeaderTab({ onBack }: any) {
+export default function AltHeaderTab({ navigation }: BottomTabHeaderProps) {
   return (
     <View style={styles.headerTab}>
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
-        <MaterialIcons name="arrow-left" size={24} />
+      <TouchableOpacity style={styles.backButton} onPress={navigation.goBack}>
+        <MaterialCommunityIcons name="chevron-left" size={24} />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
     </View>

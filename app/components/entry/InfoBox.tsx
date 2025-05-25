@@ -1,6 +1,5 @@
-import React from "react";
+import colors from "@/app/theme/colors";
 import { StyleSheet, Text, View } from "react-native";
-import colors from "../../theme/colors";
 
 interface info {
   title: string;

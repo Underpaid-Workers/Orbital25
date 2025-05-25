@@ -1,6 +1,7 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
+import AltHeaderTab from "../components/main/AltHeaderBar";
 import HeaderBar from "../components/main/HeaderBar";
 import TabBar from "../components/main/TabBar";
 
@@ -8,6 +9,8 @@ import TabBar from "../components/main/TabBar";
 //name is the name of the tab file. Eg. name="social" would path to social.tsx
 //options -> headershowm: false by default to remove the pesky header text at the top of page. change to true to see what it looks like
 export default function _layout() {
+  const altHeaderTabs = ["camera", "entry/submitEntry", "entry/[id]"];
+
   return (
     <Tabs
       //set initial route as Inventory page
@@ -16,7 +19,12 @@ export default function _layout() {
       //custom TabBar used in place of pre-defined Tab
       tabBar={(props) => <TabBar {...props} />}
       screenOptions={{
-        header: (props) => <HeaderBar {...props} />,
+        header: (props) =>
+          altHeaderTabs.includes(props.route.name) ? (
+            <AltHeaderTab {...props} />
+          ) : (
+            <HeaderBar {...props} />
+          ),
       }}
     >
       <Tabs.Screen
@@ -40,7 +48,6 @@ export default function _layout() {
       <Tabs.Screen
         name="camera"
         options={{
-          headerShown: false,
           title: "Camera",
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="camera" size={size} color={color} />
@@ -66,8 +73,8 @@ export default function _layout() {
         }}
       />
       {/* custom settings for submit and view entry to remove default header tab. A different header tab is used */}
-      <Tabs.Screen name="entry/submitEntry" options={{ headerShown: false }} />
-      <Tabs.Screen name="entry/[id]" options={{ headerShown: false }} />
+      <Tabs.Screen name="entry/submitEntry" />
+      <Tabs.Screen name="entry/[id]" />
     </Tabs>
   );
 }

@@ -1,21 +1,16 @@
 import DateTimeBox from "@/app/components/entry/DateTimeBox";
-import AltHeaderTab from "@/app/components/main/AltHeaderBar";
+import useFormatNumber from "@/app/hooks/useFormatNumber";
 import colors from "@/app/theme/colors";
 import { Image } from "expo-image";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function submitEntry() {
   const [simulateLoading, setSimulateLoading] = useState(true);
-  const router = useRouter();
-  const onBack = () => {
-    if (router.canGoBack && router.canGoBack()) {
-      router.back();
-  } else {
-      router.replace("/(tabs)/camera"); 
-  }};
-  const { photo, dateTime } = useLocalSearchParams<{
+
+  const { id, photo, dateTime } = useLocalSearchParams<{
+    id: string;
     photo: string;
     dateTime: string;
   }>();
@@ -23,6 +18,7 @@ export default function submitEntry() {
   //dateTime sent in string
   const parsedDateTime = dateTime.split(",");
 
+  //Simulated api fetching from AI/ML API
   useEffect(() => {
     const timeOut = setTimeout(() => setSimulateLoading(false), 500);
     return () => clearTimeout(timeOut);
@@ -34,13 +30,15 @@ export default function submitEntry() {
         <Text>Identifying...</Text>
       </View>
     );
+  //end of simulated api fetching
 
   return (
     <View style={styles.container}>
-      <AltHeaderTab onBack={onBack} />
       <View style={styles.entryContainer}>
-        <Text style={styles.entryTitle}>Entry Registered!</Text>
-        <Image source={photo} style={styles.entryImage} />
+        <Text style={styles.entryTitle}>
+          Entry {useFormatNumber(id)} Registered!
+        </Text>
+        <Image source={photo} style={styles.entryImage} contentFit="cover" />
         <DateTimeBox
           day={parsedDateTime[0]}
           month={parsedDateTime[1]}
@@ -69,14 +67,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   entryTitle: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: "bold",
+    textAlign: "center",
   },
   entryImage: {
     flex: 2,
     width: 200,
     height: 200,
-    resizeMode: "cover",
     borderRadius: 15,
     borderCurve: "continuous",
   },
