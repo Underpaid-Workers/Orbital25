@@ -1,4 +1,5 @@
 import InfoBox from "@/app/components/entry/InfoBox";
+import { EnvironmentTag, SpeciesTag } from "@/app/components/entry/Tag";
 import useEntryDataContext from "@/app/hooks/useEntryDataContext";
 import colors from "@/app/theme/colors";
 import { useLocalSearchParams } from "expo-router";
@@ -20,6 +21,10 @@ export default function viewEntry() {
           Captured: {entry.dateTime.toLocaleString()}
         </Text>
         <Image source={entry.image} style={styles.entryImage} />
+        <View style = {styles.tagContainer}>
+        <SpeciesTag species = "Animal"/>
+        <EnvironmentTag environment = "Flying" />
+        </View>
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{entry.description}</Text>
         </View>
@@ -62,6 +67,10 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 15,
     borderCurve: "continuous",
+  },
+  tagContainer: {
+    flexDirection: "row",
+    gap: 8,
   },
   entryTextBox: {
     minHeight: 100,

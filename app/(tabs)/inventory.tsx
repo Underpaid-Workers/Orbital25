@@ -34,7 +34,9 @@ export default function inventory() {
           data={entryData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
+            <>
             <EntryCard id={item.id} name={item.name} image={item.image} />
+            </>
           )}
         />
       )}

@@ -1,3 +1,4 @@
+import { EnvironmentTag, SpeciesTag } from "@/app/components/entry/Tag";
 import useFormatNumber from "@/app/hooks/useFormatNumber";
 import colors from "@/app/theme/colors";
 import { LinearGradient } from "expo-linear-gradient";
@@ -38,6 +39,10 @@ export default function EntryCard({ id, name, image }: entry) {
         <View style={styles.textContent}>
           <Text style={styles.index}>{useFormatNumber(id)}</Text>
           <Text style={styles.name}>{name}</Text>
+          <View style = {styles.tagContainer}>
+            <SpeciesTag species = "Animal"/>
+            <EnvironmentTag environment = "Flying"/>
+          </View>
         </View>
 
         {/* Image */}
@@ -66,6 +71,11 @@ const styles = StyleSheet.create({
   textContent: {
     flex: 1,
     paddingHorizontal: 16,
+  },
+  tagContainer: {
+    marginTop: 20,
+    flexDirection: "row",
+    gap: 8,
   },
   imageContent: {
     flex: 1,
