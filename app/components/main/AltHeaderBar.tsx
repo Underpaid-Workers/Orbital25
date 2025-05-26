@@ -3,10 +3,17 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function AltHeaderTab({ navigation }: BottomTabHeaderProps) {
+export default function AltHeaderTab({
+  navigation,
+  route,
+}: BottomTabHeaderProps) {
+  const onBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.headerTab}>
-      <TouchableOpacity style={styles.backButton} onPress={navigation.goBack}>
+      <TouchableOpacity style={styles.backButton} onPress={onBack}>
         <MaterialCommunityIcons name="chevron-left" size={24} />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
@@ -21,7 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",
-    height: 60,
+    height: 50,
     justifyContent: "space-between",
   },
   backButton: {

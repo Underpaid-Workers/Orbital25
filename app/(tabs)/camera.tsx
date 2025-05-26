@@ -24,6 +24,10 @@ export default function camera() {
   //TODO: Ensure to account for +1 entry when fetching from database
   const id = useEntryCountContext() + 1;
 
+  //returns the current datetime at the time of this function call
+  //outputs in the format eg. "1, 5, 2025, 1:30 PM"
+  const getNowDateTimeFormatted = () => moment().format("D,M,YYYY,h:mm A");
+
   //Ensures CameraView is unmounted upon moving to different screen
   //as per Expo-camera docs
   const isFocused = useIsFocused();
@@ -31,10 +35,6 @@ export default function camera() {
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
-
-  //returns the current datetime at the time of this function call
-  //outputs in the format eg. "1, 5, 2025, 1:30 PM"
-  const getNowDateTimeFormatted = () => moment().format("D,M,YYYY,h:mm A");
 
   //reset photo
   const resetPhoto = () => {
@@ -105,6 +105,7 @@ export default function camera() {
     );
   }
 
+  //Display photo once it is taken
   if (photo)
     return (
       <View style={styles.preview}>

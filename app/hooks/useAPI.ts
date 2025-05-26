@@ -6,7 +6,7 @@ export interface APIResult {
   types: string[];
 }
 
-function useAPI(): APIResult {
+export default function useAPI(): APIResult {
   return {
     name: "Mighty Bird",
     description:
@@ -14,5 +14,3 @@ function useAPI(): APIResult {
     types: ["animal", "flying"],
   };
 }
-
-export default useAPI;

@@ -14,6 +14,8 @@ export default function DateTimeBox({
   year,
   time,
 }: dateTimeFormat) {
+  const onChangeDatetime = () => {};
+
   return (
     <View style={styles.box}>
       <Text style={styles.text}>{day}</Text>
@@ -32,10 +34,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     width: "100%",
-    paddingVertical: 8,
     borderRadius: 15,
     borderCurve: "continuous",
-    justifyContent: "flex-start",
+    // justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: colors.primary,
   },
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   },
   text: {
     width: "25%",
-    fontSize: 20,
+    fontSize: 16,
     textAlign: "center",
   },
 });

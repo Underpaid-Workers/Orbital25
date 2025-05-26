@@ -1,9 +1,9 @@
 import InfoBox from "@/app/components/entry/InfoBox";
-import { EnvironmentTag, SpeciesTag } from "@/app/components/entry/Tag";
+import SpeciesTag, { EnvironmentTag } from "@/app/components/entry/Tag";
 import useEntryDataContext from "@/app/hooks/useEntryDataContext";
+import useFormatDateTime from "@/app/hooks/useFormatDateTime";
 import colors from "@/app/theme/colors";
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function viewEntry() {
@@ -13,17 +13,19 @@ export default function viewEntry() {
   //TODO : usage of testData here. API usage will require different implementation
   const entryData = useEntryDataContext();
   const entry = entryData.find((item) => item.id == id);
+  const dateTime = entry
+    ? useFormatDateTime(entry.dateTime)
+    : "<No date available>";
+
   return entry ? (
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.entryTitle}>{entry.name}</Text>
-        <Text style={styles.entryText}>
-          Captured: {entry.dateTime.toLocaleString()}
-        </Text>
+        <Text style={styles.entryText}>Captured: {dateTime}</Text>
         <Image source={entry.image} style={styles.entryImage} />
-        <View style = {styles.tagContainer}>
-        <SpeciesTag species = "Animal"/>
-        <EnvironmentTag environment = "Flying" />
+        <View style={styles.tagContainer}>
+          <SpeciesTag species="Animal" />
+          <EnvironmentTag environment="Flying" />
         </View>
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{entry.description}</Text>

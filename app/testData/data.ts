@@ -1,3 +1,4 @@
+import moment, { Moment } from "moment";
 import { ImageURISource } from "react-native";
 
 //TODO : temp fix for image data handling. Affects ALL items in data
@@ -6,7 +7,7 @@ const image = require("../testData/YellowBird.jpg");
 interface entry {
   id: string;
   name: string;
-  dateTime: Date;
+  dateTime: Moment;
   image: ImageURISource;
   description: string;
   height: string;
@@ -15,11 +16,13 @@ interface entry {
   observations: string;
 }
 
+const exampleDateTime = moment("12/02/25 10:30", "DD/MM/YYYY hh:mm");
+
 const data: entry[] = [
   {
     id: "1",
     name: "Weird Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
@@ -30,7 +33,7 @@ const data: entry[] = [
   {
     id: "2",
     name: "Yellow Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
@@ -41,7 +44,7 @@ const data: entry[] = [
   {
     id: "3",
     name: "Red Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
@@ -52,7 +55,7 @@ const data: entry[] = [
   {
     id: "4",
     name: "Red Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
@@ -63,7 +66,7 @@ const data: entry[] = [
   {
     id: "5",
     name: "Red Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
@@ -74,7 +77,7 @@ const data: entry[] = [
   {
     id: "6",
     name: "Red Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
@@ -85,7 +88,7 @@ const data: entry[] = [
   {
     id: "7",
     name: "Red Bird",
-    dateTime: new Date(Date.UTC(2025, 5, 5, 13, 40)),
+    dateTime: exampleDateTime,
     image: image,
     description: "Much cute, Might shit on you later.",
     height: "0.1m-0.4m",
