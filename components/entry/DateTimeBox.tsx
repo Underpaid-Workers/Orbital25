@@ -1,4 +1,4 @@
-import colors from "@/app/theme/colors";
+import colors from "@/constants/Colors";
 import { StyleSheet, Text, View } from "react-native";
 
 interface dateTimeFormat {

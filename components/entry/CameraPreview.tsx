@@ -1,4 +1,4 @@
-import colors from "@/app/theme/colors";
+import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, TouchableOpacity, View } from "react-native";

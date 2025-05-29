@@ -1,4 +1,4 @@
-import colors from "@/app/theme/colors";
+import colors from "@/constants/Colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 

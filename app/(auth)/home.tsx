@@ -1,15 +1,14 @@
 import { Link, useRouter } from "expo-router";
-import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function home() {
-  //router allows you to navigate to the (tabs) pages using router.navigate
   const router = useRouter();
+
   return (
     <>
       <View style={styles.container}>
         <Image
-          source={require("../../assets/custom icons/LogoTransparent.png")}
+          source={require("../../assets/custom_icons/LogoTransparent.png")}
           style={styles.logoTransparent}
         />
         <Text style={styles.text}>EcoDex</Text>

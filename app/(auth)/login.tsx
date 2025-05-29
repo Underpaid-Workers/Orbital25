@@ -1,5 +1,6 @@
-import { Link, useRouter } from "expo-router";
-import React from "react";
+import signIn from "@/supabase/auth_hooks/signIn";
+import { Link } from "expo-router";
+import { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -9,12 +10,23 @@ import {
   View,
 } from "react-native";
 
-export default function signup() {
-  const router = useRouter();
+export default function login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onBegin = () => {
+    setLoading(true);
+  };
+
+  const onComplete = () => {
+    setLoading(false);
+  };
+
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/custom icons/LogoTransparent.png")}
+        source={require("../../assets/custom_icons/LogoTransparent.png")}
         style={styles.logoTransparent}
       />
       <Text style={styles.ecodexText}>EcoDex</Text>
@@ -25,6 +37,7 @@ export default function signup() {
         <Text style={styles.headerText}>Email</Text>
         <TextInput
           style={styles.input}
+          onChangeText={(email) => setEmail(email)}
           placeholder="Email"
           placeholderTextColor="#999"
         />
@@ -34,6 +47,7 @@ export default function signup() {
         <Text style={styles.headerText}>Password</Text>
         <TextInput
           style={styles.input}
+          onChangeText={(password) => setPassword(password)}
           placeholder="Password"
           placeholderTextColor="#999"
         />
@@ -41,12 +55,15 @@ export default function signup() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("../(tabs)/inventory")}
+        onPress={() => signIn(email, password, onBegin, onComplete)}
+        disabled={loading}
       >
-        <Text style={styles.buttonText}>Log In</Text>
+        <Text style={styles.buttonText}>
+          {loading ? "Logging In..." : "Login"}
+        </Text>
       </TouchableOpacity>
 
-      <Link replace href="/(auth)/signup">
+      <Link replace href="/(auth)/signup" disabled={loading}>
         <Text style={{ textDecorationLine: "underline" }}>
           Don't have an account? Sign up here.
         </Text>

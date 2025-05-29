@@ -1,8 +1,12 @@
-import DateTimeBox from "@/app/components/entry/DateTimeBox";
-import SuccessPopup from "@/app/components/entry/SuccessPopup";
-import { EnvironmentTag, SpeciesTag } from "@/app/components/entry/Tag";
-import useFormatNumber from "@/app/hooks/useFormatNumber";
-import colors from "@/app/theme/colors";
+import DateTimeBox from "@/components/entry/DateTimeBox";
+import SuccessPopup from "@/components/entry/SuccessPopup";
+import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
+import colors from "@/constants/Colors";
+import useFormatNumber from "@/hooks/useFormatNumber";
+import { useAuthContext } from "@/providers/AuthProvider";
+import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import insertEntry from "@/supabase/db_hooks/insertEntry";
+import { FullInsertEntry } from "@/supabase/entrySchema";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -16,21 +20,18 @@ import {
 } from "react-native";
 
 export default function submitEntry() {
-  const { id, photo, dateTime } = useLocalSearchParams<{
-    id: string;
+  const { photo, dateTime } = useLocalSearchParams<{
     photo: string;
     dateTime: string;
   }>();
+
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const onSubmit = () => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      router.navigate("/(tabs)/inventory");
-    }, 700);
-  };
+  //get id from entryData count
+  const { count, getData } = useEntryDataContext();
+  const { session } = useAuthContext();
 
   //dateTime sent in string
   const parsedDateTime = dateTime.split(",");
@@ -41,6 +42,44 @@ export default function submitEntry() {
     const timeOut = setTimeout(() => setSimulateLoading(false), 500);
     return () => clearTimeout(timeOut);
   });
+
+  const submitting: FullInsertEntry = {
+    id: count,
+    name: "",
+    dateTime: dateTime,
+    environmentType: "",
+    speciesType: "",
+    image: photo,
+    description: "",
+    height: "",
+    weight: "",
+    lifespan: "",
+    observations: "",
+  };
+
+  const onSubmit = () => {
+    const onBegin = () => {
+      setLoading(true);
+    };
+
+    const onComplete = () => {
+      setLoading(false);
+      console.log("Entry Inserted");
+      getData();
+    };
+
+    if (session) {
+      console.log("Session detected, inserting entry");
+      insertEntry(session, submitting, onBegin, onComplete);
+    }
+
+    setModalVisible(true);
+
+    setTimeout(() => {
+      setModalVisible(false);
+      router.navigate("/(tabs)/inventory");
+    }, 700);
+  };
 
   if (simulateLoading)
     return (
@@ -54,8 +93,12 @@ export default function submitEntry() {
     <View style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
-        <Text style={styles.name}>{useFormatNumber(id)} Weird Bird</Text>
+        <Text style={styles.name}>
+          {useFormatNumber(count.toString())}
+          {submitting.name !== "" ? submitting.name : "<Name>"}
+        </Text>
         <Image source={photo} style={styles.image} contentFit="cover" />
+        {/* TODO: DYNAMIC SPECIES AND ENV TAGGING */}
         <View style={styles.tagContainer}>
           <SpeciesTag species="Animal" />
           <EnvironmentTag environment="Flying" />
@@ -69,14 +112,9 @@ export default function submitEntry() {
           }}
         >
           <Text style={styles.descriptionBoxText}>
-            This is a placeholder for the description of your entry. This is a
-            placeholder for the description of your entry.This is a placeholder
-            for the description of your entry.This is a placeholder for the
-            description of your entry.This is a placeholder for the description
-            of your entry.This is a placeholder for the description of your
-            entry.This is a placeholder for the description of your entry.This
-            is a placeholder for the description of your entry.This is a
-            placeholder for the description of your entry.
+            {submitting.description !== ""
+              ? submitting.description
+              : "Theres no description..."}
           </Text>
         </ScrollView>
 
@@ -94,6 +132,9 @@ export default function submitEntry() {
             multiline
             numberOfLines={10}
             placeholder="A brief description of the entry/its surroundings..."
+            onChangeText={(observation) =>
+              (submitting.observations = observation)
+            }
             style={styles.observationBox}
           />
         </View>
@@ -101,7 +142,9 @@ export default function submitEntry() {
           <Text style={styles.submitButtonText}>Submit Entry</Text>
         </TouchableOpacity>
       </View>
-      {modalVisible && <SuccessPopup isVisible={modalVisible} />}
+      {modalVisible && (
+        <SuccessPopup isVisible={modalVisible} isLoading={loading} />
+      )}
     </View>
   );
 }
@@ -110,6 +153,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   entryContainer: {
     flex: 1,

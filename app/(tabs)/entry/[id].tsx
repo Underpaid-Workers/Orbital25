@@ -1,28 +1,39 @@
-import InfoBox from "@/app/components/entry/InfoBox";
-import SpeciesTag, { EnvironmentTag } from "@/app/components/entry/Tag";
-import useEntryDataContext from "@/app/hooks/useEntryDataContext";
-import useFormatDateTime from "@/app/hooks/useFormatDateTime";
-import colors from "@/app/theme/colors";
+import InfoBox from "@/components/entry/InfoBox";
+import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
+import colors from "@/constants/Colors";
+import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
+import useFormatNumber from "@/hooks/useFormatNumber";
+import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function viewEntry() {
   //Allows this file to get respective id of EntryCard clicked through Expo router
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  //TODO : usage of testData here. API usage will require different implementation
-  const entryData = useEntryDataContext();
-  const entry = entryData.find((item) => item.id == id);
-  const dateTime = entry
-    ? useFormatDateTime(entry.dateTime)
+  const { data } = useEntryDataContext();
+
+  const entry = data[Number.parseInt(id)];
+
+  const dateTime = entry.datetime
+    ? useFormatDateTimeDisplay(entry.datetime)
     : "<No date available>";
+
+  const displayId = entry.id ? useFormatNumber(entry.id.toString()) : "#000";
 
   return entry ? (
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
-        <Text style={styles.entryTitle}>{entry.name}</Text>
+        <Text style={styles.entryTitle}>
+          {displayId} {entry.name}
+        </Text>
         <Text style={styles.entryText}>Captured: {dateTime}</Text>
-        <Image source={entry.image} style={styles.entryImage} />
+        <Image
+          source={entry.image}
+          style={styles.entryImage}
+          contentFit="cover"
+        />
         <View style={styles.tagContainer}>
           <SpeciesTag species="Animal" />
           <EnvironmentTag environment="Flying" />
@@ -66,7 +77,6 @@ const styles = StyleSheet.create({
     flex: 3,
     width: 178,
     height: 195,
-    resizeMode: "cover",
     borderRadius: 15,
     borderCurve: "continuous",
   },

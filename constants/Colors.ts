@@ -1,4 +1,4 @@
-export const colors = {
+const colors = {
   text: "#000000",
   background: "#FFFFFF",
   icon: "#000000",

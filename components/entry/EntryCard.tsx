@@ -1,24 +1,18 @@
-import { EnvironmentTag, SpeciesTag } from "@/app/components/entry/Tag";
-import useFormatNumber from "@/app/hooks/useFormatNumber";
-import colors from "@/app/theme/colors";
+import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
+import colors from "@/constants/Colors";
+import useFormatNumber from "@/hooks/useFormatNumber";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import {
-  Image,
-  ImageURISource,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-interface entry {
-  id: string;
+interface EntryCard {
+  id: number;
   name: string;
-  image: ImageURISource;
+  image: string;
 }
 
-export default function EntryCard({ id, name, image }: entry) {
+export default function EntryCard({ id, name, image }: EntryCard) {
   const router = useRouter();
   return (
     <TouchableOpacity
@@ -37,17 +31,17 @@ export default function EntryCard({ id, name, image }: entry) {
       >
         {/* Id Number + Entry Name */}
         <View style={styles.textContent}>
-          <Text style={styles.index}>{useFormatNumber(id)}</Text>
+          <Text style={styles.index}>{useFormatNumber(id.toString())}</Text>
           <Text style={styles.name}>{name}</Text>
-          <View style = {styles.tagContainer}>
-            <SpeciesTag species = "Animal"/>
-            <EnvironmentTag environment = "Flying"/>
+          <View style={styles.tagContainer}>
+            <SpeciesTag species="Animal" />
+            <EnvironmentTag environment="Flying" />
           </View>
         </View>
 
         {/* Image */}
         <View style={styles.imageContent}>
-          <Image source={image} style={styles.image} />
+          <Image source={image} style={styles.image} contentFit="cover" />
         </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -57,14 +51,15 @@ export default function EntryCard({ id, name, image }: entry) {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    height: 150,
+    height: 160,
+    minWidth: "100%",
     borderRadius: 15,
     paddingVertical: 10,
   },
   cardGradient: {
     flex: 1,
     flexDirection: "row",
-    height: 150,
+    height: 160,
     borderRadius: 15,
     paddingVertical: 16,
   },
@@ -85,9 +80,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    height: 100,
-    aspectRatio: 0.93,
-    resizeMode: "cover",
+    height: "120%",
+    aspectRatio: 0.9,
     borderRadius: 15,
   },
   index: {

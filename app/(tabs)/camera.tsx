@@ -1,37 +1,39 @@
-import CameraPreview from "@/app/components/entry/CameraPreview";
-import useEntryCountContext from "@/app/hooks/useEntryCountContext";
+import CameraPreview from "@/components/entry/CameraPreview";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { ImageManipulator } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import moment from "moment";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import colors from "../theme/colors";
+import colors from "@/constants/Colors";
+import { ImageManipulator } from "expo-image-manipulator";
 
 export default function camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<string | undefined>(undefined);
   const [photoCaptureTime, setPhotoCaptureTime] = useState<string>("");
+  const [isFocused, setIsFocused] = useState<boolean>(true);
   const [facing, setFacing] = useState<CameraType>("back");
   const cameraRef = useRef<CameraView>(null);
   const router = useRouter();
-
-  //+1 to account for additional entry over number of entries in data
-  //TODO: Ensure to account for +1 entry when fetching from database
-  const id = useEntryCountContext() + 1;
 
   //returns the current datetime at the time of this function call
   //outputs in the format eg. "1, 5, 2025, 1:30 PM"
   const getNowDateTimeFormatted = () => moment().format("D,M,YYYY,h:mm A");
 
-  //Ensures CameraView is unmounted upon moving to different screen
-  //as per Expo-camera docs
-  const isFocused = useIsFocused();
-
+  //Resets photo information on leaving camera screen
+  //TODO: Causes delay when opening camera though, since setting state causes delays? FIX
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      return () => {
+        resetPhoto();
+        setIsFocused(false);
+      };
+    }, [])
+  );
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
@@ -48,7 +50,7 @@ export default function camera() {
       mediaTypes: "images",
       allowsEditing: true,
       aspect: [9, 16],
-      quality: 1,
+      quality: 0.3,
     });
 
     if (!result.canceled) {
@@ -57,7 +59,7 @@ export default function camera() {
       const image = await (
         await ImageManipulator.manipulate(result.assets[0].uri).renderAsync()
       ).saveAsync();
-      //end of dummy fix...
+      // //end of dummy fix...
 
       setPhoto(image.uri);
       setPhotoCaptureTime(getNowDateTimeFormatted());
@@ -66,11 +68,11 @@ export default function camera() {
 
   const takePicture = async () => {
     const takenPhoto = await cameraRef.current?.takePictureAsync({
-      quality: 0.5,
+      quality: 0.3,
     });
 
     // dummy fixing ImagePicker bug in EXPO
-    //TODO remove this bugfix when bug fixed
+    // TODO remove this bugfix when bug fixed
     const image = await (
       await ImageManipulator.manipulate(takenPhoto?.uri!).renderAsync()
     ).saveAsync();
@@ -78,13 +80,14 @@ export default function camera() {
 
     setPhoto(image.uri);
     setPhotoCaptureTime(getNowDateTimeFormatted());
+    // setPhotoBase64(image.base64);
   };
 
   //TODO : complete savePicture functionality -> require storage permission?
   const savePicture = () => {
     router.navigate({
       pathname: "/(tabs)/entry/submitEntry",
-      params: { id: id, photo: photo, dateTime: photoCaptureTime },
+      params: { photo: photo, dateTime: photoCaptureTime },
     });
   };
 
