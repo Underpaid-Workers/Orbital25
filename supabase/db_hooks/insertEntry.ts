@@ -89,6 +89,7 @@ export default async function insertEntry(
       lifespan: "long",
       observations: entry.observations,
     };
+
     const { data, error } = await supabase
       .from("entries")
       .insert(inserted)

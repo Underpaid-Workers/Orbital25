@@ -1,5 +1,5 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
-import SuccessPopup from "@/components/entry/SuccessPopup";
+import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
@@ -81,6 +81,7 @@ export default function submitEntry() {
     }, 700);
   };
 
+  // simulate API fetching
   if (simulateLoading)
     return (
       <View style={styles.container}>
@@ -143,7 +144,12 @@ export default function submitEntry() {
         </TouchableOpacity>
       </View>
       {modalVisible && (
-        <SuccessPopup isVisible={modalVisible} isLoading={loading} />
+        <ProcessingPopup
+          isVisible={modalVisible}
+          isLoading={loading}
+          processingMessage="Registering Entry..."
+          processedMessage="Entry Registered!"
+        />
       )}
     </View>
   );

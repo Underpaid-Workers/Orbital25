@@ -2,12 +2,16 @@ import colors from "@/constants/Colors";
 import { Image } from "expo-image";
 import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
 
-export default function SuccessPopup({
+export default function ProcessingPopup({
   isVisible,
   isLoading,
+  processingMessage,
+  processedMessage,
 }: {
   isVisible: boolean;
   isLoading: boolean;
+  processingMessage: string;
+  processedMessage: string;
 }) {
   return (
     <Modal animationType="fade" transparent={true} visible={isVisible}>
@@ -20,7 +24,7 @@ export default function SuccessPopup({
                 size="large"
                 color={colors.tabBar}
               />
-              <Text style={styles.text}>Registering Entry...</Text>
+              <Text style={styles.text}>{processingMessage}</Text>
             </>
           ) : (
             <>
@@ -28,7 +32,7 @@ export default function SuccessPopup({
                 source={require("@/assets/images/SuccessImage.png")}
                 style={{ width: 100, height: 100 }}
               />
-              <Text style={styles.text}>Entry Registered!</Text>
+              <Text style={styles.text}>{processedMessage}</Text>
             </>
           )}
         </View>
