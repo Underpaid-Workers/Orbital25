@@ -14,8 +14,6 @@ export default function DateTimeBox({
   year,
   time,
 }: dateTimeFormat) {
-  const onChangeDatetime = () => {};
-
   return (
     <View style={styles.box}>
       <Text style={styles.text}>{day}</Text>

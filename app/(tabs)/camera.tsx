@@ -1,14 +1,13 @@
 import CameraPreview from "@/components/entry/CameraPreview";
+import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { ImageManipulator } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useRouter } from "expo-router";
 import moment from "moment";
 import { useCallback, useRef, useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-import colors from "@/constants/Colors";
-import { ImageManipulator } from "expo-image-manipulator";
 
 export default function camera() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -80,7 +79,6 @@ export default function camera() {
 
     setPhoto(image.uri);
     setPhotoCaptureTime(getNowDateTimeFormatted());
-    // setPhotoBase64(image.base64);
   };
 
   //TODO : complete savePicture functionality -> require storage permission?

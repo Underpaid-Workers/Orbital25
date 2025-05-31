@@ -1,26 +1,26 @@
 import { useAuthContext } from "@/providers/AuthProvider";
+import deleteEntry from "@/supabase/db_hooks/deleteEntry";
 import fetchEntries from "@/supabase/db_hooks/fetchEntries";
-import FetchEntry from "@/supabase/entrySchema";
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import insertEntry from "@/supabase/db_hooks/insertEntry";
+import FetchEntry, { FullInsertEntry } from "@/supabase/entrySchema";
+import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 export type EntryData = {
   data: FetchEntry[];
   count: number;
   loading: boolean;
-  getData: () => void;
+  getEntries: () => void;
+  uploadEntry: (submitting: FullInsertEntry, onComplete: () => void) => void;
+  removeEntry: (id: number, image: string, onComplete: () => void) => void;
 };
 
 const EntryDataContext = createContext<EntryData>({
   data: [],
   count: 0,
   loading: false,
-  getData: () => {},
+  getEntries: () => {},
+  uploadEntry: () => {},
+  removeEntry: () => {},
 });
 
 export default function EntryDataProvider({ children }: PropsWithChildren) {
@@ -29,38 +29,64 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const onBegin = () => {
-    setLoading(true);
-  };
-
-  const onComplete = () => {
-    setLoading(false);
-  };
-
-  const getData = async () => {
+  const getEntries = async () => {
     if (session) {
       console.log("Fetching data...");
-      fetchEntries(session, onBegin, onComplete).then(
-        (result) => {
-          //onSuccess
-          setData(result.data);
-          setCount(result.count);
-          console.log("Data fetched");
-        },
-        () => {
-          //onFail
-          console.log("Fetch failed");
-        }
-      );
+      setLoading(true);
+      fetchEntries(session)
+        .then(
+          (result) => {
+            //onSuccess
+            setData(result.data);
+            setCount(result.count);
+            console.log("Data fetched");
+          },
+          () => {
+            //onFail
+            console.log("Fetch failed");
+          }
+        )
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const uploadEntry = (submitting: FullInsertEntry, onComplete: () => void) => {
+    setLoading(true);
+    if (session) {
+      console.log("Session detected, inserting entry");
+      insertEntry(session, submitting).finally(() =>
+        getEntries().finally(() => onComplete())
+      );
+    } else {
+      console.log("Session not detected, insert failed");
+    }
+  };
+
+  const removeEntry = (id: number, image: string, onComplete: () => void) => {
+    setLoading(true);
+    if (session) {
+      console.log("Session detected, deleting entry");
+      deleteEntry(session, id, image).finally(() =>
+        getEntries().finally(() => onComplete())
+      );
+    } else {
+      console.log("Session not detected, delete failed");
+    }
+  };
 
   return (
-    <EntryDataContext.Provider value={{ data, count, loading, getData }}>
+    <EntryDataContext.Provider
+      value={{
+        data,
+        count,
+        loading,
+        getEntries,
+        uploadEntry,
+        removeEntry,
+      }}
+    >
       {children}
     </EntryDataContext.Provider>
   );

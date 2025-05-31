@@ -7,14 +7,10 @@ import { Alert } from "react-native";
 /**
  * @description Fetches entries from the public.entries table.
  * @param session as Session
- * @param onBegin as () => void
- * @param onComplete as () => void
  * @returns Promise<EntryData> if successful
  */
 export default async function fetchEntries(
-  session: Session,
-  onBegin: () => void,
-  onComplete: () => void
+  session: Session
 ): Promise<EntryData> {
   const result = <EntryData>{
     data: <FetchEntry[]>[],
@@ -26,7 +22,6 @@ export default async function fetchEntries(
   }
 
   try {
-    onBegin();
     if (!session?.user) {
       throw new Error("No user on the session!");
     } else {
@@ -51,8 +46,7 @@ export default async function fetchEntries(
         .order("entry_id", { ascending: true });
       if (error) {
         throw error;
-      }
-      if (data && count) {
+      } else if (data && count) {
         data.forEach((entry) => {
           let image = fetchImage(entry.image_url).publicUrl;
           let temp = <FetchEntry>{
@@ -80,7 +74,6 @@ export default async function fetchEntries(
       Alert.alert(error.message);
     }
   } finally {
-    onComplete();
     return result;
   }
 }

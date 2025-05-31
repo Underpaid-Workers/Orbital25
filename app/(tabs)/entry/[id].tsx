@@ -4,9 +4,7 @@ import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
 import useFormatNumber from "@/hooks/useFormatNumber";
-import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
-import deleteEntry from "@/supabase/db_hooks/deleteEntry";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -19,46 +17,34 @@ import {
 } from "react-native";
 
 export default function viewEntry() {
-  //Allows this file to get respective id of EntryCard clicked through Expo router
+  //Allows this function to get respective id of EntryCard clicked through Expo router
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, getData } = useEntryDataContext();
-  const { session } = useAuthContext();
+  const { data, loading, removeEntry } = useEntryDataContext();
+
   //search for specific entry in entryData
   const entry = data[Number.parseInt(id)];
 
-  const dateTime = entry.datetime
-    ? useFormatDateTimeDisplay(entry.datetime)
-    : "<No date available>";
-  const displayId = entry.id ? useFormatNumber(entry.id.toString()) : "#000";
+  let dateTime = "<No date available>";
+  let displayId = "#000";
+
+  if (entry !== undefined) {
+    dateTime = entry.datetime = useFormatDateTimeDisplay(entry.datetime);
+    displayId = useFormatNumber(entry.id.toString());
+  }
 
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const onDelete = () => {
-    const onBegin = () => {
-      setLoading(true);
-    };
-
     const onComplete = () => {
-      setLoading(false);
-      console.log("Entry deleted");
-      getData();
+      setModalVisible(false);
+      router.replace("/(tabs)/inventory");
     };
-
-    if (session) {
-      console.log("Session detected, deleting entry");
-      deleteEntry(session, entry.id, entry.image, onBegin, onComplete);
-    }
 
     setModalVisible(true);
-
-    setTimeout(() => {
-      setModalVisible(false);
-      router.navigate("/(tabs)/inventory");
-    }, 700);
+    removeEntry(entry.id, entry.image, onComplete);
   };
-  console.warn(entry.image);
+
   return entry !== undefined ? (
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
@@ -70,6 +56,7 @@ export default function viewEntry() {
           source={entry.image}
           style={styles.entryImage}
           contentFit="cover"
+          placeholder={require("../../../assets/images/placeholderImage.png")}
         />
         <View style={styles.tagContainer}>
           <SpeciesTag species="Animal" />
@@ -93,7 +80,7 @@ export default function viewEntry() {
         <ProcessingPopup
           isVisible={modalVisible}
           isLoading={loading}
-          processingMessage="Deleting Entry...!"
+          processingMessage="Deleting Entry..."
           processedMessage="Entry Deleted!"
         />
       )}

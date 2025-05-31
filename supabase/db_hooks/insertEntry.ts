@@ -5,20 +5,17 @@ import { Session } from "@supabase/supabase-js";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
 import { Alert } from "react-native";
+import uuid from "react-native-uuid";
 
 /**
- * @description Insert entry using format FullInsertEntry into public.entries table
+ * @description Inserts an entry using format FullInsertEntry into public.entries table
  * @param session as Session
  * @param entry as FullInsertEntry
- * @param onBegin as () => void
- * @param onComplete as () => void
  * @returns void
  */
 export default async function insertEntry(
   session: Session,
-  entry: FullInsertEntry,
-  onBegin: () => void,
-  onComplete: () => void
+  entry: FullInsertEntry
 ) {
   type EntryFormat = {
     user_id: string;
@@ -36,26 +33,27 @@ export default async function insertEntry(
   };
 
   async function uploadPhoto(userId: string, entryId: number, image: string) {
-    const imageName = `${userId}-${entryId}`;
-    const filePath = `${imageName}.jpg`;
-    const imageBase64 = await FileSystem.readAsStringAsync(image, {
+    const imageEncoded = await FileSystem.readAsStringAsync(image, {
       encoding: "base64",
     });
+
+    const imageName = `${userId}-${entryId}-${uuid.v4()}`;
+    const filePath = `${imageName}.jpg`;
     const { data, error } = await supabase.storage
       .from("entry-images")
-      .update(filePath, decode(imageBase64), {
+      .update(filePath, decode(imageEncoded), {
         contentType: "image/jpg",
       });
 
     if (error) {
       Alert.alert(error.message);
     } else {
+      console.log(data.path);
       return data.path;
     }
   }
 
   try {
-    onBegin();
     if (!session?.user) throw new Error("No user on the session!");
 
     const imageUrl = await uploadPhoto(session.user.id, entry.id, entry.image);
@@ -98,10 +96,9 @@ export default async function insertEntry(
     if (error) {
       throw error;
     }
+
+    console.log("Entry inserted");
   } catch (error: any) {
-    console.warn(error);
-    Alert.alert(error);
-  } finally {
-    onComplete();
+    Alert.alert(error.message);
   }
 }

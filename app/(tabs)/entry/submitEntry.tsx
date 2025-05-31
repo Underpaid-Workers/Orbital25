@@ -3,9 +3,7 @@ import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
-import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
-import insertEntry from "@/supabase/db_hooks/insertEntry";
 import { FullInsertEntry } from "@/supabase/entrySchema";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -24,14 +22,11 @@ export default function submitEntry() {
     photo: string;
     dateTime: string;
   }>();
-
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   //get id from entryData count
-  const { count, getData } = useEntryDataContext();
-  const { session } = useAuthContext();
+  const { count, loading, uploadEntry, getEntries } = useEntryDataContext();
 
   //dateTime sent in string
   const parsedDateTime = dateTime.split(",");
@@ -58,27 +53,13 @@ export default function submitEntry() {
   };
 
   const onSubmit = () => {
-    const onBegin = () => {
-      setLoading(true);
-    };
-
     const onComplete = () => {
-      setLoading(false);
-      console.log("Entry Inserted");
-      getData();
+      setModalVisible(false);
+      router.replace("/(tabs)/inventory");
     };
-
-    if (session) {
-      console.log("Session detected, inserting entry");
-      insertEntry(session, submitting, onBegin, onComplete);
-    }
 
     setModalVisible(true);
-
-    setTimeout(() => {
-      setModalVisible(false);
-      router.navigate("/(tabs)/inventory");
-    }, 700);
+    uploadEntry(submitting, onComplete);
   };
 
   // simulate API fetching

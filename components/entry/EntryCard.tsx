@@ -14,16 +14,16 @@ interface EntryCard {
 
 export default function EntryCard({ id, name, image }: EntryCard) {
   const router = useRouter();
+
+  const onClickDetails = () => {
+    router.navigate({
+      pathname: "/(tabs)/entry/[id]",
+      params: { id },
+    });
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => {
-        router.navigate({
-          pathname: "/(tabs)/entry/[id]",
-          params: { id },
-        });
-      }}
-    >
+    <TouchableOpacity style={styles.card} onPress={onClickDetails}>
       <LinearGradient
         colors={[colors.primary, "#1E7744"]}
         end={{ x: 1, y: 0 }}
