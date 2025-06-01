@@ -5,10 +5,12 @@ import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { FullInsertEntry } from "@/supabase/entrySchema";
+import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,6 +18,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import Constants from 'expo-constants';
+
+
+let hfToken: any = null;
+let hfModelUrl: any = null;
+
+if (Constants.expoConfig && Constants.expoConfig.extra) {
+  hfToken = Constants.expoConfig.extra.hfToken as string;
+  hfModelUrl = Constants.expoConfig.extra.hfModelUrl as string;
+} else {
+  console.error("Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys.");
+}
+
+// Ensure that the keys are actually loaded (good for debugging)
+if (!hfToken || !hfModelUrl) {
+  console.error("Hugging Face Token or Model URL is missing AFTER loading attempt! Check your .env and app.config.js");
+} else {
+  console.log("Hugging Face Token loaded:", hfToken ? "Yes" : "No");
+  console.log("Hugging Face Model URL loaded:", hfModelUrl ? "Yes" : "No");
+}
+
 
 export default function submitEntry() {
   const { photo, dateTime } = useLocalSearchParams<{
@@ -25,34 +49,116 @@ export default function submitEntry() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
 
-  //get id from entryData count
   const { count, loading, uploadEntry, getEntries } = useEntryDataContext();
 
-  //dateTime sent in string
   const parsedDateTime = dateTime.split(",");
 
-  //Simulated api fetching from AI/ML API
-  const [simulateLoading, setSimulateLoading] = useState(true);
-  useEffect(() => {
-    const timeOut = setTimeout(() => setSimulateLoading(false), 500);
-    return () => clearTimeout(timeOut);
-  });
+  const [simulateLoading, setSimulateLoading] = useState(false);
 
-  const submitting: FullInsertEntry = {
-    id: count,
-    name: "",
-    dateTime: dateTime,
-    environmentType: "",
-    speciesType: "",
-    image: photo,
-    description: "",
-    height: "",
-    weight: "",
-    lifespan: "",
-    observations: "",
+  const [speciesName, setSpeciesName] = useState("Unknown Species");
+  const [description, setDescription] = useState("");
+  const [observations, setObservations] = useState("");
+
+  const fetchWikipediaSummary = async (title: string): Promise<string> => {
+  try {
+    const response = await fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
+    );
+
+    if (!response.ok) throw new Error("Not found");
+
+    const data = await response.json();
+    if (data.extract) {
+      return data.extract;
+    } else {
+      return "Could not find description";
+    }
+  } catch (error) {
+    console.error("Wikipedia fetch error:", error);
+    return "Could not find description";
+  }
+};
+
+
+  const classifyImage = async (photoUri: string) => {
+  try {
+    setSimulateLoading(true);
+
+    const base64Image = await FileSystem.readAsStringAsync(photoUri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+
+    const response = await fetch(hfModelUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${hfToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ inputs: base64Image }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${errorText}`);
+    }
+
+    const data = await response.json();
+    const prediction = data?.[0];
+    
+    if (prediction?.label) {
+      const animalName = prediction.label.split(",")[0].trim(); 
+      setSpeciesName(animalName);
+      const wikiSummary = await fetchWikipediaSummary(animalName);
+      setDescription(wikiSummary);
+    } else {
+      setSpeciesName("Unknown Species");
+      setDescription("Could not find description");
+    }
+  } catch (error) {
+    console.error("Classification error:", error);
+
+    let errorMessage = "Could not identify species";
+    if (error instanceof Error){
+      errorMessage = error.message;
+    }
+
+    Alert.alert(
+      "AI Identification Failed",errorMessage);
+    setSpeciesName("Unknown Species");
+    setDescription("Could not find description");
+  } finally {
+    setSimulateLoading(false);
+  }
+};
+
+
+useEffect(() => {
+  let isMounted = true;
+  
+  if (photo) {
+    classifyImage(photo).catch(console.error);
+  }
+
+  return () => {
+    isMounted = false;
   };
+}, [photo]);
 
   const onSubmit = () => {
+    const submitting: FullInsertEntry = {
+      id: count,
+      name: speciesName,
+      dateTime: dateTime,
+      environmentType: "", 
+      speciesType: "", 
+      image: photo,
+      description: description,
+      height: "",
+      weight: "",
+      lifespan: "",
+      observations: observations,
+    };
+
     const onComplete = () => {
       setModalVisible(false);
       router.replace("/(tabs)/inventory");
@@ -62,24 +168,22 @@ export default function submitEntry() {
     uploadEntry(submitting, onComplete);
   };
 
-  // simulate API fetching
   if (simulateLoading)
     return (
       <View style={styles.container}>
-        <Text>Identifying...</Text>
+        <Text>Identifying species using AI...</Text>
       </View>
     );
-  //end of simulated api fetching
 
   return (
     <View style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
         <Text style={styles.name}>
-          {useFormatNumber(count.toString())}
-          {submitting.name !== "" ? submitting.name : "<Name>"}
+          {useFormatNumber(count?.toString() || "0")} -{" "}
+          {speciesName !== "" ? speciesName : "<Name>"}
         </Text>
-        <Image source={photo} style={styles.image} contentFit="cover" />
+        <Image source={{ uri: photo }} style={styles.image} contentFit="cover" />
         {/* TODO: DYNAMIC SPECIES AND ENV TAGGING */}
         <View style={styles.tagContainer}>
           <SpeciesTag species="Animal" />
@@ -94,9 +198,7 @@ export default function submitEntry() {
           }}
         >
           <Text style={styles.descriptionBoxText}>
-            {submitting.description !== ""
-              ? submitting.description
-              : "Theres no description..."}
+            {description !== "" ? description : "There's no description..."}
           </Text>
         </ScrollView>
 
@@ -114,9 +216,7 @@ export default function submitEntry() {
             multiline
             numberOfLines={10}
             placeholder="A brief description of the entry/its surroundings..."
-            onChangeText={(observation) =>
-              (submitting.observations = observation)
-            }
+            onChangeText={(observation) => setObservations(observation)}
             style={styles.observationBox}
           />
         </View>
