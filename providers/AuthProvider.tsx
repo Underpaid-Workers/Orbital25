@@ -1,3 +1,6 @@
+import signIn from "@/supabase/auth_hooks/signIn";
+import signOut from "@/supabase/auth_hooks/signOut";
+import signUp from "@/supabase/auth_hooks/signUp";
 import supabase from "@/supabase/main";
 import { Session } from "@supabase/supabase-js";
 import {
@@ -11,11 +14,17 @@ import {
 type AuthData = {
   session: Session | null;
   loading: boolean;
+  logIn: (email: string, password: string) => void;
+  logOut: () => void;
+  signUpWithEmail: (email: string, password: string) => void;
 };
 
 const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
+  logIn: () => {},
+  logOut: () => {},
+  signUpWithEmail: () => {},
 });
 
 export default function AuthProvider({ children }: PropsWithChildren) {
@@ -36,8 +45,26 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setSession(session);
     });
   }, []);
+
+  const logIn = (email: string, password: string) => {
+    setLoading(true);
+    signIn(email, password).finally(() => setLoading(false));
+  };
+
+  const logOut = () => {
+    setLoading(true);
+    signOut().finally(() => setLoading(false));
+  };
+
+  const signUpWithEmail = (email: string, password: string) => {
+    setLoading(true);
+    signUp(email, password).finally(() => setLoading(false));
+  };
+
   return (
-    <AuthContext.Provider value={{ session, loading }}>
+    <AuthContext.Provider
+      value={{ session, loading, logIn, logOut, signUpWithEmail }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -8,14 +8,7 @@ export default ({ config }) => {
   const existingExtra = currentExpoConfig.extra || {};
 
   return {
-    ...config, // Spread all existing top-level properties from the base config (e.g., hostUri if present)
-
-    // Explicitly define the 'expo' property and structure its content
     expo: {
-      // First, spread all existing properties from the 'expo' object (name, slug, plugins, etc.)
-      ...currentExpoConfig,
-
-      // Now, define the 'extra' property *inside* 'expo'
       extra: {
         ...existingExtra, 
         "eas": {
@@ -39,9 +32,11 @@ export default ({ config }) => {
         "package": "com.underpaidworkers.ecodex",
          "adaptiveIcon": {
            "foregroundImage": "./assets/images/AppIcon.png",
-           "backgroundColor": "#ffffff"
+           "backgroundColor": "#ffffff",
          },
-         "edgeToEdgeEnabled": true
+         "edgeToEdgeEnabled": true,
+         hfToken: process.env.HF_TOKEN,
+         hfModelUrl: process.env.HF_MODEL_URL,
        },
        "web": {
          "bundler": "metro",
