@@ -18,6 +18,9 @@ export default ({ config }) => {
       // Now, define the 'extra' property *inside* 'expo'
       extra: {
         ...existingExtra, 
+        "eas": {
+          "projectId": "357f90cc-93b8-4c08-ad3d-833ebbf6d71a"
+        },
         hfToken: process.env.HF_TOKEN,
         hfModelUrl: process.env.HF_MODEL_URL,
       },
@@ -33,6 +36,7 @@ export default ({ config }) => {
          "supportsTablet": true
        },
        "android": {
+        "package": "com.underpaidworkers.ecodex",
          "adaptiveIcon": {
            "foregroundImage": "./assets/images/AppIcon.png",
            "backgroundColor": "#ffffff"
@@ -49,7 +53,7 @@ export default ({ config }) => {
          [
            "expo-splash-screen",
            {
-             "image": "./assets/images/splash-icon.png",
+             "image": "./assets/images/AppIcon.png",
             "imageWidth": 200,
              "resizeMode": "contain",
              "backgroundColor": "#ffffff"
