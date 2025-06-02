@@ -100,7 +100,7 @@ export default function submitEntry() {
       setIsFetchingAPI(true);
 
       const base64Image = await FileSystem.readAsStringAsync(photoUri, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: "base64",
       });
 
       const response = await fetch(hfModelUrl, {
