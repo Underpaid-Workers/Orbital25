@@ -22,7 +22,7 @@ export interface LocalInsertEntry {
 
 //Scheme for API fetch data!
 export interface InsertEntryMetadata {
-  name: number;
+  name: string;
   environmentType: string;
   speciesType: string;
   description: string;

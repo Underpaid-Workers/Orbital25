@@ -4,12 +4,13 @@ import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
-import { FullInsertEntry } from "@/supabase/entrySchema";
+import { FullInsertEntry, InsertEntryMetadata } from "@/supabase/entrySchema";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   ScrollView,
   StyleSheet,
@@ -19,8 +20,7 @@ import {
   View,
 } from "react-native";
 
-import Constants from 'expo-constants';
-
+import Constants from "expo-constants";
 
 let hfToken: any = null;
 let hfModelUrl: any = null;
@@ -29,17 +29,26 @@ if (Constants.expoConfig && Constants.expoConfig.extra) {
   hfToken = Constants.expoConfig.extra.hfToken as string;
   hfModelUrl = Constants.expoConfig.extra.hfModelUrl as string;
 } else {
-  console.error("Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys.");
+  console.error(
+    "Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys."
+  );
 }
 
 // Ensure that the keys are actually loaded (good for debugging)
-if (!hfToken || !hfModelUrl) {
-  console.error("Hugging Face Token or Model URL is missing AFTER loading attempt! Check your .env and app.config.js");
+if (!hfToken) {
+  console.error(
+    "Hugging Face Token is missing AFTER loading attempt! Check your .env and app.config.js"
+  );
 } else {
-  console.log("Hugging Face Token loaded:", hfToken ? "Yes" : "No");
-  console.log("Hugging Face Model URL loaded:", hfModelUrl ? "Yes" : "No");
+  console.log("Hugging Face Token loaded");
 }
-
+if (!hfModelUrl) {
+  console.error(
+    "Hugging Face Mode URL is missing AFTER loading attempt! Check your .env and app.config.js"
+  );
+} else {
+  console.log("Hugging Face Mode URL loaded");
+}
 
 export default function submitEntry() {
   const { photo, dateTime } = useLocalSearchParams<{
@@ -47,112 +56,120 @@ export default function submitEntry() {
     dateTime: string;
   }>();
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
+  const { count, loading, uploadEntry } = useEntryDataContext();
 
-  const { count, loading, uploadEntry, getEntries } = useEntryDataContext();
-
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const parsedDateTime = dateTime.split(",");
-
-  const [simulateLoading, setSimulateLoading] = useState(false);
-
-  const [speciesName, setSpeciesName] = useState("Unknown Species");
-  const [description, setDescription] = useState("");
-  const [observations, setObservations] = useState("");
+  const [isFetchingAPI, setIsFetchingAPI] = useState<boolean>(false);
+  const [id, setId] = useState<number>(count + 1);
+  const [observations, setObservations] = useState<string>("");
+  const [entryMetaData, setEntryMetaData] = useState<InsertEntryMetadata>({
+    name: "",
+    environmentType: "",
+    speciesType: "",
+    description: "",
+    height: "",
+    weight: "",
+    lifespan: "",
+  });
 
   const fetchWikipediaSummary = async (title: string): Promise<string> => {
-  try {
-    const response = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`
-    );
+    try {
+      const response = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+          title
+        )}`
+      );
 
-    if (!response.ok) throw new Error("Not found");
+      if (!response.ok) throw new Error("Not found");
 
-    const data = await response.json();
-    if (data.extract) {
-      return data.extract;
-    } else {
+      const data = await response.json();
+      if (data.extract) {
+        return data.extract;
+      } else {
+        return "Could not find description";
+      }
+    } catch (error) {
+      console.error("Wikipedia fetch error:", error);
       return "Could not find description";
     }
-  } catch (error) {
-    console.error("Wikipedia fetch error:", error);
-    return "Could not find description";
-  }
-};
-
+  };
 
   const classifyImage = async (photoUri: string) => {
-  try {
-    setSimulateLoading(true);
+    try {
+      setIsFetchingAPI(true);
 
-    const base64Image = await FileSystem.readAsStringAsync(photoUri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+      const base64Image = await FileSystem.readAsStringAsync(photoUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
-    const response = await fetch(hfModelUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${hfToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ inputs: base64Image }),
-    });
+      const response = await fetch(hfModelUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${hfToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ inputs: base64Image }),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API Error: ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API Error: ${errorText}`);
+      }
+      const data = await response.json();
+      const prediction = data?.[0];
+
+      if (prediction?.label) {
+        const speciesName = prediction.label.split(",")[0].trim() as string;
+        const speciesNameUppercased = speciesName
+          .split(" ")
+          .map((word) => word[0].toUpperCase() + word.substring(1))
+          .join(" ");
+        const wikiSummary = await fetchWikipediaSummary(speciesName);
+        setEntryMetaData({
+          ...entryMetaData,
+          name: speciesNameUppercased,
+          description: wikiSummary,
+        });
+      }
+    } catch (error) {
+      console.warn();
+      console.error("Classification error:", error);
+
+      let errorMessage = "Could not identify species";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      Alert.alert("AI Identification Failed", errorMessage);
+      //if unable to identify, it should redirect user back to camera
+      router.replace("/(tabs)/camera");
     }
 
-    const data = await response.json();
-    const prediction = data?.[0];
-    
-    if (prediction?.label) {
-      const animalName = prediction.label.split(",")[0].trim(); 
-      setSpeciesName(animalName);
-      const wikiSummary = await fetchWikipediaSummary(animalName);
-      setDescription(wikiSummary);
-    } else {
-      setSpeciesName("Unknown Species");
-      setDescription("Could not find description");
-    }
-  } catch (error) {
-    console.error("Classification error:", error);
-
-    let errorMessage = "Could not identify species";
-    if (error instanceof Error){
-      errorMessage = error.message;
-    }
-
-    Alert.alert(
-      "AI Identification Failed",errorMessage);
-    setSpeciesName("Unknown Species");
-    setDescription("Could not find description");
-  } finally {
-    setSimulateLoading(false);
-  }
-};
-
-
-useEffect(() => {
-  let isMounted = true;
-  
-  if (photo) {
-    classifyImage(photo).catch(console.error);
-  }
-
-  return () => {
-    isMounted = false;
+    setIsFetchingAPI(false);
   };
-}, [photo]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (photo) {
+      classifyImage(photo).catch(console.error);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [photo]);
 
   const onSubmit = () => {
     const submitting: FullInsertEntry = {
-      id: count,
-      name: speciesName,
+      id: id,
+      name: entryMetaData.name,
       dateTime: dateTime,
-      environmentType: "", 
-      speciesType: "", 
+      environmentType: "",
+      speciesType: "",
       image: photo,
-      description: description,
+      description: entryMetaData.description,
       height: "",
       weight: "",
       lifespan: "",
@@ -168,9 +185,10 @@ useEffect(() => {
     uploadEntry(submitting, onComplete);
   };
 
-  if (simulateLoading)
+  if (isFetchingAPI)
     return (
       <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.tabBar} />
         <Text>Identifying species using AI...</Text>
       </View>
     );
@@ -180,10 +198,14 @@ useEffect(() => {
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
         <Text style={styles.name}>
-          {useFormatNumber(count?.toString() || "0")} -{" "}
-          {speciesName !== "" ? speciesName : "<Name>"}
+          {useFormatNumber(id?.toString() || "0")} -{" "}
+          {entryMetaData.name !== "" ? entryMetaData.name : "Unknown Species"}
         </Text>
-        <Image source={{ uri: photo }} style={styles.image} contentFit="cover" />
+        <Image
+          source={{ uri: photo }}
+          style={styles.image}
+          contentFit="cover"
+        />
         {/* TODO: DYNAMIC SPECIES AND ENV TAGGING */}
         <View style={styles.tagContainer}>
           <SpeciesTag species="Animal" />
@@ -198,7 +220,9 @@ useEffect(() => {
           }}
         >
           <Text style={styles.descriptionBoxText}>
-            {description !== "" ? description : "There's no description..."}
+            {entryMetaData.description !== ""
+              ? entryMetaData.description
+              : "There's no description..."}
           </Text>
         </ScrollView>
 
@@ -255,7 +279,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   name: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
     textAlign: "center",
   },

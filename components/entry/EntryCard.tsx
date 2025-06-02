@@ -16,6 +16,7 @@ export default function EntryCard({ id, name, image }: EntryCard) {
   const router = useRouter();
 
   const onClickDetails = () => {
+    console.log(`Entry ${id} clicked`);
     router.navigate({
       pathname: "/(tabs)/entry/[id]",
       params: { id },
@@ -64,8 +65,8 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   textContent: {
-    flex: 1,
-    paddingHorizontal: 16,
+    flex: 2,
+    paddingLeft: 16,
   },
   tagContainer: {
     marginTop: 20,

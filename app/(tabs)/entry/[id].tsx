@@ -22,7 +22,7 @@ export default function viewEntry() {
   const { data, loading, removeEntry } = useEntryDataContext();
 
   //search for specific entry in entryData
-  const entry = data[Number.parseInt(id)];
+  const entry = data[Number.parseInt(id) - 1]; //since data is 0-indexed, while id is 1 indexed
 
   let dateTime = "<No date available>";
   let displayId = "#000";
@@ -49,7 +49,7 @@ export default function viewEntry() {
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.entryTitle}>
-          {displayId} {entry.name}
+          {displayId} - {entry.name}
         </Text>
         <Text style={styles.entryText}>Captured: {dateTime}</Text>
         <Image
@@ -102,7 +102,9 @@ const styles = StyleSheet.create({
   },
   entryTitle: {
     flex: 1,
-    fontSize: 40,
+    width: "100%",
+    textAlign: "center",
+    fontSize: 32,
     fontWeight: "bold",
   },
   entryText: {

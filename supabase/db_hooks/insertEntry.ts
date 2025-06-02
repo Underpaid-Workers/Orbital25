@@ -57,36 +57,36 @@ export default async function insertEntry(
     if (!session?.user) throw new Error("No user on the session!");
 
     const imageUrl = await uploadPhoto(session.user.id, entry.id, entry.image);
-    // const inserted = <EntryFormat>{
-    //   user_id: session.user.id,
-    //   entry_id: entry.id,
-    //   name: entry.name,
-    //   datetime: useFormatDateTimeInsert(entry.dateTime),
-    //   image_url: imageUrl,
-    //   species_type: entry.speciesType,
-    //   env_type: entry.environmentType,
-    //   description: entry.description,
-    //   height: entry.height,
-    //   weight: entry.weight,
-    //   lifespan: entry.lifespan,
-    //   observations: entry.observations,
-    // };
-
-    //temp entry, actual entry formatting above when AI API comes through
     const inserted = <EntryFormat>{
       user_id: session.user.id,
       entry_id: entry.id,
       name: entry.name,
       datetime: useFormatDateTimeInsert(entry.dateTime),
       image_url: imageUrl,
-      species_type: "mad",
-      env_type: "sad",
+      species_type: entry.speciesType,
+      env_type: entry.environmentType,
       description: entry.description,
-      height: "lad",
-      weight: "fat",
-      lifespan: "long",
+      height: entry.height,
+      weight: entry.weight,
+      lifespan: entry.lifespan,
       observations: entry.observations,
     };
+
+    //temp entry, actual entry formatting above when AI API comes through
+    // const inserted = <EntryFormat>{
+    //   user_id: session.user.id,
+    //   entry_id: entry.id,
+    //   name: entry.name,
+    //   datetime: useFormatDateTimeInsert(entry.dateTime),
+    //   image_url: imageUrl,
+    //   species_type: "mad",
+    //   env_type: "sad",
+    //   description: entry.description,
+    //   height: "lad",
+    //   weight: "fat",
+    //   lifespan: "long",
+    //   observations: entry.observations,
+    // };
 
     const { data, error } = await supabase
       .from("entries")
