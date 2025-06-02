@@ -1,13 +1,11 @@
-import { useRouter } from "expo-router";
-import React from "react";
+import signOut from "@/supabase/auth_hooks/signOut";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function settings() {
-  const router = useRouter();
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={router.back}>
-        <Text style={styles.text}>Go back</Text>
+      <TouchableOpacity onPress={signOut}>
+        <Text style={styles.text}>Sign Out</Text>
       </TouchableOpacity>
     </View>
   );

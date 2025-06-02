@@ -1,7 +1,6 @@
+import colors from "@/constants/Colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import colors from "../theme/colors";
 
 //returns a custom TabBar
 //
@@ -14,6 +13,12 @@ export default function TabBar({
   //temporary workaround for hiding "entry" folder from TabBar.
   //change this if changing tab routes!
   const tabs = ["social", "maps", "camera", "inventory", "events"];
+  const hiddenRoutes = ["camera", "entry/submitEntry", "entry/[id]"];
+
+  if (hiddenRoutes.includes(state.routes[state.index].name)) {
+    return null;
+  }
+
   return (
     <View style={styles.tabBar}>
       {state.routes
@@ -59,7 +64,7 @@ export default function TabBar({
               onPress={onPress}
               style={{
                 height: "100%",
-                width: 90,
+                flex: 0.5,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: isSelected
@@ -90,9 +95,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderTopWidth: 2,
-  },
-  tab: {
-    //default styling of tabs
   },
   cameraTab: {
     //specific styling of Camera tab

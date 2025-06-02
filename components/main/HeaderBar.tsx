@@ -1,17 +1,11 @@
-import { MaterialIcons } from "@expo/vector-icons";
+import colors from "@/constants/Colors";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
-import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import colors from "../theme/colors";
 
 //Header icon components used for header tab
 
-export default function HeaderBar({
-  layout,
-  options,
-  route,
-  navigation,
-}: BottomTabHeaderProps) {
+export default function HeaderBar({ navigation }: BottomTabHeaderProps) {
   return (
     <View style={styles.headerTab}>
       <Text style={styles.headerText}>EcoDex</Text>
@@ -21,11 +15,11 @@ export default function HeaderBar({
           // temp onPress logic
           onPress={() => console.log("Search pressed")}
         >
-          <MaterialIcons name="search" size={28} />
+          <MaterialCommunityIcons name="magnify" size={28} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.headerIcon}>
-          <MaterialIcons
-            name="settings"
+          <MaterialCommunityIcons
+            name="cog"
             size={28}
             onPress={() => navigation.navigate("settings")}
           />
@@ -41,7 +35,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     alignItems: "center",
-    height: 60,
+    height: 50,
     justifyContent: "space-between",
   },
   headerText: {
