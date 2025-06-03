@@ -1,3 +1,4 @@
+import { loginImage, logoTransparent } from "@/constants/Image";
 import { Link, useRouter } from "expo-router";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -7,15 +8,9 @@ export default function home() {
   return (
     <>
       <View style={styles.container}>
-        <Image
-          source={require("../../assets/custom_icons/LogoTransparent.png")}
-          style={styles.logoTransparent}
-        />
+        <Image source={logoTransparent} style={styles.logoTransparent} />
         <Text style={styles.text}>EcoDex</Text>
-        <Image
-          source={require("../../assets/images/LoginImage.png")}
-          style={styles.loginImage}
-        />
+        <Image source={loginImage} style={styles.loginImage} />
         <TouchableOpacity
           style={styles.button}
           onPress={() => router.push("/(auth)/login")}

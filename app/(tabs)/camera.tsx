@@ -81,7 +81,6 @@ export default function camera() {
     setPhotoCaptureTime(getNowDateTimeFormatted());
   };
 
-  //TODO : complete savePicture functionality -> require storage permission?
   const savePicture = () => {
     router.navigate({
       pathname: "/(tabs)/entry/submitEntry",

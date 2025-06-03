@@ -1,8 +1,11 @@
-import signUp from "@/supabase/auth_hooks/signUp";
+import { logoTransparent } from "@/constants/Image";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { Link } from "expo-router";
 import { useState } from "react";
 import {
   Image,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -13,46 +16,40 @@ import {
 export default function signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const onBegin = () => {
-    setLoading(true);
-  };
-
-  const onComplete = () => {
-    setLoading(false);
-  };
+  const { loading, signUpWithEmail } = useAuthContext();
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/custom_icons/LogoTransparent.png")}
-        style={styles.logoTransparent}
-      />
-      <Text style={styles.ecodexText}>EcoDex</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={styles.container}>
+        <Image source={logoTransparent} style={styles.logoTransparent} />
+        <Text style={styles.ecodexText}>EcoDex</Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.headerText}>Email</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(email) => setEmail(email)}
-          placeholder="Email"
-          placeholderTextColor="#999"
-        />
-      </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.headerText}>Email</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(email) => setEmail(email)}
+            placeholder="Email"
+            placeholderTextColor="#999"
+          />
+        </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.headerText}>Password</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(password) => setPassword(password)}
-          placeholder="Password"
-          placeholderTextColor="#999"
-        />
-      </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.headerText}>Password</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(password) => setPassword(password)}
+            placeholder="Password"
+            placeholderTextColor="#999"
+          />
+        </View>
 
-      {/* Temp removal of confirm password container */}
-      {/* <View style={styles.inputContainer}>
+        {/* Temp removal of confirm password container */}
+        {/* <View style={styles.inputContainer}>
         <Text style={styles.headerText}>Confirm Password</Text>
         <TextInput
           style={styles.input}
@@ -61,22 +58,24 @@ export default function signup() {
         />
       </View> */}
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => signUp(email, password, onBegin, onComplete)}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? "Creating an Account..." : "Create an Account"}
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => signUpWithEmail(email, password)}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Creating an Account..." : "Create an Account"}
+          </Text>
+        </TouchableOpacity>
 
-      <Link replace href="/(auth)/login" disabled={loading}>
-        <Text style={{ textDecorationLine: "underline" }}>
-          Already have an account? Log in here.
-        </Text>
-      </Link>
-    </View>
+        <Link replace href="/(auth)/login" disabled={loading}>
+          <Text style={{ textDecorationLine: "underline" }}>
+            Already have an account? Log in here.
+          </Text>
+        </Link>
+      </View>
+      {/* </KeyboardAvoidingView> */}
+    </KeyboardAvoidingView>
   );
 }
 

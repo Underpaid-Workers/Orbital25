@@ -3,12 +3,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function AltHeaderTab({
-  navigation,
-  route,
-}: BottomTabHeaderProps) {
+export default function AltHeaderTab({ navigation }: BottomTabHeaderProps) {
   const onBack = () => {
-    navigation.goBack();
+    navigation.canGoBack()
+      ? navigation.goBack()
+      : navigation.navigate("inventory");
   };
 
   return (

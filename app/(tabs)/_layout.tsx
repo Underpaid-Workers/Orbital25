@@ -1,6 +1,7 @@
 import AltHeaderTab from "@/components/main/AltHeaderBar";
 import HeaderBar from "@/components/main/HeaderBar";
 import TabBar from "@/components/main/TabBar";
+import { loginImage } from "@/constants/Image";
 import { useAuthContext } from "@/providers/AuthProvider";
 import EntryDataProvider from "@/providers/EntryDataProvider";
 import { FontAwesome } from "@expo/vector-icons";
@@ -16,14 +17,10 @@ export default function ProtectedLayout() {
 
   const { session, loading } = useAuthContext();
 
-  //While fetching session, TODO: show splashscreen
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Image
-          source={require("../../assets/images/LoginImage.png")}
-          style={{ width: 345, height: 345 }}
-        />
+        <Image source={loginImage} style={{ width: 345, height: 345 }} />
       </View>
     );
   }
