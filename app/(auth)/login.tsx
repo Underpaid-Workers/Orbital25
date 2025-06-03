@@ -1,8 +1,12 @@
-import signIn from "@/supabase/auth_hooks/signIn";
+import colors from "@/constants/Colors";
+import { logoTransparent } from "@/constants/Image";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { Link } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -13,69 +17,65 @@ import {
 export default function login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const onBegin = () => {
-    setLoading(true);
-  };
-
-  const onComplete = () => {
-    setLoading(false);
-  };
+  const { loading, logIn } = useAuthContext();
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/custom_icons/LogoTransparent.png")}
-        style={styles.logoTransparent}
-      />
-      <Text style={styles.ecodexText}>EcoDex</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={40}
+    >
+      <View style={styles.container}>
+        <Image source={logoTransparent} style={styles.logoTransparent} />
+        <Text style={styles.ecodexText}>EcoDex</Text>
 
-      <Text style={styles.welcomeText}>Welcome Back!</Text>
+        <Text style={styles.welcomeText}>Welcome Back!</Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.headerText}>Email</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(email) => setEmail(email)}
-          placeholder="Email"
-          placeholderTextColor="#999"
-        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.headerText}>Email</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(email) => setEmail(email)}
+            placeholder="Email"
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.headerText}>Password</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(password) => setPassword(password)}
+            placeholder="Password"
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => logIn(email, password)}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Logging In..." : "Login"}
+          </Text>
+        </TouchableOpacity>
+
+        <Link replace href="/(auth)/signup" disabled={loading}>
+          <Text style={{ textDecorationLine: "underline" }}>
+            Don't have an account? Sign up here.
+          </Text>
+        </Link>
       </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.headerText}>Password</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(password) => setPassword(password)}
-          placeholder="Password"
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => signIn(email, password, onBegin, onComplete)}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? "Logging In..." : "Login"}
-        </Text>
-      </TouchableOpacity>
-
-      <Link replace href="/(auth)/signup" disabled={loading}>
-        <Text style={{ textDecorationLine: "underline" }}>
-          Don't have an account? Sign up here.
-        </Text>
-      </Link>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,

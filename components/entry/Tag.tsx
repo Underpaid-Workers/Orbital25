@@ -1,4 +1,11 @@
 import colors from "@/constants/Colors";
+import {
+  animalSpeciesTag,
+  aquaticEnvTag,
+  flyingEnvTag,
+  plantSpeciesTag,
+  terrestrialEnvTag,
+} from "@/constants/Image";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 type Species = {
@@ -10,20 +17,16 @@ type Environment = {
 };
 
 const EnvironmentMap = {
-  Aquatic: require("../../assets/images/aquatic.png"),
-  Flying: require("../../assets/images/flying.png"),
-  Terrestrial: require("../../assets/images/terrestrial.png"),
+  Aquatic: aquaticEnvTag,
+  Flying: flyingEnvTag,
+  Terrestrial: terrestrialEnvTag,
 };
 
 export function SpeciesTag({ species }: Species) {
   return (
     <View style={styles.tag}>
       <Image
-        source={
-          species === "Animal"
-            ? require("../../assets/images/animal.png")
-            : require("../../assets/images/plant.png")
-        }
+        source={species === "Animal" ? animalSpeciesTag : plantSpeciesTag}
         style={styles.icon}
       />
       <Text style={styles.text}>{species}</Text>

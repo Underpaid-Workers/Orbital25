@@ -100,7 +100,7 @@ export default function submitEntry() {
       setIsFetchingAPI(true);
 
       const base64Image = await FileSystem.readAsStringAsync(photoUri, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: "base64",
       });
 
       const response = await fetch(hfModelUrl, {
@@ -133,7 +133,6 @@ export default function submitEntry() {
         });
       }
     } catch (error) {
-      console.warn();
       console.error("Classification error:", error);
 
       let errorMessage = "Could not identify species";
@@ -240,6 +239,7 @@ export default function submitEntry() {
             multiline
             numberOfLines={10}
             placeholder="A brief description of the entry/its surroundings..."
+            placeholderTextColor={"gray"}
             onChangeText={(observation) => setObservations(observation)}
             style={styles.observationBox}
           />

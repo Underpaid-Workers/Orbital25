@@ -3,19 +3,11 @@ import { Alert } from "react-native";
 
 /**
  * @description Use supabase authentication to sign up for an account. Creates an entry on auth.user
- * @param email
- * @param password
- * @param onBegin
- * @param onComplete
+ * @param email as string
+ * @param password as string
  * @returns void
  */
-export default async function signUp(
-  email: string,
-  password: string,
-  onBegin: () => void,
-  onComplete: () => void
-) {
-  onBegin();
+export default async function signUp(email: string, password: string) {
   const {
     data: { session },
     error,
@@ -31,5 +23,4 @@ export default async function signUp(
       Alert.alert("Success!");
     }
   }
-  onComplete();
 }

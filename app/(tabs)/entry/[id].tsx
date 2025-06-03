@@ -2,6 +2,7 @@ import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
+import { placeholderImage } from "@/constants/Image";
 import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
@@ -56,7 +57,7 @@ export default function viewEntry() {
           source={entry.image}
           style={styles.entryImage}
           contentFit="cover"
-          placeholder={require("../../../assets/images/placeholderImage.png")}
+          placeholder={placeholderImage}
         />
         <View style={styles.tagContainer}>
           <SpeciesTag species="Animal" />

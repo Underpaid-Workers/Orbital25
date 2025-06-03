@@ -1,5 +1,6 @@
 import EntryCard from "@/components/entry/EntryCard";
 import colors from "@/constants/Colors";
+import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -37,7 +38,7 @@ export default function inventory() {
     return (
       <View style={styles.container}>
         <Image
-          source={require("../../assets/images/MissingImage.png")}
+          source={missingImage}
           contentFit="cover"
           style={styles.missingImage}
         />
@@ -48,7 +49,7 @@ export default function inventory() {
     return (
       <View style={styles.container}>
         <Image
-          source={require("../../assets/images/EmptyImage.png")}
+          source={emptyImage}
           contentFit="cover"
           style={styles.missingImage}
         />

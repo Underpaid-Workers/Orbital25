@@ -12,7 +12,11 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env":{
+        "HF_TOKEN":"HF_TOKEN",
+        "HF_MODEL_URL" : "HF_MODEL_URL"
+      }
     }
   },
   "submit": {

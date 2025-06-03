@@ -1,10 +1,12 @@
-import signOut from "@/supabase/auth_hooks/signOut";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function settings() {
+  const { logOut } = useAuthContext();
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={signOut}>
+      <TouchableOpacity onPress={logOut}>
         <Text style={styles.text}>Sign Out</Text>
       </TouchableOpacity>
     </View>
