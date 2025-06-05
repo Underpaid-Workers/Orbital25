@@ -1,57 +1,169 @@
-import { StyleSheet, View } from "react-native";
+import colors from "@/constants/Colors";
+import fetchLocation from "@/hooks/fetchLocation";
+import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
+import fetchEntriesByLocation, {
+  location,
+} from "@/supabase/db_hooks/fetchEntriesByLocation";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
+type marker = {
+  datetime: string;
+  lat: number;
+  long: number;
+  name: string;
+};
+
 export default function maps() {
-  type entry = {
-    entryName: string;
-    location: { latitude: number; longitude: number };
-    captured: string;
+  //starter location defaulted to center of Singapore.
+  const [currentLocation, setCurrentLocation] = useState<location>({
+    lat: 1.3518865175286692,
+    long: 103.79266088828444,
+  });
+  const [data, setData] = useState<marker[]>([]);
+  const [mapReady, setMapReady] = useState(false);
+  let mapRef = React.createRef<MapView | null>();
+
+  const animateToLocation = (pos: location) => {
+    mapRef.current?.animateToRegion(
+      {
+        longitude: pos.long,
+        latitude: pos.lat,
+        latitudeDelta: 0.1,
+        longitudeDelta: 0.1,
+      },
+      500
+    );
   };
-  let entryMarkers: entry[] = [
-    {
-      entryName: "lizard",
-      location: { latitude: 1.3582308673358716, longitude: 103.73124634847045 },
-      captured: "02/05/2025, 12:44 PM",
-    },
-    {
-      entryName: "spider",
-      location: { latitude: 1.3382308673358716, longitude: 103.74124634847045 },
-      captured: "01/03/2025, 9:10 AM",
-    },
-    {
-      entryName: "tiger",
-      location: { latitude: 1.349923337329362, longitude: 103.78116795793176 },
-      captured: "02/06/2025, 12:35 PM",
-    },
-  ];
+
+  const animateToCurrentLocation = async () => {
+    const pos = await fetchLocation();
+    if (pos && mapReady) {
+      animateToLocation({
+        lat: pos.coords.latitude,
+        long: pos.coords.longitude,
+      });
+    }
+  };
+
+  const getMarkers = async () => {
+    await fetchEntriesByLocation(currentLocation).then((entries) =>
+      setData(entries)
+    );
+  };
 
   const showEntryMarkers = () => {
-    return entryMarkers.map((entry, index) => {
+    return data.map((entry, index) => {
       return (
         <Marker
           key={index}
-          coordinate={entry.location}
-          title={entry.entryName}
-          description={"Captured: " + entry.captured}
+          coordinate={{ latitude: entry.lat, longitude: entry.long }}
+          title={entry.name}
+          description={"Captured: " + useFormatDateTimeDisplay(entry.datetime)}
         />
       );
     });
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      animateToCurrentLocation().finally(() => getMarkers());
+
+      return () => {};
+    }, [mapReady])
+  );
+
+  // let entryMarkers = [
+  //   {
+  //     entry_id: 1,
+  //     user_id: session?.user.id,
+  //     datetime: "2025-06-04 16:22:45",
+  //     env_type: "",
+  //     species_type: "",
+  //     image_url: "photo",
+  //     description: "entryMetaData.description",
+  //     height: "",
+  //     weight: "",
+  //     lifespan: "",
+  //     observations: "observations",
+  //     name: "lizard",
+  //     location: "POINT(103.73124634847045 1.3582308673358716)",
+  //   },
+  //   {
+  //     entry_id: 2,
+  //     datetime: "2025-06-04 16:22:45",
+  //     user_id: session?.user.id,
+  //     env_type: "",
+  //     species_type: "",
+  //     image_url: "photo",
+  //     description: "entryMetaData.description",
+  //     height: "",
+  //     weight: "",
+  //     lifespan: "",
+  //     observations: "observations",
+  //     name: "spider",
+  //     location: "POINT(103.74124634847045 1.3382308673358716)",
+  //   },
+  //   {
+  //     entry_id: 3,
+  //     user_id: session?.user.id,
+  //     datetime: "2025-06-04 16:22:45",
+  //     env_type: "",
+  //     species_type: "",
+  //     image_url: "photo",
+  //     description: "entryMetaData.description",
+  //     height: "",
+  //     weight: "",
+  //     lifespan: "",
+  //     observations: "observations",
+  //     name: "tiger",
+  //     location: "POINT(103.78116795793176 1.349923337329362)",
+  //   },
+  // ];
+
   return (
     <View style={styles.container}>
       <MapView
         style={styles.mapView}
-        onRegionChangeComplete={(region) => console.log(region)}
+        onRegionChangeComplete={(region) => {
+          setCurrentLocation({ lat: region.latitude, long: region.longitude });
+          console.log(currentLocation);
+          getMarkers();
+        }}
+        // showsUserLocation={true}
+        // onUserLocationChange={(pos) => {
+        //   //TODO: may be causing overheads due to constant location fetching
+        //   if (
+        //     pos.nativeEvent.coordinate?.speed &&
+        //     pos.nativeEvent.coordinate?.speed > 1
+        //   ) {
+        //     animateToLocation({
+        //       lat: pos.nativeEvent.coordinate?.latitude as number,
+        //       long: pos.nativeEvent.coordinate?.longitude as number,
+        //     });
+        //   }
+        // }}
+        onMapReady={() => setMapReady(true)}
+        ref={mapRef}
         initialRegion={{
-          latitude: 1.3502649043052042,
-          latitudeDelta: 0.13305053778058062,
-          longitude: 103.76391230151057,
-          longitudeDelta: 0.07468711584806442,
+          latitude: currentLocation.lat,
+          latitudeDelta: 0.4,
+          longitude: currentLocation.long,
+          longitudeDelta: 0.4,
         }}
       >
         {showEntryMarkers()}
       </MapView>
+      <MaterialCommunityIcons style={styles.crosshair} name="plus" size={20} />
+      <TouchableOpacity
+        onPress={animateToCurrentLocation}
+        style={styles.locationButton}
+      >
+        <MaterialCommunityIcons name="crosshairs-gps" size={24} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -65,5 +177,23 @@ const styles = StyleSheet.create({
   mapView: {
     width: "100%",
     height: "100%",
+  },
+  crosshair: {
+    position: "absolute",
+    left: "50%",
+    bottom: "50%",
+    transform: [{ translateY: "-50%" }, { translateX: "-50%" }],
+  },
+  locationButton: {
+    position: "absolute",
+    right: 16,
+    bottom: 70,
+    width: 50,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "100%",
+    borderCurve: "circular",
+    backgroundColor: colors.primary,
   },
 });
