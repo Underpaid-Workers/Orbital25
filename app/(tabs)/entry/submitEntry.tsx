@@ -4,7 +4,7 @@ import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
-import { FullInsertEntry, InsertEntryMetadata } from "@/supabase/entrySchema";
+import Entry, { EntryMetadata } from "@/supabase/entrySchema";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -19,6 +19,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+//
+//
+//
+// TODO : SET UP LOCATION LOGIC
+//
+//
+//
+//
 
 import Constants from "expo-constants";
 
@@ -51,22 +60,24 @@ if (!hfModelUrl) {
 }
 
 export default function submitEntry() {
+  const router = useRouter();
+  const { count, loading, uploadEntry } = useEntryDataContext();
+
+  let id = count + 1;
   const { photo, dateTime } = useLocalSearchParams<{
     photo: string;
     dateTime: string;
   }>();
-  const router = useRouter();
-  const { count, loading, uploadEntry } = useEntryDataContext();
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const parsedDateTime = dateTime.split(",");
   const [isFetchingAPI, setIsFetchingAPI] = useState<boolean>(false);
-  const [id, setId] = useState<number>(count + 1);
   const [observations, setObservations] = useState<string>("");
-  const [entryMetaData, setEntryMetaData] = useState<InsertEntryMetadata>({
+  const [entryMetaData, setEntryMetaData] = useState<EntryMetadata>({
     name: "",
     environmentType: "",
     speciesType: "",
+    rarity: "",
     description: "",
     height: "",
     weight: "",
@@ -149,24 +160,20 @@ export default function submitEntry() {
   };
 
   useEffect(() => {
-    let isMounted = true;
-
     if (photo) {
       classifyImage(photo).catch(console.error);
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [photo]);
 
   const onSubmit = () => {
-    const submitting: FullInsertEntry = {
+    const submitting: Entry = {
       id: id,
       name: entryMetaData.name,
-      dateTime: dateTime,
+      datetime: dateTime,
       environmentType: "",
       speciesType: "",
+      rarity: "",
+      location: { lat: 0, long: 0 },
       image: photo,
       description: entryMetaData.description,
       height: "",

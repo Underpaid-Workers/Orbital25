@@ -23,6 +23,7 @@ export default function maps() {
     lat: 1.3518865175286692,
     long: 103.79266088828444,
   });
+
   const [data, setData] = useState<marker[]>([]);
   const [mapReady, setMapReady] = useState(false);
   let mapRef = React.createRef<MapView | null>();
@@ -50,13 +51,32 @@ export default function maps() {
   };
 
   const getMarkers = async () => {
+    const updateMarkers = (
+      oldMarkers: marker[],
+      newMarkers: marker[]
+    ): marker[] => {
+      const newKeys = new Set<string>(
+        newMarkers.map((m) => `${m.lat},${m.long}`)
+      );
+      const oldKeys = new Set<string>(
+        oldMarkers.map((m) => `${m.lat},${m.long}`)
+      );
+      const fromOld = oldMarkers.filter((m) =>
+        newKeys.has(`${m.lat},${m.long}`)
+      );
+      const fromNew = newMarkers.filter(
+        (m) => !oldKeys.has(`${m.lat},${m.long}`)
+      );
+      return [...fromOld, ...fromNew];
+    };
     await fetchEntriesByLocation(currentLocation).then((entries) =>
-      setData(entries)
+      setData(updateMarkers(data, entries))
     );
   };
 
   const showEntryMarkers = () => {
     return data.map((entry, index) => {
+      console.log(entry.name + " -- " + entry.lat + " " + entry.long);
       return (
         <Marker
           key={index}
@@ -130,22 +150,8 @@ export default function maps() {
         style={styles.mapView}
         onRegionChangeComplete={(region) => {
           setCurrentLocation({ lat: region.latitude, long: region.longitude });
-          console.log(currentLocation);
           getMarkers();
         }}
-        // showsUserLocation={true}
-        // onUserLocationChange={(pos) => {
-        //   //TODO: may be causing overheads due to constant location fetching
-        //   if (
-        //     pos.nativeEvent.coordinate?.speed &&
-        //     pos.nativeEvent.coordinate?.speed > 1
-        //   ) {
-        //     animateToLocation({
-        //       lat: pos.nativeEvent.coordinate?.latitude as number,
-        //       long: pos.nativeEvent.coordinate?.longitude as number,
-        //     });
-        //   }
-        // }}
         onMapReady={() => setMapReady(true)}
         ref={mapRef}
         initialRegion={{
