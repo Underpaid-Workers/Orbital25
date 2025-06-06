@@ -1,11 +1,13 @@
 //Full entry fetched to local
-export interface FetchEntry {
+export interface Entry {
   id: number;
   name: string;
   datetime: string;
   image: string;
-  speciesType: string;
   environmentType: string;
+  speciesType: string;
+  rarity: string;
+  location: { lat: number; long: number };
   description: string;
   height: string;
   weight: string;
@@ -14,36 +16,22 @@ export interface FetchEntry {
 }
 
 //Locally stored entry information
-export interface LocalInsertEntry {
+export interface LocalEntry {
   datetime: string;
   image: string;
+  location: { lat: number; long: number };
   observations: string;
 }
 
-//Scheme for API fetch data!
-export interface InsertEntryMetadata {
+export interface EntryMetadata {
   name: string;
   environmentType: string;
   speciesType: string;
+  rarity: string;
   description: string;
   height: string;
   weight: string;
   lifespan: string;
 }
 
-//Full entry with API metadata to be sent to main database (for Inserting)
-export interface FullInsertEntry {
-  id: number;
-  name: string;
-  dateTime: string;
-  image: string;
-  environmentType: string;
-  speciesType: string;
-  description: string;
-  height: string;
-  weight: string;
-  lifespan: string;
-  observations: string;
-}
-
-export default FetchEntry;
+export default Entry;

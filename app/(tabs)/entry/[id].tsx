@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 
 export default function viewEntry() {
   //Allows this function to get respective id of EntryCard clicked through Expo router
@@ -72,6 +73,26 @@ export default function viewEntry() {
         <Text style={styles.entryTextBoxTitle}>Observations</Text>
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{entry.observations}</Text>
+        </View>
+        <Text style={styles.entryTextBoxTitle}>Location</Text>
+        <View style={styles.mapBox}>
+          <MapView
+            style={styles.mapView}
+            initialRegion={{
+              latitude: entry.location.lat,
+              latitudeDelta: 0.1,
+              longitude: entry.location.long,
+              longitudeDelta: 0.1,
+            }}
+            cacheEnabled={true}
+          >
+            <Marker
+              coordinate={{
+                latitude: entry.location.lat,
+                longitude: entry.location.long,
+              }}
+            ></Marker>
+          </MapView>
         </View>
         <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
           <Text style={styles.deleteButtonText}>Delete Entry</Text>
@@ -136,6 +157,18 @@ const styles = StyleSheet.create({
     width: "100%",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  mapBox: {
+    height: 150,
+    width: "100%",
+    borderRadius: 15,
+    borderCurve: "continuous",
+    overflow: "hidden",
+    backgroundColor: "yellow",
+  },
+  mapView: {
+    height: "100%",
+    width: "100%",
   },
   deleteButton: {
     height: 40,

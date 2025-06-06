@@ -4,11 +4,11 @@ import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   View,
@@ -18,11 +18,9 @@ export default function inventory() {
   const { data, count, loading, getEntries } = useEntryDataContext();
 
   //refetch data everytime user clicks back onto screen
-  useFocusEffect(
-    useCallback(() => {
-      getEntries();
-    }, [])
-  );
+  useEffect(() => {
+    getEntries();
+  }, []);
 
   //temporary setting for error state TODO: ACCOUNT FOR LACK OF INTERNET
   const [error, setError] = useState(false);
@@ -70,6 +68,9 @@ export default function inventory() {
           renderItem={({ item }) => (
             <EntryCard id={item.id} name={item.name} image={item.image} />
           )}
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={getEntries} />
+          }
         />
       </View>
     );
