@@ -2,15 +2,15 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import deleteEntry from "@/supabase/db_hooks/deleteEntry";
 import fetchEntries from "@/supabase/db_hooks/fetchEntries";
 import insertEntry from "@/supabase/db_hooks/insertEntry";
-import Entry from "@/supabase/entrySchema";
+import FetchEntry, { FullInsertEntry } from "@/supabase/entrySchema";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 export type EntryData = {
-  data: Entry[];
+  data: FetchEntry[];
   count: number;
   loading: boolean;
   getEntries: () => void;
-  uploadEntry: (submitting: Entry, onComplete: () => void) => void;
+  uploadEntry: (submitting: FullInsertEntry, onComplete: () => void) => void;
   removeEntry: (id: number, image: string, onComplete: () => void) => void;
 };
 
@@ -25,7 +25,7 @@ const EntryDataContext = createContext<EntryData>({
 
 export default function EntryDataProvider({ children }: PropsWithChildren) {
   const { session } = useAuthContext();
-  const [data, setData] = useState<Entry[]>([]);
+  const [data, setData] = useState<FetchEntry[]>([]);
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -39,7 +39,7 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
             //onSuccess
             setData(result.data);
             setCount(result.count);
-            console.log(`${result.count} entries fetched`);
+            console.log("Data fetched");
           },
           () => {
             //onFail
@@ -52,7 +52,7 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const uploadEntry = (submitting: Entry, onComplete: () => void) => {
+  const uploadEntry = (submitting: FullInsertEntry, onComplete: () => void) => {
     setLoading(true);
     if (session) {
       console.log("Session detected, inserting entry");
@@ -94,7 +94,7 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
 
 /**
  * @description (tabs)-wide context for managing entry data
- * @param data the entry data as Entry[]
+ * @param data the entry data as FetchEntry[]
  * @param count the number of entries fetched
  * @param loading the boolean of loading state. true when fetching data, false otherwise
  * @param getData a function which initiates a data fetch from supabase
