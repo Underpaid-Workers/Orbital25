@@ -27,7 +27,7 @@ export default async function deleteEntry(
   try {
     if (!session?.user) throw new Error("No user on the session!");
     const { error } = await supabase
-      .from("entries")
+      .from("entriestest")
       .delete()
       .eq("entry_id", entryId)
       .select();

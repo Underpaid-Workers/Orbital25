@@ -155,17 +155,18 @@ export default function submitEntry() {
 
         if (!aiSummary) {
           throw new Error("error with returning summary");
+        } else {
+          setEntryMetaData({
+            name: speciesNameUppercased,
+            description: aiSummary.description || "",
+            speciesType: aiSummary.speciesType || "",
+            environmentType: aiSummary.environmentType || "",
+            rarity: aiSummary.rarity || "",
+            weight: aiSummary.weight || "",
+            height: aiSummary.height || "",
+            lifespan: aiSummary.lifespan || "",
+          });
         }
-        setEntryMetaData({
-          ...entryMetaData,
-          name: speciesNameUppercased,
-          description: aiSummary.description || "",
-          weight: aiSummary.weight || "",
-          height: aiSummary.height || "",
-          lifespan: aiSummary.lifespan || "",
-          speciesType: aiSummary.speciesType || "",
-          environmentType: aiSummary.environmentType || "",
-        });
       }
     } catch (error) {
       console.error("Classification error:", error);
@@ -174,24 +175,16 @@ export default function submitEntry() {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-
+      setIsFetchingAPI(false);
       Alert.alert("AI Identification Failed", errorMessage);
       router.replace("/(tabs)/camera");
     }
-
-    setIsFetchingAPI(false);
   };
 
   useEffect(() => {
-    let isMounted = true;
-
     if (photo) {
       classifyImage(photo).catch(console.error);
     }
-
-    return () => {
-      isMounted = false;
-    };
   }, [photo]);
 
   const onSubmit = () => {
@@ -201,7 +194,7 @@ export default function submitEntry() {
       datetime: datetime,
       environmentType: entryMetaData.environmentType,
       speciesType: entryMetaData.speciesType,
-      rarity: "TODO",
+      rarity: entryMetaData.rarity,
       location: { lat: 0, long: 0 },
       image: photo,
       description: entryMetaData.description,
@@ -210,6 +203,7 @@ export default function submitEntry() {
       lifespan: entryMetaData.lifespan,
       observations: observations,
     };
+    console.log(submitting);
 
     const onComplete = () => {
       setModalVisible(false);
@@ -233,7 +227,7 @@ export default function submitEntry() {
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
         <Text style={styles.name}>
-          {useFormatNumber(id?.toString() || "0")} -{" "}
+          {useFormatNumber(id?.toString() || "0")} + " - "
           {entryMetaData.name !== "" ? entryMetaData.name : "Unknown Species"}
         </Text>
         <Image
