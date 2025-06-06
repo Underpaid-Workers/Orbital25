@@ -1,6 +1,6 @@
 import Leaderboard from "@/components/entry/Leaderboard";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 //delete later
 const mockData1 = [
@@ -25,20 +25,29 @@ const mockData2 = [
 ];
 const social = () => {
   const [board, setBoard] = useState< 1 | 2>(1);
+  const [searchFriends, setSearchFriends] = useState('')
 
   return (
     <View style={styles.container}>
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.button} onPress={() => setBoard(1)}>
+        <TouchableOpacity style={[styles.button, board === 1? styles.activeButton:styles.inactiveButton]} onPress={() => setBoard(1)}>
           <Text style={styles.buttonText}>Friends</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setBoard(2)}>
+        <TouchableOpacity style={[styles.button, board === 2? styles.activeButton:styles.inactiveButton]} onPress={() => setBoard(2)}>
           <Text style={styles.buttonText}>Leaderboard</Text>
         </TouchableOpacity>
       </View>
 
       {board === 1 ? (
+        <View style = {styles.friendContainer}>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Add new friend..."
+          value={searchFriends}
+          onChangeText={setSearchFriends}
+        />
         <Leaderboard pulledData={mockData1} />
+        </View>
       ): (
         <Leaderboard pulledData={mockData2} />
       )
@@ -61,6 +70,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 30,
   },
+  activeButton: {
+    backgroundColor: 'rgba(78, 180, 107, 1)',
+  },
+  inactiveButton: {
+    backgroundColor: 'rgba(78, 180, 107, 0.3)',
+  },
   button: {
     backgroundColor: "#4EB46B",
     borderRadius: 10,
@@ -68,11 +83,25 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
     marginHorizontal: 10,
   },
   buttonText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  friendContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  searchBar: {
+    width: 350,
+    height: 45,
+    backgroundColor: "rgba(78, 180, 107, 0.3)",
+    paddingHorizontal: 5,
+    fontSize: 16,
+    color: "black",
+    marginBottom: 20,
+    borderRadius: 10,
   },
 });
