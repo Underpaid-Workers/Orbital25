@@ -5,7 +5,6 @@ import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import Entry, { EntryMetadata } from "@/supabase/entrySchema";
-import { GoogleGenAI } from "@google/genai";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -44,6 +43,22 @@ if (Constants.expoConfig && Constants.expoConfig.extra) {
   );
 }
 
+// Ensure that the keys are actually loaded (good for debugging)
+if (!hfToken) {
+  console.error(
+    "Hugging Face Token is missing AFTER loading attempt! Check your .env and app.config.js"
+  );
+} else {
+  console.log("Hugging Face Token loaded");
+}
+if (!hfModelUrl) {
+  console.error(
+    "Hugging Face Mode URL is missing AFTER loading attempt! Check your .env and app.config.js"
+  );
+} else {
+  console.log("Hugging Face Mode URL loaded");
+}
+
 export default function submitEntry() {
   const router = useRouter();
   const { count, loading, uploadEntry } = useEntryDataContext();
@@ -68,56 +83,26 @@ export default function submitEntry() {
     weight: "",
     lifespan: "",
   });
-  const ai = new GoogleGenAI({
-    apiKey: "AIzaSyCvvv5D5gE2Ydh6V6wxyummkjsyI-PYeWY",
-  });
 
-  const fetchAiSummary = async (
-    speciesName: string
-  ): Promise<Partial<InsertEntryMetadata> | null> => {
+  const fetchWikipediaSummary = async (title: string): Promise<string> => {
     try {
-      const prompt = `Return only a raw JSON object with the following data about the species "${speciesName}":
-  {
-    "description": "Brief description of the species with 2 fun facts integrated, under 100 words.",
-    "weight": "xx-xx unit of measurement (kg or g)",
-    "height": "xx-xx unit of measurement (m or cm)",
-    "lifespan": "xx-xx unit of measurement (days, months, or years)",
-    "speciesType": "plant or animal",
-    "environmentType": "terrestrial, aquatic, or flying",
-    "rarity": "common, uncommon, rare, very rare, or unique"
-  }
+      const response = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+          title
+        )}`
+      );
 
-  Respond ONLY with this JSON and nothing else. Do not wrap it in code blocks or add any commentary.`;
+      if (!response.ok) throw new Error("Not found");
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: prompt,
-      });
-
-      const raw = response.text;
-
-      if (!raw) throw new Error("No response from Gemini");
-
-      //remove syntax error
-      const match = raw.match(/{[\s\S]*}/);
-      if (!match) throw new Error("No valid JSON block found in response");
-
-      const parsed = JSON.parse(match[0]);
-      console.log(parsed);
-
-      if (!parsed || typeof parsed !== "object") return null;
-
-      return {
-        description: parsed.description || "",
-        weight: parsed.weight || "",
-        height: parsed.height || "",
-        lifespan: parsed.lifespan || "",
-        speciesType: parsed.speciesType || "",
-        environmentType: parsed.environmentType || "",
-      };
+      const data = await response.json();
+      if (data.extract) {
+        return data.extract;
+      } else {
+        return "Could not find description";
+      }
     } catch (error) {
-      console.error("AI summary fetch error:", error);
-      return null;
+      console.error("Wikipedia fetch error:", error);
+      return "Could not find description";
     }
   };
 
@@ -151,20 +136,11 @@ export default function submitEntry() {
           .split(" ")
           .map((word) => word[0].toUpperCase() + word.substring(1))
           .join(" ");
-        const aiSummary = await fetchAiSummary(speciesName);
-
-        if (!aiSummary) {
-          throw new Error("error with returning summary");
-        }
+        const wikiSummary = await fetchWikipediaSummary(speciesName);
         setEntryMetaData({
           ...entryMetaData,
           name: speciesNameUppercased,
-          description: aiSummary.description || "",
-          weight: aiSummary.weight || "",
-          height: aiSummary.height || "",
-          lifespan: aiSummary.lifespan || "",
-          speciesType: aiSummary.speciesType || "",
-          environmentType: aiSummary.environmentType || "",
+          description: wikiSummary,
         });
       }
     } catch (error) {
@@ -176,6 +152,7 @@ export default function submitEntry() {
       }
 
       Alert.alert("AI Identification Failed", errorMessage);
+      //if unable to identify, it should redirect user back to camera
       router.replace("/(tabs)/camera");
     }
 
@@ -193,15 +170,15 @@ export default function submitEntry() {
       id: id,
       name: entryMetaData.name,
       datetime: dateTime,
-      environmentType: entryMetaData.environmentType,
-      speciesType: entryMetaData.speciesType,
+      environmentType: "",
+      speciesType: "",
       rarity: "",
       location: { lat: 0, long: 0 },
       image: photo,
       description: entryMetaData.description,
-      height: entryMetaData.height,
-      weight: entryMetaData.weight,
-      lifespan: entryMetaData.lifespan,
+      height: "",
+      weight: "",
+      lifespan: "",
       observations: observations,
     };
 
