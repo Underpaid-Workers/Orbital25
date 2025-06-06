@@ -1,4 +1,4 @@
-import useFormatDateTimeInsert from "@/hooks/useFormatDateTimeInsert";
+import formatDateTimeInsert from "@/hooks/formatDateTimeInsert";
 import Entry from "@/supabase/entrySchema";
 import supabase from "@/supabase/main";
 import { Session } from "@supabase/supabase-js";
@@ -55,7 +55,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
       user_id: session.user.id,
       entry_id: entry.id,
       name: entry.name,
-      datetime: useFormatDateTimeInsert(entry.datetime),
+      datetime: formatDateTimeInsert(entry.datetime),
       image_url: imageUrl,
       species_type: entry.speciesType,
       env_type: entry.environmentType,
@@ -72,7 +72,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
     //   user_id: session.user.id,
     //   entry_id: entry.id,
     //   name: entry.name,
-    //   datetime: useFormatDateTimeInsert(entry.dateTime),
+    //   datetime: formatDateTimeInsert(entry.dateTime),
     //   image_url: imageUrl,
     //   species_type: "mad",
     //   env_type: "sad",

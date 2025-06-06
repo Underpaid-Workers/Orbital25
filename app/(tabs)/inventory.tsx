@@ -63,8 +63,16 @@ export default function inventory() {
         <FlatList
           data={data}
           keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
           renderItem={({ item }) => (
-            <EntryCard id={item.id} name={item.name} image={item.image} />
+            <EntryCard
+              id={item.id}
+              name={item.name}
+              image={item.image}
+              speciesType={item.speciesType}
+              envType={item.environmentType}
+              rarity={item.rarity}
+            />
           )}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={getEntries} />

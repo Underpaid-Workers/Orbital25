@@ -5,6 +5,6 @@ import moment from "moment";
  * @param "YYYY-MM-DDTHH:MM:SS.sssZ" as string
  * @returns "DD/MM/YYYY, h:mm a" as string
  */
-export default function useFormatDateTimeDisplay(dateTime: string): string {
+export default function formatDateTimeDisplay(dateTime: string): string {
   return moment(dateTime, moment.ISO_8601).format("DD/MM/YYYY, h:mm a");
 }

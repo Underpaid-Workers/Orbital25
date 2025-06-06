@@ -5,6 +5,6 @@ import moment from "moment";
  * @param "DD/MM/YYYY, h:mm a" as string
  * @returns "YYYY-MM-DDTHH:MM:SS.sssZ" as string
  */
-export default function useFormatDateTimeInsert(dateTime: string): string {
+export default function formatDateTimeInsert(dateTime: string): string {
   return moment(dateTime, "DD,MM,YYYY,h:mm A").toISOString(true);
 }

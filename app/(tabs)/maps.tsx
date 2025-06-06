@@ -1,6 +1,6 @@
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
-import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
+import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import fetchEntriesByLocation, {
   location,
 } from "@/supabase/db_hooks/fetchEntriesByLocation";
@@ -76,13 +76,12 @@ export default function maps() {
 
   const showEntryMarkers = () => {
     return data.map((entry, index) => {
-      console.log(entry.name + " -- " + entry.lat + " " + entry.long);
       return (
         <Marker
           key={index}
           coordinate={{ latitude: entry.lat, longitude: entry.long }}
           title={entry.name}
-          description={"Captured: " + useFormatDateTimeDisplay(entry.datetime)}
+          description={"Captured: " + formatDateTimeDisplay(entry.datetime)}
         />
       );
     });

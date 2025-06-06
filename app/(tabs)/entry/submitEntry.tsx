@@ -1,8 +1,8 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
-import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
+import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
-import useFormatNumber from "@/hooks/useFormatNumber";
+import formatNumber from "@/hooks/formatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import Entry, { EntryMetadata } from "@/supabase/entrySchema";
 import { GoogleGenAI } from "@google/genai";
@@ -78,13 +78,13 @@ export default function submitEntry() {
     try {
       const prompt = `Return only a raw JSON object with the following data about the species "${speciesName}":
   {
-    "description": "Brief description of the species with 2 fun facts integrated, under 100 words.",
+    "description": "Brief description of the species with 2 fun facts integrated into the description, under 100 words.",
     "weight": "xx-xx unit of measurement (kg or g)",
     "height": "xx-xx unit of measurement (m or cm)",
     "lifespan": "xx-xx unit of measurement (days, months, or years)",
-    "speciesType": "plant or animal",
-    "environmentType": "terrestrial, aquatic, or flying",
-    "rarity": "common, uncommon, rare, very rare, or unique"
+    "speciesType": "Plant" or "Animal",
+    "environmentType": "Terrestrial", "Aquatic", or "Flying",
+    "rarity": "Common", "Uncommon", "Rare", "Very Rare", or "Unique"
   }
 
   Respond ONLY with this JSON and nothing else. Do not wrap it in code blocks or add any commentary.`;
@@ -227,7 +227,7 @@ export default function submitEntry() {
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
         <Text style={styles.name}>
-          {useFormatNumber(id?.toString() || "0")} + " - "
+          {formatNumber(id?.toString() || "0")} + " - "
           {entryMetaData.name !== "" ? entryMetaData.name : "Unknown Species"}
         </Text>
         <Image
@@ -235,10 +235,9 @@ export default function submitEntry() {
           style={styles.image}
           contentFit="cover"
         />
-        {/* TODO: DYNAMIC SPECIES AND ENV TAGGING */}
         <View style={styles.tagContainer}>
-          <SpeciesTag species="Animal" />
-          <EnvironmentTag environment="Flying" />
+          <SpeciesTag species={entryMetaData.speciesType} />
+          <EnvironmentTag env={entryMetaData.environmentType} />
         </View>
         <ScrollView
           style={styles.descriptionBox}

@@ -3,8 +3,8 @@ import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import { placeholderImage } from "@/constants/Image";
-import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
-import useFormatNumber from "@/hooks/useFormatNumber";
+import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
+import formatNumber from "@/hooks/formatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -19,19 +19,18 @@ import {
 import MapView, { Marker } from "react-native-maps";
 
 export default function viewEntry() {
-  //Allows this function to get respective id of EntryCard clicked through Expo router
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, loading, removeEntry } = useEntryDataContext();
 
-  //search for specific entry in entryData
-  const entry = data[Number.parseInt(id) - 1]; //since data is 0-indexed, while id is 1 indexed
+  //data is 0-indexed, while id is 1 indexed
+  const entry = data[Number.parseInt(id) - 1];
 
   let dateTime = "<No date available>";
   let displayId = "#000";
 
   if (entry !== undefined) {
-    dateTime = entry.datetime = useFormatDateTimeDisplay(entry.datetime);
-    displayId = useFormatNumber(entry.id.toString());
+    dateTime = entry.datetime = formatDateTimeDisplay(entry.datetime);
+    displayId = formatNumber(entry.id.toString());
   }
 
   const router = useRouter();
@@ -61,8 +60,8 @@ export default function viewEntry() {
           placeholder={placeholderImage}
         />
         <View style={styles.tagContainer}>
-          <SpeciesTag species="Animal" />
-          <EnvironmentTag environment="Flying" />
+          <SpeciesTag species={entry.speciesType} />
+          <EnvironmentTag env={entry.environmentType} />
         </View>
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{entry.description}</Text>
