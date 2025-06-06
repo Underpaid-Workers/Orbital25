@@ -4,7 +4,7 @@ import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import useFormatNumber from "@/hooks/useFormatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
-import { FullInsertEntry, InsertEntryMetadata } from "@/supabase/entrySchema";
+import Entry, { EntryMetadata } from "@/supabase/entrySchema";
 import { GoogleGenAI } from "@google/genai";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
@@ -22,6 +22,15 @@ import {
   View,
 } from "react-native";
 
+//
+//
+//
+// TODO : SET UP LOCATION LOGIC
+//
+//
+//
+//
+
 let hfToken: any = null;
 let hfModelUrl: any = null;
 
@@ -35,30 +44,37 @@ if (Constants.expoConfig && Constants.expoConfig.extra) {
 }
 
 export default function submitEntry() {
-  const { photo, dateTime } = useLocalSearchParams<{
-    photo: string;
-    dateTime: string;
-  }>();
   const router = useRouter();
   const { count, loading, uploadEntry } = useEntryDataContext();
 
+  let id = count + 1;
+  const { photo, datetime } = useLocalSearchParams<{
+    photo: string;
+    datetime: string;
+  }>();
+
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const parsedDateTime = dateTime.split(",");
+  const parsedDateTime = datetime.split(",");
   const [isFetchingAPI, setIsFetchingAPI] = useState<boolean>(false);
-  const [id, setId] = useState<number>(count + 1);
   const [observations, setObservations] = useState<string>("");
-  const [entryMetaData, setEntryMetaData] = useState<InsertEntryMetadata>({
+  const [entryMetaData, setEntryMetaData] = useState<EntryMetadata>({
     name: "",
     environmentType: "",
     speciesType: "",
+    rarity: "",
     description: "",
     height: "",
     weight: "",
     lifespan: "",
   });
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyCvvv5D5gE2Ydh6V6wxyummkjsyI-PYeWY" });
 
-  const fetchAiSummary = async (speciesName: string): Promise<Partial<InsertEntryMetadata> | null> => {
+  const ai = new GoogleGenAI({
+    apiKey: "AIzaSyCvvv5D5gE2Ydh6V6wxyummkjsyI-PYeWY",
+  });
+
+  const fetchAiSummary = async (
+    speciesName: string
+  ): Promise<Partial<EntryMetadata> | null> => {
     try {
       const prompt = `Return only a raw JSON object with the following data about the species "${speciesName}":
   {
@@ -87,7 +103,7 @@ export default function submitEntry() {
       if (!match) throw new Error("No valid JSON block found in response");
 
       const parsed = JSON.parse(match[0]);
-      console.log(parsed)
+      console.log(parsed);
 
       if (!parsed || typeof parsed !== "object") return null;
 
@@ -104,8 +120,6 @@ export default function submitEntry() {
       return null;
     }
   };
-
-
 
   const classifyImage = async (photoUri: string) => {
     try {
@@ -140,7 +154,7 @@ export default function submitEntry() {
         const aiSummary = await fetchAiSummary(speciesName);
 
         if (!aiSummary) {
-          throw new Error("error with returning summary")
+          throw new Error("error with returning summary");
         }
         setEntryMetaData({
           ...entryMetaData,
@@ -181,12 +195,14 @@ export default function submitEntry() {
   }, [photo]);
 
   const onSubmit = () => {
-    const submitting: FullInsertEntry = {
+    const submitting: Entry = {
       id: id,
       name: entryMetaData.name,
-      dateTime: dateTime,
+      datetime: datetime,
       environmentType: entryMetaData.environmentType,
       speciesType: entryMetaData.speciesType,
+      rarity: "TODO",
+      location: { lat: 0, long: 0 },
       image: photo,
       description: entryMetaData.description,
       height: entryMetaData.height,
