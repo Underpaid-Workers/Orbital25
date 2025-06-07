@@ -11,6 +11,8 @@ type Leaderboard = {
 }
 
 export default function Leaderboard({pulledData} : Leaderboard){
+    const sortedData = [...pulledData].sort((a, b) => b.speciesNum - a.speciesNum);
+
     const renderItem = ({item, index }: {item: LeaderboardItem, index: number}) => (
         <View
         style={[
@@ -30,7 +32,7 @@ export default function Leaderboard({pulledData} : Leaderboard){
 
    return (
     <FlatList
-      data={pulledData}
+      data={sortedData}
       renderItem={renderItem}
       keyExtractor={(item, index) => index.toString()}
     />

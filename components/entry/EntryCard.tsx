@@ -25,7 +25,6 @@ export default function EntryCard({
   envType,
 }: EntryCard) {
   const router = useRouter();
-
   const onClickDetails = () => {
     console.log(`Entry ${id} clicked`);
     router.navigate({
