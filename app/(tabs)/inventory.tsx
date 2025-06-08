@@ -1,4 +1,5 @@
 import EntryCard from "@/components/entry/EntryCard";
+import FloatingInfoBar from "@/components/entry/FloatingInfoBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
@@ -14,7 +15,8 @@ import {
   View,
 } from "react-native";
 export default function inventory() {
-  const { data, count, loading, getEntries } = useEntryDataContext();
+  const { data, entryCount, speciesCount, score, loading, getEntries } =
+    useEntryDataContext();
 
   //refetch data everytime user clicks back onto screen
   useEffect(() => {
@@ -23,7 +25,7 @@ export default function inventory() {
 
   //temporary setting for error state TODO: ACCOUNT FOR LACK OF INTERNET
   const [error, setError] = useState(false);
-  //Loading! (Fetching userdata)
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -41,9 +43,14 @@ export default function inventory() {
         <Text style={styles.missingText}>Error : Unable to load</Text>
       </View>
     );
-  } else if (count === 0) {
-    return (
+  } else {
+    return entryCount === 0 ? (
       <View style={styles.container}>
+        <FloatingInfoBar
+          species={speciesCount}
+          entries={entryCount}
+          score={score}
+        />
         <Image
           source={emptyImage}
           contentFit="cover"
@@ -56,14 +63,17 @@ export default function inventory() {
           <MaterialCommunityIcons name="arrow-down" size={60} />
         </View>
       </View>
-    );
-  } else {
-    return (
+    ) : (
       <View style={styles.container}>
+        <FloatingInfoBar
+          species={speciesCount}
+          entries={entryCount}
+          score={score}
+        />
         <FlatList
           data={data}
           keyExtractor={(item) => item.id.toString()}
-          ItemSeparatorComponent={() => <View style={{ height: 10 }}></View>}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }}></View>}
           renderItem={({ item }) => (
             <EntryCard
               id={item.id}
@@ -82,12 +92,13 @@ export default function inventory() {
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: "100%",
     width: "100%",
-    paddingHorizontal: 16,
+    padding: 16,
     alignItems: "center",
   },
   loadingContainer: {

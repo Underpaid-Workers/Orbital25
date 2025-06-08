@@ -25,12 +25,15 @@ export default function viewEntry() {
   //data is 0-indexed, while id is 1 indexed
   const entry = data[Number.parseInt(id) - 1];
 
-  let dateTime = "<No date available>";
+  let datetime = "<No date available>";
   let displayId = "#000";
+  let observations = "Nothing written here...";
 
   if (entry !== undefined) {
-    dateTime = entry.datetime = formatDateTimeDisplay(entry.datetime);
+    datetime = formatDateTimeDisplay(entry.datetime);
     displayId = formatNumber(entry.id.toString());
+    observations =
+      entry.observations !== "" ? entry.observations : observations;
   }
 
   const router = useRouter();
@@ -52,7 +55,7 @@ export default function viewEntry() {
         <Text style={styles.entryTitle}>
           {displayId} - {entry.name}
         </Text>
-        <Text style={styles.entryText}>Captured: {dateTime}</Text>
+        <Text style={styles.entryText}>Captured: {datetime}</Text>
         <Image
           source={entry.image}
           style={styles.entryImage}
@@ -71,7 +74,7 @@ export default function viewEntry() {
         <InfoBox title="Lifespan" text={entry.lifespan} />
         <Text style={styles.entryTextBoxTitle}>Observations</Text>
         <View style={styles.entryTextBox}>
-          <Text style={styles.entryText}>{entry.observations}</Text>
+          <Text style={styles.entryText}>{observations}</Text>
         </View>
         <Text style={styles.entryTextBoxTitle}>Location</Text>
         <View style={styles.mapBox}>
@@ -150,7 +153,6 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 1,
     padding: 16,
-    justifyContent: "center",
   },
   entryTextBoxTitle: {
     width: "100%",

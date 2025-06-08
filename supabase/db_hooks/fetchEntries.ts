@@ -13,7 +13,9 @@ export default async function fetchEntries(
 ): Promise<EntryData> {
   const result = <EntryData>{
     data: <Entry[]>[],
-    count: 0,
+    entryCount: 0,
+    speciesCount: 0,
+    score: 0,
   };
 
   function fetchImage(image_url: string) {
@@ -89,7 +91,7 @@ export default async function fetchEntries(
             });
         }
 
-        result.count = count;
+        result.entryCount = count;
       }
     }
   } catch (error) {

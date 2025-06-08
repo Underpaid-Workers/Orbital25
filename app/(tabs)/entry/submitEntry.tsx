@@ -45,9 +45,9 @@ if (Constants.expoConfig && Constants.expoConfig.extra) {
 
 export default function submitEntry() {
   const router = useRouter();
-  const { count, loading, uploadEntry } = useEntryDataContext();
+  const { entryCount, loading, uploadEntry } = useEntryDataContext();
 
-  let id = count + 1;
+  let id = entryCount + 1;
   const { photo, datetime } = useLocalSearchParams<{
     photo: string;
     datetime: string;
