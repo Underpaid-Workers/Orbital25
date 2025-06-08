@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "stretch",
+    alignItems: "center",
     paddingHorizontal: 16,
-    height: 80,
+    height: 70,
     width: "100%",
     borderRadius: 15,
     borderCurve: "circular",

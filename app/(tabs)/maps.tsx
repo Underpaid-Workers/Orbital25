@@ -1,3 +1,4 @@
+import FilterBar from "@/components/maps/FilterBar";
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
@@ -162,6 +163,10 @@ export default function maps() {
       >
         {showEntryMarkers()}
       </MapView>
+      <View style={styles.filterBar}>
+        <FilterBar />
+      </View>
+
       <MaterialCommunityIcons style={styles.crosshair} name="plus" size={20} />
       <TouchableOpacity
         onPress={animateToCurrentLocation}
@@ -177,6 +182,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  filterBar: {
+    position: "absolute",
+    top: 8,
+    width: "100%",
+    paddingHorizontal: 16,
+    alignItems: "center",
   },
   mapView: {
     width: "100%",
