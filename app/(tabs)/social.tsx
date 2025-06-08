@@ -1,5 +1,6 @@
 import Leaderboard from "@/components/entry/Leaderboard";
-import React, { useState } from "react";
+import { getLeaderboardData } from "@/supabase/social_hooks/fetchLeaderboard";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -9,17 +10,18 @@ import {
   View,
 } from "react-native";
 
-// delete later
-const mockData2 = [
-  { name: "Tung Tung Tung Tung Tung Tung Sahur", speciesNum: 2312 },
-  { name: "Bombardilo Crocadilo", speciesNum: 2047 },
-  { name: "Chimpanzini Bananini", speciesNum: 1877 },
-  { name: "Lirili Larila", speciesNum: 1564 },
-  { name: "Cappuccino Assassino", speciesNum: 1499 },
-  { name: "Trippi Troppi", speciesNum: 1478 },
-  { name: "Linganguli", speciesNum: 1466 },
-  { name: "Don Pollo", speciesNum: 1454 },
-];
+
+//const mockData2 = [
+  //{ name: "Tung Tung Tung Tung Tung Tung Sahur", speciesNum: 2312 },
+  //{ name: "Bombardilo Crocadilo", speciesNum: 2047 },
+  //{ name: "Chimpanzini Bananini", speciesNum: 1877 },
+  //{ name: "Lirili Larila", speciesNum: 1564 },
+  //{ name: "Cappuccino Assassino", speciesNum: 1499 },
+  //{ name: "Trippi Troppi", speciesNum: 1478 },
+  //{ name: "Linganguli", speciesNum: 1466 },
+  //{ name: "Don Pollo", speciesNum: 1454 },
+//];
+
 
 const searchFriendsData = [
   { name: "wazaaaaaaa.001", speciesNum: 1234 },
@@ -31,6 +33,16 @@ const searchFriendsData = [
 const Social = () => {
   const [board, setBoard] = useState<1 | 2>(1);
   const [searchInput, setSearchInput] = useState("");
+
+  const [leaderboardData, setLeaderboardData] = useState<{ name: string; speciesNum: number }[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getLeaderboardData();
+      setLeaderboardData(data);
+    };
+
+    fetchData();
+  }, []);
 
   const [friendsList, setFriendsList] = useState([
     { name: "Rong Kang", speciesNum: 35 },
@@ -103,7 +115,7 @@ const Social = () => {
           </View>
         </View>
       ) : (
-        <Leaderboard pulledData={mockData2} />
+        <Leaderboard pulledData={leaderboardData} />
       )}
     </View>
   );
