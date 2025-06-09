@@ -2,15 +2,18 @@ import DateTimeBox from "@/components/entry/DateTimeBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
+import fetchLocation from "@/hooks/fetchLocation";
 import formatNumber from "@/hooks/formatNumber";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { location } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
 import Entry, { EntryMetadata } from "@/supabase/entrySchema";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { GoogleGenAI } from "@google/genai";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -21,6 +24,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 
 //
 //
@@ -178,6 +182,8 @@ export default function submitEntry() {
       setIsFetchingAPI(false);
       Alert.alert("AI Identification Failed", errorMessage);
       router.replace("/(tabs)/camera");
+    } finally {
+      setIsFetchingAPI(false);
     }
   };
 
@@ -195,7 +201,7 @@ export default function submitEntry() {
       environmentType: entryMetaData.environmentType,
       speciesType: entryMetaData.speciesType,
       rarity: entryMetaData.rarity,
-      location: { lat: 0, long: 0 },
+      location: currentLocation,
       image: photo,
       description: entryMetaData.description,
       height: entryMetaData.height,
@@ -214,20 +220,53 @@ export default function submitEntry() {
     uploadEntry(submitting, onComplete);
   };
 
+  let mapRef = React.createRef<MapView | null>();
+  //TODO: Location set to center of singapore for now
+  const [currentLocation, setCurrentLocation] = useState<location>({
+    lat: 1.3518865175286692,
+    long: 103.79266088828444,
+  });
+
+  const animateToCurrentLocation = async () => {
+    const animateToLocation = (pos: location) => {
+      mapRef.current?.animateToRegion(
+        {
+          longitude: pos.long,
+          latitude: pos.lat,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+        },
+        500
+      );
+    };
+
+    const pos = await fetchLocation();
+    if (pos) {
+      setCurrentLocation({
+        lat: pos.coords.latitude,
+        long: pos.coords.longitude,
+      });
+      animateToLocation({
+        lat: pos.coords.latitude,
+        long: pos.coords.longitude,
+      });
+    }
+  };
+
   if (isFetchingAPI)
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.tabBar} />
         <Text>Identifying species using AI...</Text>
       </View>
     );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
         <Text style={styles.name}>
-          {formatNumber(id?.toString() || "0")} + " - "
+          {formatNumber(id?.toString() || "0") + " - "}
           {entryMetaData.name !== "" ? entryMetaData.name : "Unknown Species"}
         </Text>
         <Image
@@ -254,7 +293,7 @@ export default function submitEntry() {
           </Text>
         </ScrollView>
 
-        <View style={{ flex: 0.35, width: "100%" }}>
+        <View style={styles.datetimeBox}>
           <DateTimeBox
             day={parsedDateTime[0]}
             month={parsedDateTime[1]}
@@ -273,11 +312,48 @@ export default function submitEntry() {
             style={styles.observationBox}
           />
         </View>
+        <Text style={styles.locationBoxTitle}>Location</Text>
+        <View style={styles.mapBox}>
+          <MapView
+            style={styles.mapView}
+            initialRegion={{
+              latitude: currentLocation.lat,
+              latitudeDelta: 0.5,
+              longitude: currentLocation.long,
+              longitudeDelta: 0.5,
+            }}
+            ref={mapRef}
+            onRegionChangeComplete={(region) =>
+              setCurrentLocation({
+                lat: region.latitude,
+                long: region.longitude,
+              })
+            }
+          >
+            <Marker
+              coordinate={{
+                latitude: currentLocation.lat,
+                longitude: currentLocation.long,
+              }}
+            ></Marker>
+          </MapView>
+          <MaterialCommunityIcons
+            style={styles.crosshair}
+            name="plus"
+            size={20}
+          />
+          <TouchableOpacity
+            onPress={animateToCurrentLocation}
+            style={styles.locationButton}
+          >
+            <MaterialCommunityIcons name="crosshairs-gps" size={20} />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity style={styles.submitButton} onPress={onSubmit}>
           <Text style={styles.submitButtonText}>Submit Entry</Text>
         </TouchableOpacity>
       </View>
-      {modalVisible && (
+      {true && (
         <ProcessingPopup
           isVisible={modalVisible}
           isLoading={loading}
@@ -285,15 +361,19 @@ export default function submitEntry() {
           processedMessage="Entry Registered!"
         />
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  container: {
+    flex: 1,
+    alignContent: "center",
   },
   entryContainer: {
     flex: 1,
@@ -313,8 +393,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   image: {
-    flex: 1.5,
-    aspectRatio: 0.75,
+    flex: 3,
+    width: 178,
+    height: 195,
     borderRadius: 15,
     borderCurve: "continuous",
   },
@@ -323,11 +404,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   descriptionBox: {
-    flex: 0.5,
-    maxHeight: 120,
+    height: 120,
     fontSize: 16,
-    minHeight: 20,
-    minWidth: "100%",
+    width: "100%",
     borderRadius: 15,
     borderCurve: "continuous",
     borderColor: colors.primary,
@@ -339,15 +418,15 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     flexWrap: "wrap",
   },
+  datetimeBox: { height: 60, width: "100%" },
   observationContainer: {
-    flex: 1,
+    width: "100%",
     gap: 6,
   },
   observationBox: {
-    flex: 0.8,
     fontSize: 16,
-    minHeight: 80,
-    minWidth: "100%",
+    height: 120,
+    width: "100%",
     borderRadius: 15,
     borderCurve: "continuous",
     borderColor: colors.primary,
@@ -362,10 +441,54 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  locationBox: {
+    minHeight: 100,
+    width: "100%",
+    borderRadius: 15,
+    borderCurve: "continuous",
+    borderColor: colors.primary,
+    borderWidth: 1,
+    padding: 16,
+  },
+  locationBoxTitle: {
+    width: "100%",
+    alignSelf: "flex-start",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  mapBox: {
+    height: 200,
+    width: "100%",
+    borderRadius: 15,
+    borderCurve: "continuous",
+    overflow: "hidden",
+    backgroundColor: "yellow",
+  },
+  mapView: {
+    height: "100%",
+    width: "100%",
+  },
+  crosshair: {
+    position: "absolute",
+    left: "50%",
+    bottom: "50%",
+    transform: [{ translateY: "-50%" }, { translateX: "-50%" }],
+  },
+  locationButton: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "100%",
+    borderCurve: "circular",
+    backgroundColor: colors.primary,
+  },
   submitButton: {
-    flex: 0.3,
-    height: 20,
-    minWidth: "80%",
+    height: 40,
+    width: "80%",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.primary,

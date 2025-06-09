@@ -67,21 +67,6 @@ export default async function insertEntry(session: Session, entry: Entry) {
       lifespan: entry.lifespan,
       observations: entry.observations,
     };
-    //temp entry, actual entry formatting above when AI API comes through
-    // const inserted = <EntryFormat>{
-    //   user_id: session.user.id,
-    //   entry_id: entry.id,
-    //   name: entry.name,
-    //   datetime: formatDateTimeInsert(entry.dateTime),
-    //   image_url: imageUrl,
-    //   species_type: "mad",
-    //   env_type: "sad",
-    //   description: entry.description,
-    //   height: "lad",
-    //   weight: "fat",
-    //   lifespan: "long",
-    //   observations: entry.observations,
-    // };
     const { data, error } = await supabase
       .from("entriestest")
       .insert(inserted)
