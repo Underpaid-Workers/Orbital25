@@ -1,4 +1,5 @@
 import Leaderboard from "@/components/entry/Leaderboard";
+import { fetchFriends } from "@/supabase/social_hooks/fetchFriends";
 import { getLeaderboardData } from "@/supabase/social_hooks/fetchLeaderboard";
 import React, { useEffect, useState } from "react";
 import {
@@ -9,19 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-
-//const mockData2 = [
-  //{ name: "Tung Tung Tung Tung Tung Tung Sahur", speciesNum: 2312 },
-  //{ name: "Bombardilo Crocadilo", speciesNum: 2047 },
-  //{ name: "Chimpanzini Bananini", speciesNum: 1877 },
-  //{ name: "Lirili Larila", speciesNum: 1564 },
-  //{ name: "Cappuccino Assassino", speciesNum: 1499 },
-  //{ name: "Trippi Troppi", speciesNum: 1478 },
-  //{ name: "Linganguli", speciesNum: 1466 },
-  //{ name: "Don Pollo", speciesNum: 1454 },
-//];
-
 
 const searchFriendsData = [
   { name: "wazaaaaaaa.001", speciesNum: 1234 },
@@ -44,15 +32,14 @@ const Social = () => {
     fetchData();
   }, []);
 
-  const [friendsList, setFriendsList] = useState([
-    { name: "Rong Kang", speciesNum: 35 },
-    { name: "Joses", speciesNum: 26 },
-    { name: "Siao Shiuan", speciesNum: 17 },
-    { name: "Andy", speciesNum: 14 },
-    { name: "Javier", speciesNum: 9 },
-    { name: "Yao Hui", speciesNum: 2 },
-    { name: "Tze Ray", speciesNum: 0 },
-  ]);
+  const { friends, loading } = fetchFriends();
+  const [friendsList, setFriendsList] = useState<{ name: string; speciesNum: number}[]>([]);
+
+  useEffect(() => {
+    if (!loading) {
+      setFriendsList(friends);
+    }
+  }, [loading, friends]);
 
   const filteredFriends = searchFriendsData.filter((friend) =>
     friend.name.toLowerCase().includes(searchInput.toLowerCase()) &&
