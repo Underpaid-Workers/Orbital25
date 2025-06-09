@@ -1,10 +1,11 @@
 import supabase from "@/supabase/main";
 
-export default async function fetchEntriesByLocation(currLocation: location) {
-  const markerRenderDistance = 0.5;
+export default async function fetchGlobalEntriesByLocation(
+  currLocation: location
+) {
   const { data, error } = await supabase
     .schema("public")
-    .rpc("entrys_in_view", {
+    .rpc("entries_in_view", {
       min_lat: currLocation.lat - markerRenderDistance,
       min_long: currLocation.long - markerRenderDistance,
       max_lat: currLocation.lat + markerRenderDistance,
@@ -21,3 +22,5 @@ export type location = {
   lat: number;
   long: number;
 };
+
+export const markerRenderDistance = 10;

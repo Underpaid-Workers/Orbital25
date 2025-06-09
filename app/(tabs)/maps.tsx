@@ -1,9 +1,10 @@
+import FilterBar from "@/components/maps/FilterBar";
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
-import fetchEntriesByLocation, {
+import fetchGlobalEntriesByLocation, {
   location,
-} from "@/supabase/db_hooks/fetchEntriesByLocation";
+} from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
@@ -11,10 +12,13 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 type marker = {
+  name: string;
   datetime: string;
+  rarity: string;
+  species_type: string;
+  env_type: string;
   lat: number;
   long: number;
-  name: string;
 };
 
 export default function maps() {
@@ -24,9 +28,15 @@ export default function maps() {
     long: 103.79266088828444,
   });
 
+  //Map and markers
   const [data, setData] = useState<marker[]>([]);
   const [mapReady, setMapReady] = useState(false);
   let mapRef = React.createRef<MapView | null>();
+
+  //Filters
+  const [filterRarity, setFilterRarity] = useState<string>("");
+  const [filterSpecies, setFilterSpecies] = useState<string>("");
+  const [filterEnv, setFilterEnv] = useState<string>("");
 
   const animateToLocation = (pos: location) => {
     mapRef.current?.animateToRegion(
@@ -69,9 +79,29 @@ export default function maps() {
       );
       return [...fromOld, ...fromNew];
     };
-    await fetchEntriesByLocation(currentLocation).then((entries) =>
-      setData(updateMarkers(data, entries))
-    );
+    await fetchGlobalEntriesByLocation(currentLocation).then((entries) => {
+      const result = updateMarkers(data, entries);
+      let filteredResult = result;
+      if (filterRarity !== "") {
+        console.log(`${filterRarity} filtered`);
+        filteredResult = filteredResult.filter(
+          (entry) => entry.rarity === filterRarity
+        );
+      }
+      if (filterSpecies !== "") {
+        console.log(`${filterSpecies} filtered`);
+        filteredResult = filteredResult.filter(
+          (entry) => entry.species_type === filterSpecies
+        );
+      }
+      if (filterEnv !== "") {
+        console.log(`${filterEnv} filtered`);
+        filteredResult = filteredResult.filter(
+          (entry) => entry.env_type === filterEnv
+        );
+      }
+      setData(filteredResult);
+    });
   };
 
   const showEntryMarkers = () => {
@@ -81,8 +111,20 @@ export default function maps() {
           key={index}
           coordinate={{ latitude: entry.lat, longitude: entry.long }}
           title={entry.name}
-          description={"Captured: " + formatDateTimeDisplay(entry.datetime)}
-        />
+          description={`Captured: ${formatDateTimeDisplay(entry.datetime)}`}
+        >
+          {/* TODO: Callout does not work as intended as of now, due to EXPO and react-native-maps package compatibility issues
+          Currently only can display capture time and name, until fix/workaround made to display custom callout */}
+          {/* <View style={{ width: 100, height: 100 }}>
+            <Text>{entry.name}</Text>
+            <Text>
+              Captured: {formatDateTimeDisplay(entry.datetime)}
+              Rarity: {entry.rarity}
+              Species: {entry.species_type}
+              Environment: {entry.env_type}
+            </Text>
+          </View> */}
+        </Marker>
       );
     });
   };
@@ -149,6 +191,7 @@ export default function maps() {
         style={styles.mapView}
         onRegionChangeComplete={(region) => {
           setCurrentLocation({ lat: region.latitude, long: region.longitude });
+          // console.log(region.latitude + " " + region.longitude);
           getMarkers();
         }}
         onMapReady={() => setMapReady(true)}
@@ -162,6 +205,29 @@ export default function maps() {
       >
         {showEntryMarkers()}
       </MapView>
+      <View style={styles.filterBar}>
+        <FilterBar
+          filterRarity={(rarity) => {
+            setFilterRarity(rarity);
+            getMarkers();
+          }}
+          filterSpecies={(species) => {
+            setFilterSpecies(species);
+            getMarkers();
+          }}
+          filterEnv={(env) => {
+            setFilterEnv(env);
+            getMarkers();
+          }}
+          filterReset={() => {
+            setFilterRarity("");
+            setFilterSpecies("");
+            setFilterEnv("");
+            getMarkers();
+          }}
+        />
+      </View>
+
       <MaterialCommunityIcons style={styles.crosshair} name="plus" size={20} />
       <TouchableOpacity
         onPress={animateToCurrentLocation}
@@ -177,6 +243,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  filterBar: {
+    position: "absolute",
+    top: 8,
+    width: "100%",
+    paddingHorizontal: 35,
+    alignItems: "center",
   },
   mapView: {
     width: "100%",

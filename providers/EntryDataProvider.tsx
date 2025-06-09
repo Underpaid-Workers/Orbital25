@@ -7,7 +7,9 @@ import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 export type EntryData = {
   data: Entry[];
-  count: number;
+  entryCount: number;
+  speciesCount: number;
+  score: number;
   loading: boolean;
   getEntries: () => void;
   uploadEntry: (submitting: Entry, onComplete: () => void) => void;
@@ -16,7 +18,9 @@ export type EntryData = {
 
 const EntryDataContext = createContext<EntryData>({
   data: [],
-  count: 0,
+  entryCount: 0,
+  speciesCount: 0,
+  score: 0,
   loading: false,
   getEntries: () => {},
   uploadEntry: () => {},
@@ -26,7 +30,9 @@ const EntryDataContext = createContext<EntryData>({
 export default function EntryDataProvider({ children }: PropsWithChildren) {
   const { session } = useAuthContext();
   const [data, setData] = useState<Entry[]>([]);
-  const [count, setCount] = useState<number>(0);
+  const [entryCount, setEntryCount] = useState<number>(0);
+  const [speciesCount, setSpeciesCount] = useState<number>(0);
+  const [score, setScore] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
 
   const getEntries = async () => {
@@ -38,8 +44,10 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
           (result) => {
             //onSuccess
             setData(result.data);
-            setCount(result.count);
-            console.log(`${result.count} entries fetched`);
+            setEntryCount(result.entryCount);
+            setSpeciesCount(result.speciesCount); //TODO: Replace with actual unique species count
+            setScore(result.entryCount * 10); //TODO: Replace with actual score
+            console.log(`${result.entryCount} entries fetched`);
           },
           () => {
             //onFail
@@ -78,7 +86,9 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
     <EntryDataContext.Provider
       value={{
         data,
-        count,
+        entryCount,
+        speciesCount,
+        score,
         loading,
         getEntries,
         uploadEntry,
@@ -93,7 +103,9 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
 /**
  * @description (tabs)-wide context for managing entry data
  * @param data the entry data as Entry[]
- * @param count the number of entries fetched
+ * @param entryCount the number of entries fetched
+ * @param speciesCount the number of unique entry species
+ * @param score the total score of entries
  * @param loading the boolean of loading state. true when fetching data, false otherwise
  * @param getData a function which initiates a data fetch from supabase
  * @example const { data, count, loading, getData } = useEntryDataContext();

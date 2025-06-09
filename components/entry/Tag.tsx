@@ -13,10 +13,10 @@ export default function SpeciesTag({ species }: { species: string }) {
   let image;
   let tag = species;
   switch (species) {
-    case "animal":
+    case "Animal":
       image = animalSpeciesTag;
       break;
-    case "plant":
+    case "Plant":
       image = plantSpeciesTag;
       break;
     default:
@@ -36,13 +36,13 @@ export function EnvironmentTag({ env }: { env: string }) {
   let image;
   let tag = env;
   switch (env) {
-    case "aquatic":
+    case "Aquatic":
       image = aquaticEnvTag;
       break;
-    case "terrestrial":
+    case "Terrestrial":
       image = terrestrialEnvTag;
       break;
-    case "flying":
+    case "Flying":
       image = flyingEnvTag;
       break;
     default:
