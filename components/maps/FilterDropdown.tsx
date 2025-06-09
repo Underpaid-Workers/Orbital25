@@ -1,7 +1,7 @@
 import { Item } from "@/components/maps/FilterBar";
 import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
@@ -9,11 +9,21 @@ interface Dropdown {
   title: string;
   data: Item[];
   onSelect: (selected: string) => void;
+  onReset: boolean;
 }
 
-export default function FilterDropdown({ title, data, onSelect }: Dropdown) {
+export default function FilterDropdown({
+  title,
+  data,
+  onSelect,
+  onReset,
+}: Dropdown) {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>("");
+
+  useEffect(() => {
+    setSelected(title);
+  }, [onReset]);
 
   return (
     <View style={styles.dropdown}>
@@ -51,7 +61,6 @@ const styles = StyleSheet.create({
     width: "35%",
     height: "80%",
     justifyContent: "center",
-    alignContent: "center",
     backgroundColor: colors.primary,
     borderRadius: 15,
   },
@@ -59,8 +68,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   text: {
-    paddingLeft: 16,
+    paddingLeft: 10,
     fontSize: 14,
   },
-  icon: { paddingRight: 8 },
+  icon: { paddingRight: 4 },
 });
