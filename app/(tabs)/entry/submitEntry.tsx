@@ -170,6 +170,7 @@ export default function submitEntry() {
             height: aiSummary.height || "",
             lifespan: aiSummary.lifespan || "",
           });
+          setIsFetchingAPI(false);
         }
       }
     } catch (error) {
