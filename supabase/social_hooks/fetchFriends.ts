@@ -19,36 +19,50 @@ export const fetchFriends = () => {
         error: userError,
       } = await supabase.auth.getUser();
 
-      console.log("Logged-in user ID from auth:", user?.id);
-
       if (userError || !user) {
         console.error("User not logged in.");
         setLoading(false);
         return;
       }
+      
+      //add user's own data to friend list
+      const userId = user.id;
+      const userEmail = user.email ?? "unknown@example.com";
+      const userName = userEmail.split("@")[0];
 
-      console.log("Logged-in user ID from auth:", user.id);
+      const { count: mySpeciesCount, error: mySpeciesErr } = await supabase
+        .from("entriestest")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId);
 
-      // Step 1: Get all friend_ids where user_id = current user
+      if (mySpeciesErr) {
+        console.error("Error fetching own species count:", mySpeciesErr);
+        setLoading(false);
+        return;
+      }
+
+      const results: Friend[] = [
+        {
+          name: userName,
+          speciesNum: mySpeciesCount || 0,
+        },
+      ];
+
+      // friend ids
       const { data: friendships, error: friendErr } = await supabase
         .from("friendships")
         .select("friend_id")
         .eq("user_id", user.id);
-        console.log("Logged-in user ID:", user.id);
 
       if (friendErr || !friendships) {
         console.error("Failed to fetch friendships", friendErr);
         setLoading(false);
         return;
       }
-      console.log("Friendship rows:", friendships)
-      // Step 2: For each friend_id, get email and species count
-      const results: Friend[] = [];
 
       for (const f of friendships) {
         const friendId = f.friend_id;
 
-        // Fetch email
         const { data: userData, error: userErr } = await supabase
           .from("users")
           .select("email")
@@ -57,10 +71,8 @@ export const fetchFriends = () => {
 
         if (userErr || !userData) continue;
 
-        // Derive name from email
         const name = userData.email.split("@")[0];
 
-        // Count species (entries)
         const { count, error: entryErr } = await supabase
           .from("entriestest")
           .select("*", { count: "exact", head: true })

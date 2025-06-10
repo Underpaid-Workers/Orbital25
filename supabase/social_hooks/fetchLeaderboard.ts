@@ -33,7 +33,7 @@ export const getLeaderboardData = async () => {
     (item): item is { name: string; speciesNum: number } => item !== null
   );
 
-  const top20 = filteredData.sort((a,b) => b.speciesNum - a.speciesNum).slice(0,20);
+  //const top20 = filteredData.sort((a,b) => b.speciesNum - a.speciesNum).slice(0,20);
 
-  return top20
+  return filteredData
 };

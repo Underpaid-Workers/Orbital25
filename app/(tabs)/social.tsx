@@ -1,4 +1,5 @@
 import Leaderboard from "@/components/entry/Leaderboard";
+import { addFriend } from "@/supabase/social_hooks/addFriend";
 import { fetchFriends } from "@/supabase/social_hooks/fetchFriends";
 import { getLeaderboardData } from "@/supabase/social_hooks/fetchLeaderboard";
 import React, { useEffect, useState } from "react";
@@ -10,13 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-const searchFriendsData = [
-  { name: "wazaaaaaaa.001", speciesNum: 1234 },
-  { name: "wazaaaaaaa.002", speciesNum: 354 },
-  { name: "wazaaaaaaa.003", speciesNum: 762 },
-  { name: "wazaaaaaaa.004", speciesNum: 888 },
-];
 
 const Social = () => {
   const [board, setBoard] = useState<1 | 2>(1);
@@ -32,6 +26,8 @@ const Social = () => {
     fetchData();
   }, []);
 
+  const searchFriendsData = leaderboardData;
+
   const { friends, loading } = fetchFriends();
   const [friendsList, setFriendsList] = useState<{ name: string; speciesNum: number}[]>([]);
 
@@ -46,9 +42,14 @@ const Social = () => {
     !friendsList.some((f) => f.name === friend.name)
   );
 
-  const handleAddFriend = (friendToAdd: { name: string; speciesNum: number }) => {
-    setFriendsList((prev) => [...prev, friendToAdd]);
-    Alert.alert("Friend added!");
+  const handleAddFriend = async (friendToAdd: { name: string; speciesNum: number }) => {
+    const response = await addFriend(friendToAdd.name); 
+    if (response.success) {
+      setFriendsList((prev) => [...prev, friendToAdd]);
+      Alert.alert("Friend added!");
+    } else {
+      Alert.alert("Error", response.message);
+    }
   };
 
   return (
