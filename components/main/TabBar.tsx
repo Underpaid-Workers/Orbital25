@@ -11,7 +11,7 @@ export default function TabBar({
   navigation,
 }: BottomTabBarProps) {
   //temporary workaround for hiding "entry" folder from TabBar.
-  //change this if changing tab routes!
+  //change this if changing tab routes
   const tabs = ["social", "maps", "camera", "inventory", "events"];
   const hiddenRoutes = ["camera", "entry/submitEntry", "entry/[id]"];
 
@@ -88,7 +88,6 @@ export default function TabBar({
 
 const styles = StyleSheet.create({
   tabBar: {
-    //styling of whole tab bar
     flexDirection: "row",
     backgroundColor: colors.primary,
     height: 70,
@@ -97,7 +96,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
   },
   cameraTab: {
-    //specific styling of Camera tab
     bottom: 35,
     width: 90,
     height: 90,

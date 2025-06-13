@@ -122,6 +122,7 @@ export default function submitEntry() {
         lifespan: parsed.lifespan || "",
         speciesType: parsed.speciesType || "",
         environmentType: parsed.environmentType || "",
+        rarity: parsed.rarity
       };
     } catch (error) {
       console.error("AI summary fetch error:", error);
