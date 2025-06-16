@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 type Friend = {
   name: string;
   speciesNum: number;
+  isSelf?: boolean;
 };
 
 export const fetchFriends = () => {
@@ -45,6 +46,7 @@ export const fetchFriends = () => {
         {
           name: userName,
           speciesNum: mySpeciesCount || 0,
+          isSelf: true
         },
       ];
 
