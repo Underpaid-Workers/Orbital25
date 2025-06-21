@@ -1,5 +1,10 @@
 import supabase from "@/supabase/main";
 
+/**
+ * @description Fetch all entries that are within a set bounding box based on a location
+ * @param currLocation as location object
+ * @returns Array of Entries
+ */
 export default async function fetchGlobalEntriesByLocation(
   currLocation: location
 ) {

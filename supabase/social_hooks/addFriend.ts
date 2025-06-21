@@ -1,6 +1,11 @@
 import supabase from "@/supabase/main";
 
-export const addFriend = async (friendEmail: string) => {
+/**
+ * @description Add a friend based on email to friends list
+ * @param friendEmail as string
+ * @returns Object of {sucess:string, message:string}
+ */
+export default async function addFriend(friendEmail: string) {
   // Get cur user
   const {
     data: { user },
@@ -27,7 +32,7 @@ export const addFriend = async (friendEmail: string) => {
   }
 
   const friendId = friendUser.id;
-  console.log(friendId)
+  console.log(friendId);
 
   // Insert friendship row
   const { error: insertError } = await supabase.from("friendships").insert([
@@ -43,4 +48,4 @@ export const addFriend = async (friendEmail: string) => {
   }
 
   return { success: true, message: "Friend added!" };
-};
+}

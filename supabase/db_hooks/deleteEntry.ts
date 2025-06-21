@@ -2,7 +2,13 @@ import supabase from "@/supabase/main";
 import { Session } from "@supabase/supabase-js";
 import { Alert } from "react-native";
 
-
+/**
+ * @description Delete entry from supabase entriestest table
+ * @param session as Session
+ * @param entryId as number
+ * @param entryImageURL as string
+ * @returns void
+ */
 export default async function deleteEntry(
   session: Session,
   entryId: number,
@@ -10,7 +16,9 @@ export default async function deleteEntry(
 ) {
   async function deletePhoto(imageURL: string) {
     const imageName = imageURL.slice(imageURL.lastIndexOf("/") + 1);
-    const { error } = await supabase.storage.from("entry-images").remove([imageName]);
+    const { error } = await supabase.storage
+      .from("entry-images")
+      .remove([imageName]);
     if (error) throw error;
   }
 
@@ -18,7 +26,12 @@ export default async function deleteEntry(
     if (!session?.user) throw new Error("No user on the session!");
     const userId = session.user.id;
 
-    console.log("Starting deletion process for user:", userId, "entry:", entryId);
+    console.log(
+      "Starting deletion process for user:",
+      userId,
+      "entry:",
+      entryId
+    );
 
     //delete row
     const { error: deleteError, data: deleteData } = await supabase
@@ -51,7 +64,10 @@ export default async function deleteEntry(
       console.error("RPC error:", rpcError);
       throw rpcError;
     }
-    console.log("Called decrement_entry_ids_after_delete function, result:", rpcData);
+    console.log(
+      "Called decrement_entry_ids_after_delete function, result:",
+      rpcData
+    );
 
     Alert.alert("Success", "Entry deleted and entry IDs updated.");
   } catch (error: any) {

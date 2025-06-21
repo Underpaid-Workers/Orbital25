@@ -1,5 +1,10 @@
 import * as Location from "expo-location";
 
+/**
+ * @description Get location from device, dependant on Foreground Location Permission
+ * @params none
+ * @returns Promise<Location.LocationObject | null>
+ */
 export default async function fetchLocation(): Promise<Location.LocationObject | null> {
   try {
     let { status } = await Location.requestForegroundPermissionsAsync();

@@ -45,8 +45,8 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
             //onSuccess
             setData(result.data);
             setEntryCount(result.entryCount);
-            setSpeciesCount(result.speciesCount); //TODO: Replace with actual unique species count
-            setScore(result.entryCount * 10); //TODO: Replace with actual score
+            setSpeciesCount(result.speciesCount);
+            setScore(result.score);
             console.log(`${result.entryCount} entries fetched`);
           },
           () => {

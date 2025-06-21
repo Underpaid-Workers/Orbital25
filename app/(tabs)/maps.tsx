@@ -137,54 +137,6 @@ export default function maps() {
     }, [mapReady])
   );
 
-  // let entryMarkers = [
-  //   {
-  //     entry_id: 1,
-  //     user_id: session?.user.id,
-  //     datetime: "2025-06-04 16:22:45",
-  //     env_type: "",
-  //     species_type: "",
-  //     image_url: "photo",
-  //     description: "entryMetaData.description",
-  //     height: "",
-  //     weight: "",
-  //     lifespan: "",
-  //     observations: "observations",
-  //     name: "lizard",
-  //     location: "POINT(103.73124634847045 1.3582308673358716)",
-  //   },
-  //   {
-  //     entry_id: 2,
-  //     datetime: "2025-06-04 16:22:45",
-  //     user_id: session?.user.id,
-  //     env_type: "",
-  //     species_type: "",
-  //     image_url: "photo",
-  //     description: "entryMetaData.description",
-  //     height: "",
-  //     weight: "",
-  //     lifespan: "",
-  //     observations: "observations",
-  //     name: "spider",
-  //     location: "POINT(103.74124634847045 1.3382308673358716)",
-  //   },
-  //   {
-  //     entry_id: 3,
-  //     user_id: session?.user.id,
-  //     datetime: "2025-06-04 16:22:45",
-  //     env_type: "",
-  //     species_type: "",
-  //     image_url: "photo",
-  //     description: "entryMetaData.description",
-  //     height: "",
-  //     weight: "",
-  //     lifespan: "",
-  //     observations: "observations",
-  //     name: "tiger",
-  //     location: "POINT(103.78116795793176 1.349923337329362)",
-  //   },
-  // ];
-
   return (
     <View style={styles.container}>
       <MapView

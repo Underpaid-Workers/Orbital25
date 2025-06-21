@@ -26,15 +26,6 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-//
-//
-//
-// TODO : SET UP LOCATION LOGIC
-//
-//
-//
-//
-
 let hfToken: any = null;
 let hfModelUrl: any = null;
 
@@ -125,7 +116,7 @@ export default function submitEntry() {
         lifespan: parsed.lifespan || "",
         speciesType: parsed.speciesType || "",
         environmentType: parsed.environmentType || "",
-        rarity: parsed.rarity
+        rarity: parsed.rarity,
       };
     } catch (error) {
       console.error("AI summary fetch error:", error);
@@ -166,16 +157,16 @@ export default function submitEntry() {
         const aiSummary = await fetchAiSummary(speciesName);
 
         if (aiSummary === "NONE") {
-          setIsFetchingAPI(false);     // stop spinner
+          setIsFetchingAPI(false); // stop spinner
           Alert.alert(
             "Not a plant or animal!",
             "Please upload a photo of a plant or an animal.",
-          [{ text: "OK", onPress: () => router.replace("/(tabs)/camera") }],
-          { cancelable: false }
+            [{ text: "OK", onPress: () => router.replace("/(tabs)/camera") }],
+            { cancelable: false }
           );
-        return;                      // bail out before setEntryMetaData
+          return; // bail out before setEntryMetaData
         }
-/* =================== */
+        /* =================== */
 
         if (!aiSummary) {
           throw new Error("error with returning summary");
@@ -287,18 +278,20 @@ export default function submitEntry() {
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
         <View style={styles.nameRow}>
-          <Text style={styles.nameId}>{formatNumber(id?.toString() || "0")} - </Text>
-            <TextInput
-              style={styles.nameInput}
-              value={entryMetaData.name}
-              placeholder="Unknown Species"
-              onChangeText={(text) =>
-                setEntryMetaData((prev) => ({ ...prev, name: text }))
-              }
-              autoCorrect={false}
-              autoCapitalize="words"
-              placeholderTextColor="gray"
-            />
+          <Text style={styles.nameId}>
+            {formatNumber(id?.toString() || "0")} -{" "}
+          </Text>
+          <TextInput
+            style={styles.nameInput}
+            value={entryMetaData.name}
+            placeholder="Unknown Species"
+            onChangeText={(text) =>
+              setEntryMetaData((prev) => ({ ...prev, name: text }))
+            }
+            autoCorrect={false}
+            autoCapitalize="words"
+            placeholderTextColor="gray"
+          />
         </View>
 
         <Image
@@ -436,7 +429,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   descriptionBox: {
-    height: 120,
+    minHeight: 120,
     fontSize: 16,
     width: "100%",
     borderRadius: 15,
@@ -457,7 +450,7 @@ const styles = StyleSheet.create({
   },
   observationBox: {
     fontSize: 16,
-    height: 120,
+    minHeight: 120,
     width: "100%",
     borderRadius: 15,
     borderCurve: "continuous",

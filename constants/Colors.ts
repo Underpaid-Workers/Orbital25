@@ -8,6 +8,7 @@ const colors = {
   tabBar: "#60BB7E",
   primary: "#4DB46A",
   tag: "#E0DD9E",
+  gray: "#D9D9D9",
 };
 
 //use this template to enable light,dark mode colors

@@ -1,6 +1,6 @@
 /**
  * @description Formats a non-zero padded number "X" into the zero padded "#XXX"
- * @param "X" as string
+ * @param input as "X" as string
  * @returns "#XXX" as string
  */
 export default function formatNumber(input: string): string {

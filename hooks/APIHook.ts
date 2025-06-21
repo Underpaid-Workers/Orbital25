@@ -6,7 +6,7 @@ export interface APIResult {
   types: string[];
 }
 
-export default function useAPI(): APIResult {
+export default function APIHook(): APIResult {
   return {
     name: "Mighty Bird",
     description:

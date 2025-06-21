@@ -6,7 +6,13 @@ const colors = {
   unique: ["#F0DC82", "#C6E0E0"],
 } as const;
 
-export default function formatRarirtyToGradient(rarity: string) {
+/**
+ * @description Converts the rarity to the respective color gradient
+ * @param rarity as "Common", "Uncommon", "Rare", "Very Rare", "Unique"
+ * @returns [color1, color2] as string array of length 2
+ * @default returns ["#DADADA", "#BFBFBF"]
+ */
+export default function formatRarityToGradient(rarity: string) {
   switch (rarity) {
     case "Common":
       return colors.common;

@@ -1,9 +1,10 @@
-import Leaderboard from "@/components/entry/Leaderboard";
-import { addFriend } from "@/supabase/social_hooks/addFriend";
-import { fetchFriends } from "@/supabase/social_hooks/fetchFriends";
-import { getLeaderboardData } from "@/supabase/social_hooks/fetchLeaderboard";
-import { removeFriend } from "@/supabase/social_hooks/removeFriend";
-import React, { useEffect, useState } from "react";
+import Leaderboard from "@/components/social/Leaderboard";
+import colors from "@/constants/Colors";
+import addFriend from "@/supabase/social_hooks/addFriend";
+import fetchFriends from "@/supabase/social_hooks/fetchFriends";
+import getLeaderboardData from "@/supabase/social_hooks/fetchLeaderboard";
+import removeFriend from "@/supabase/social_hooks/removeFriend";
+import { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -13,11 +14,13 @@ import {
   View,
 } from "react-native";
 
-const Social = () => {
+export default function social() {
   const [board, setBoard] = useState<1 | 2>(1);
   const [searchInput, setSearchInput] = useState("");
 
-  const [leaderboardData, setLeaderboardData] = useState<{ name: string; speciesNum: number }[]>([]);
+  const [leaderboardData, setLeaderboardData] = useState<
+    { name: string; speciesNum: number }[]
+  >([]);
   useEffect(() => {
     const fetchData = async () => {
       const data = await getLeaderboardData();
@@ -30,7 +33,9 @@ const Social = () => {
   const searchFriendsData = leaderboardData;
 
   const { friends, loading } = fetchFriends();
-  const [friendsList, setFriendsList] = useState<{ name: string; speciesNum: number}[]>([]);
+  const [friendsList, setFriendsList] = useState<
+    { name: string; speciesNum: number }[]
+  >([]);
 
   useEffect(() => {
     if (!loading) {
@@ -38,15 +43,20 @@ const Social = () => {
     }
   }, [loading, friends]);
 
-  const filteredFriends = searchFriendsData.filter((friend) =>
-    friend.name.toLowerCase().includes(searchInput.toLowerCase()) &&
-    !friendsList.some((f) => f.name === friend.name)
+  const filteredFriends = searchFriendsData.filter(
+    (friend) =>
+      friend.name.toLowerCase().includes(searchInput.toLowerCase()) &&
+      !friendsList.some((f) => f.name === friend.name)
   );
 
-  const handleAddFriend = async (friendToAdd: { name: string; speciesNum: number }) => {
-    const response = await addFriend(friendToAdd.name); 
+  const handleAddFriend = async (friendToAdd: {
+    name: string;
+    speciesNum: number;
+  }) => {
+    const response = await addFriend(friendToAdd.name);
     if (response.success) {
       setFriendsList((prev) => [...prev, friendToAdd]);
+      setSearchInput("");
       Alert.alert("Friend added!");
     } else {
       Alert.alert("Error", response.message);
@@ -54,37 +64,41 @@ const Social = () => {
   };
 
   const deleteFriend = (friendName: string) => {
-  Alert.alert(
-    "Confirm Removal",
-    `Are you sure you want to remove ${friendName} from your friends list?`,
-    [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Yes",
-        onPress: async () => {
-          const response = await removeFriend(friendName);
-          if (response.success) {
-            setFriendsList(prev => prev.filter(f => f.name !== friendName));
-            Alert.alert("Removed", `${friendName} has been removed from your friends`);
-          } else {
-            Alert.alert("Error", response.message);
-          }
+    Alert.alert(
+      "Confirm Removal",
+      `Are you sure you want to remove ${friendName} from your friends list?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
         },
-        style: "destructive",
-      },
-    ],
-    { cancelable: true }
-  );
-};
-
-
+        {
+          text: "Yes",
+          onPress: async () => {
+            const response = await removeFriend(friendName);
+            if (response.success) {
+              setFriendsList((prev) =>
+                prev.filter((f) => f.name !== friendName)
+              );
+              Alert.alert(
+                "Removed",
+                `${friendName} has been removed from your friends`
+              );
+            } else {
+              Alert.alert("Error", response.message);
+            }
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.buttonRow}>
+        {/* Friends button */}
         <TouchableOpacity
           style={[
             styles.button,
@@ -94,6 +108,7 @@ const Social = () => {
         >
           <Text style={styles.buttonText}>Friends</Text>
         </TouchableOpacity>
+        {/* Leaderboard Button */}
         <TouchableOpacity
           style={[
             styles.button,
@@ -115,18 +130,19 @@ const Social = () => {
           />
           <View style={styles.searchContainer}>
             {searchInput.trim().length === 0 ? (
-              <Leaderboard 
-              pulledData={friendsList}
-              showDelete
-              onDelete={deleteFriend}
+              <Leaderboard
+                pulledData={friendsList}
+                showDelete
+                onDelete={deleteFriend}
               />
             ) : (
               <View style={styles.resultsContainer}>
                 {filteredFriends.map((friend, index) => (
                   <View key={index} style={styles.friendRow}>
                     <Text style={styles.friendName}>{friend.name}</Text>
-                    <TouchableOpacity style={styles.addFriendButton}
-                    onPress={() => handleAddFriend(friend)}
+                    <TouchableOpacity
+                      style={styles.addFriendButton}
+                      onPress={() => handleAddFriend(friend)}
                     >
                       <Text style={styles.addFriendButtonText}>Add Friend</Text>
                     </TouchableOpacity>
@@ -141,9 +157,7 @@ const Social = () => {
       )}
     </View>
   );
-};
-
-export default Social;
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -158,13 +172,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   activeButton: {
-    backgroundColor: "rgba(78, 180, 107, 1)",
+    backgroundColor: colors.primary,
   },
   inactiveButton: {
     backgroundColor: "rgba(78, 180, 107, 0.3)",
   },
   button: {
-    backgroundColor: "#4EB46B",
     borderRadius: 10,
     width: 165,
     height: 50,
@@ -182,17 +195,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   searchBar: {
-    width: 350,
+    minWidth: "80%",
     height: 45,
     backgroundColor: "rgba(78, 180, 107, 0.3)",
-    paddingHorizontal: 5,
+    paddingHorizontal: 8,
     fontSize: 16,
     color: "black",
     marginBottom: 20,
     borderRadius: 10,
   },
   friendRow: {
-    width: '100%',
+    width: "100%",
     height: 85,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -224,9 +237,9 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
   resultsContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

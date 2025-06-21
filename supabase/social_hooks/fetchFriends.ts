@@ -7,7 +7,12 @@ type Friend = {
   isSelf?: boolean;
 };
 
-export const fetchFriends = () => {
+/**
+ * @description Fetch friends list of user from database
+ * @params none
+ * @returns Object of {friends, loading}
+ */
+export default function fetchFriends() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +30,7 @@ export const fetchFriends = () => {
         setLoading(false);
         return;
       }
-      
+
       //add user's own data to friend list
       const userId = user.id;
       const userEmail = user.email ?? "unknown@example.com";
@@ -46,7 +51,7 @@ export const fetchFriends = () => {
         {
           name: userName,
           speciesNum: mySpeciesCount || 0,
-          isSelf: true
+          isSelf: true,
         },
       ];
 
@@ -96,4 +101,4 @@ export const fetchFriends = () => {
   }, []);
 
   return { friends, loading };
-};
+}

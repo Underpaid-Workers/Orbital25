@@ -1,6 +1,11 @@
 import supabase from "@/supabase/main";
 
-export const getLeaderboardData = async () => {
+/**
+ * @description Fetch data for the global leaderboard
+ * @params none
+ * @returns Array of entries?
+ */
+export default async function getLeaderboardData() {
   const { data: users, error: userError } = await supabase
     .from("users")
     .select("id, email");
@@ -35,5 +40,5 @@ export const getLeaderboardData = async () => {
 
   //const top20 = filteredData.sort((a,b) => b.speciesNum - a.speciesNum).slice(0,20);
 
-  return filteredData
-};
+  return filteredData;
+}

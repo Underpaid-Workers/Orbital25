@@ -1,8 +1,17 @@
 import supabase from "@/supabase/main";
 
-type RemoveFriendResult = { success: true } | { success: false; message: string };
+type RemoveFriendResult =
+  | { success: true }
+  | { success: false; message: string };
 
-export const removeFriend = async (friendName: string): Promise<RemoveFriendResult> => {
+/**
+ * @description Removes friend from friends list of user
+ * @param friendName as string
+ * @returns Promise<RemoveFriendResult>
+ */
+export default async function removeFriend(
+  friendName: string
+): Promise<RemoveFriendResult> {
   const {
     data: { session },
     error: sessionError,
@@ -13,12 +22,9 @@ export const removeFriend = async (friendName: string): Promise<RemoveFriendResu
   }
   const currentUserId = session.user.id;
 
-//friend
+  //friend
   const friendEmail = `${friendName}@gmail.com`;
-  const {
-    data: friendUser,
-    error: friendLookupError,
-  } = await supabase
+  const { data: friendUser, error: friendLookupError } = await supabase
     .from("users")
     .select("id")
     .eq("email", friendEmail)
@@ -42,13 +48,11 @@ export const removeFriend = async (friendName: string): Promise<RemoveFriendResu
     return { success: false, message: deleteError.message };
   }
 
-//DELETE INVERSE DIRECTION LATER ON
+  //DELETE INVERSE DIRECTION LATER ON
   //await supabase
-    //.from("friendships")
-    //.delete()
-    //.match({ user_id: friendId, friend_id: currentUserId });
+  //.from("friendships")
+  //.delete()
+  //.match({ user_id: friendId, friend_id: currentUserId });
 
   return { success: true };
-};
-
-
+}

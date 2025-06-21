@@ -22,6 +22,14 @@ export default async function fetchEntries(
     return supabase.storage.from("entry-images").getPublicUrl(image_url).data;
   }
 
+  const rarityScores: Record<string, number> = {
+    Common: 10,
+    Uncommon: 20,
+    Rare: 50,
+    "Very Rare": 100,
+    Unique: 1000,
+  };
+
   type coordinate = {
     lat: number;
     long: number;
@@ -92,6 +100,13 @@ export default async function fetchEntries(
         }
 
         result.entryCount = count;
+        result.speciesCount = new Set(
+          result.data.map((entry) => entry.name)
+        ).size;
+        result.score = result.data.reduce(
+          (sum, entry) => sum + (rarityScores[entry.rarity] || 0),
+          0
+        );
       }
     }
   } catch (error) {
