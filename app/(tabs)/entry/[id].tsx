@@ -5,7 +5,9 @@ import colors from "@/constants/Colors";
 import { placeholderImage } from "@/constants/Image";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import formatNumber from "@/hooks/formatNumber";
+import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -53,7 +55,12 @@ export default function viewEntry() {
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.entryTitle}>
-          {displayId} - {entry.name}
+          {displayId} - {entry.name}{" "}
+          <MaterialCommunityIcons
+            name="cards-playing-diamond-multiple"
+            size={30}
+            color={formatRarityToGradient(entry.rarity)[0]}
+          />
         </Text>
         <Text style={styles.entryText}>Captured: {datetime}</Text>
         <Image
