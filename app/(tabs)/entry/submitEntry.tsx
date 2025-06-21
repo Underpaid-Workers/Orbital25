@@ -78,9 +78,11 @@ export default function submitEntry() {
 
   const fetchAiSummary = async (
     speciesName: string
-  ): Promise<Partial<EntryMetadata> | null> => {
+  ): Promise<Partial<EntryMetadata> | "NONE" | null> => {
     try {
-      const prompt = `Return only a raw JSON object with the following data about the species "${speciesName}":
+      const prompt = `Firstly, check if "${speciesName}" sounds like a valid animal or plant. If it is NOT, immediately return the word "NONE"
+      and do not comply with the following instructions. If it is a valid animal or plant species, carry on with the following instructions.
+      Return only a raw JSON object with the following data about the species "${speciesName}":
   {
     "description": "Brief description of the species with 2 fun facts integrated into the description, under 100 words. 
                     Make sure the sentences flow smoothly, and make it engaging for a reader",
@@ -103,9 +105,10 @@ export default function submitEntry() {
         contents: prompt,
       });
 
-      const raw = response.text;
-
+      const raw = response.text?.trim();
       if (!raw) throw new Error("No response from Gemini");
+
+      if (raw.toUpperCase() === "NONE") return "NONE";
 
       const match = raw.match(/{[\s\S]*}/);
       if (!match) throw new Error("No valid JSON block found in response");
@@ -161,6 +164,18 @@ export default function submitEntry() {
           .map((word) => word[0].toUpperCase() + word.substring(1))
           .join(" ");
         const aiSummary = await fetchAiSummary(speciesName);
+
+        if (aiSummary === "NONE") {
+          setIsFetchingAPI(false);     // stop spinner
+          Alert.alert(
+            "Not a plant or animal!",
+            "Please upload a photo of a plant or an animal.",
+          [{ text: "OK", onPress: () => router.replace("/(tabs)/camera") }],
+          { cancelable: false }
+          );
+        return;                      // bail out before setEntryMetaData
+        }
+/* =================== */
 
         if (!aiSummary) {
           throw new Error("error with returning summary");
@@ -271,10 +286,21 @@ export default function submitEntry() {
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.title}>Entry Identified!</Text>
-        <Text style={styles.name}>
-          {formatNumber(id?.toString() || "0") + " - "}
-          {entryMetaData.name !== "" ? entryMetaData.name : "Unknown Species"}
-        </Text>
+        <View style={styles.nameRow}>
+          <Text style={styles.nameId}>{formatNumber(id?.toString() || "0")} - </Text>
+            <TextInput
+              style={styles.nameInput}
+              value={entryMetaData.name}
+              placeholder="Unknown Species"
+              onChangeText={(text) =>
+                setEntryMetaData((prev) => ({ ...prev, name: text }))
+              }
+              autoCorrect={false}
+              autoCapitalize="words"
+              placeholderTextColor="gray"
+            />
+        </View>
+
         <Image
           source={{ uri: photo }}
           style={styles.image}
@@ -517,5 +543,25 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     alignItems: "center",
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+    flexWrap: "wrap",
+  },
+  nameId: {
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  nameInput: {
+    fontSize: 25,
+    fontWeight: "bold",
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+    paddingVertical: 2,
+    minWidth: 100,
+    maxWidth: "70%",
   },
 });

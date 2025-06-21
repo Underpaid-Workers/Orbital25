@@ -2,6 +2,7 @@ import Leaderboard from "@/components/entry/Leaderboard";
 import { addFriend } from "@/supabase/social_hooks/addFriend";
 import { fetchFriends } from "@/supabase/social_hooks/fetchFriends";
 import { getLeaderboardData } from "@/supabase/social_hooks/fetchLeaderboard";
+import { removeFriend } from "@/supabase/social_hooks/removeFriend";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -52,6 +53,35 @@ const Social = () => {
     }
   };
 
+  const deleteFriend = (friendName: string) => {
+  Alert.alert(
+    "Confirm Removal",
+    `Are you sure you want to remove ${friendName} from your friends list?`,
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: async () => {
+          const response = await removeFriend(friendName);
+          if (response.success) {
+            setFriendsList(prev => prev.filter(f => f.name !== friendName));
+            Alert.alert("Removed", `${friendName} has been removed from your friends`);
+          } else {
+            Alert.alert("Error", response.message);
+          }
+        },
+        style: "destructive",
+      },
+    ],
+    { cancelable: true }
+  );
+};
+
+
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonRow}>
@@ -85,7 +115,11 @@ const Social = () => {
           />
           <View style={styles.searchContainer}>
             {searchInput.trim().length === 0 ? (
-              <Leaderboard pulledData={friendsList} />
+              <Leaderboard 
+              pulledData={friendsList}
+              showDelete
+              onDelete={deleteFriend}
+              />
             ) : (
               <View style={styles.resultsContainer}>
                 {filteredFriends.map((friend, index) => (

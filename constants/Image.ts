@@ -5,6 +5,7 @@ export const emptyImage = require("../assets/images/EmptyImage.png");
 export const missingImage = require("../assets/images/MissingImage.png");
 export const successImage = require("../assets/images/SuccessImage.png");
 export const placeholderImage = require("../assets/images/PlaceholderImage.png");
+export const deleteImage = require("../assets/images/deleteIcon.png");
 
 //Tags
 export const animalSpeciesTag = require("../assets/images/Tags/animal.png");
