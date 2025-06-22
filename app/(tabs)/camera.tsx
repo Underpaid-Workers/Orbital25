@@ -84,7 +84,7 @@ export default function camera() {
   const savePicture = () => {
     router.navigate({
       pathname: "/(tabs)/entry/submitEntry",
-      params: { photo: photo, dateTime: photoCaptureTime },
+      params: { photo: photo, datetime: photoCaptureTime },
     });
   };
 

@@ -1,20 +1,30 @@
-import { EnvironmentTag, SpeciesTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
-import useFormatNumber from "@/hooks/useFormatNumber";
+import formatNumber from "@/hooks/formatNumber";
+import formatRarirtyToGradient from "@/hooks/formatRarityToGradient";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import SpeciesTag, { EnvironmentTag } from "./Tag";
 
 interface EntryCard {
   id: number;
   name: string;
   image: string;
+  rarity: string;
+  speciesType: string;
+  envType: string;
 }
 
-export default function EntryCard({ id, name, image }: EntryCard) {
+export default function EntryCard({
+  id,
+  name,
+  image,
+  rarity,
+  speciesType,
+  envType,
+}: EntryCard) {
   const router = useRouter();
-
   const onClickDetails = () => {
     console.log(`Entry ${id} clicked`);
     router.navigate({
@@ -22,25 +32,23 @@ export default function EntryCard({ id, name, image }: EntryCard) {
       params: { id },
     });
   };
-
   return (
     <TouchableOpacity style={styles.card} onPress={onClickDetails}>
       <LinearGradient
-        colors={[colors.primary, "#1E7744"]}
-        end={{ x: 1, y: 0 }}
+        colors={formatRarirtyToGradient(rarity)}
+        start={{ x: 0, y: 0.9 }}
+        end={{ x: 0.1, y: 1.6 }}
+        dither={true}
         style={styles.cardGradient}
       >
-        {/* Id Number + Entry Name */}
         <View style={styles.textContent}>
-          <Text style={styles.index}>{useFormatNumber(id.toString())}</Text>
+          <Text style={styles.index}>{formatNumber(id.toString())}</Text>
           <Text style={styles.name}>{name}</Text>
           <View style={styles.tagContainer}>
-            <SpeciesTag species="Animal" />
-            <EnvironmentTag environment="Flying" />
+            <SpeciesTag species={speciesType} />
+            <EnvironmentTag env={envType} />
           </View>
         </View>
-
-        {/* Image */}
         <View style={styles.imageContent}>
           <Image source={image} style={styles.image} contentFit="cover" />
         </View>
@@ -52,10 +60,11 @@ export default function EntryCard({ id, name, image }: EntryCard) {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    height: 160,
+    height: 140,
     minWidth: "100%",
     borderRadius: 15,
-    paddingVertical: 10,
+    borderColor: colors.primary,
+    borderWidth: 0.3,
   },
   cardGradient: {
     flex: 1,

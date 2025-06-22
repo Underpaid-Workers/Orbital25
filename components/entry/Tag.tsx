@@ -3,64 +3,81 @@ import {
   animalSpeciesTag,
   aquaticEnvTag,
   flyingEnvTag,
+  placeholderImage,
   plantSpeciesTag,
   terrestrialEnvTag,
 } from "@/constants/Image";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-type Species = {
-  species: "Animal" | "Plant";
-};
+export default function SpeciesTag({ species }: { species: string }) {
+  let image;
+  let tag = species;
+  switch (species) {
+    case "Animal":
+      image = animalSpeciesTag;
+      break;
+    case "Plant":
+      image = plantSpeciesTag;
+      break;
+    default:
+      image = placeholderImage; //TODO: replace with proper empty icon image
+      tag = "Undefined";
+  }
 
-type Environment = {
-  environment: "Aquatic" | "Flying" | "Terrestrial";
-};
-
-const EnvironmentMap = {
-  Aquatic: aquaticEnvTag,
-  Flying: flyingEnvTag,
-  Terrestrial: terrestrialEnvTag,
-};
-
-export function SpeciesTag({ species }: Species) {
   return (
     <View style={styles.tag}>
-      <Image
-        source={species === "Animal" ? animalSpeciesTag : plantSpeciesTag}
-        style={styles.icon}
-      />
-      <Text style={styles.text}>{species}</Text>
+      <Image source={image} style={styles.icon} />
+      <Text style={styles.text}>{tag}</Text>
     </View>
   );
 }
 
-export function EnvironmentTag({ environment }: Environment) {
+export function EnvironmentTag({ env }: { env: string }) {
+  let image;
+  let tag = env;
+  switch (env) {
+    case "Aquatic":
+      image = aquaticEnvTag;
+      break;
+    case "Terrestrial":
+      image = terrestrialEnvTag;
+      break;
+    case "Flying":
+      image = flyingEnvTag;
+      break;
+    default:
+      image = placeholderImage; //TODO: replace with proper empty icon image
+      tag = "Undefined";
+  }
   return (
     <View style={styles.tag}>
-      <Image source={EnvironmentMap[environment]} style={styles.icon} />
-      <Text style={styles.text}>{environment}</Text>
+      <Image source={image} style={styles.icon} />
+      <Text style={styles.text}>{tag}</Text>
     </View>
   );
 }
-
-export default SpeciesTag;
 
 const styles = StyleSheet.create({
   tag: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-around",
     backgroundColor: colors.tag,
     borderRadius: 20,
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     width: 100,
-    justifyContent: "space-around",
+    borderColor: colors.primary,
+    borderWidth: 0,
   },
   icon: {
     width: 20,
     height: 20,
+    color: colors.text,
   },
   text: {
-    fontSize: 11,
+    fontSize: 12,
+    textAlign: "center",
+    color: colors.text,
   },
 });

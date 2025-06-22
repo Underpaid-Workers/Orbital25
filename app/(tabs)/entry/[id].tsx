@@ -3,9 +3,11 @@ import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import { placeholderImage } from "@/constants/Image";
-import useFormatDateTimeDisplay from "@/hooks/useFormatDateTimeDisplay";
-import useFormatNumber from "@/hooks/useFormatNumber";
+import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
+import formatNumber from "@/hooks/formatNumber";
+import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
@@ -16,21 +18,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 
 export default function viewEntry() {
-  //Allows this function to get respective id of EntryCard clicked through Expo router
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, loading, removeEntry } = useEntryDataContext();
 
-  //search for specific entry in entryData
-  const entry = data[Number.parseInt(id) - 1]; //since data is 0-indexed, while id is 1 indexed
+  //data is 0-indexed, while id is 1 indexed
+  const entry = data[Number.parseInt(id) - 1];
 
-  let dateTime = "<No date available>";
+  let datetime = "<No date available>";
   let displayId = "#000";
+  let observations = "Nothing written here...";
 
   if (entry !== undefined) {
-    dateTime = entry.datetime = useFormatDateTimeDisplay(entry.datetime);
-    displayId = useFormatNumber(entry.id.toString());
+    datetime = formatDateTimeDisplay(entry.datetime);
+    displayId = formatNumber(entry.id.toString());
+    observations =
+      entry.observations !== "" ? entry.observations : observations;
   }
 
   const router = useRouter();
@@ -50,9 +55,14 @@ export default function viewEntry() {
     <ScrollView style={styles.container}>
       <View style={styles.entryContainer}>
         <Text style={styles.entryTitle}>
-          {displayId} - {entry.name}
+          {displayId} - {entry.name}{" "}
+          <MaterialCommunityIcons
+            name="cards-playing-diamond-multiple"
+            size={30}
+            color={formatRarityToGradient(entry.rarity)[0]}
+          />
         </Text>
-        <Text style={styles.entryText}>Captured: {dateTime}</Text>
+        <Text style={styles.entryText}>Captured: {datetime}</Text>
         <Image
           source={entry.image}
           style={styles.entryImage}
@@ -60,8 +70,8 @@ export default function viewEntry() {
           placeholder={placeholderImage}
         />
         <View style={styles.tagContainer}>
-          <SpeciesTag species="Animal" />
-          <EnvironmentTag environment="Flying" />
+          <SpeciesTag species={entry.speciesType} />
+          <EnvironmentTag env={entry.environmentType} />
         </View>
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{entry.description}</Text>
@@ -71,7 +81,27 @@ export default function viewEntry() {
         <InfoBox title="Lifespan" text={entry.lifespan} />
         <Text style={styles.entryTextBoxTitle}>Observations</Text>
         <View style={styles.entryTextBox}>
-          <Text style={styles.entryText}>{entry.observations}</Text>
+          <Text style={styles.entryText}>{observations}</Text>
+        </View>
+        <Text style={styles.entryTextBoxTitle}>Location</Text>
+        <View style={styles.mapBox}>
+          <MapView
+            style={styles.mapView}
+            initialRegion={{
+              latitude: entry.location.lat,
+              latitudeDelta: 0.1,
+              longitude: entry.location.long,
+              longitudeDelta: 0.1,
+            }}
+            cacheEnabled={true}
+          >
+            <Marker
+              coordinate={{
+                latitude: entry.location.lat,
+                longitude: entry.location.long,
+              }}
+            ></Marker>
+          </MapView>
         </View>
         <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
           <Text style={styles.deleteButtonText}>Delete Entry</Text>
@@ -130,12 +160,23 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     borderWidth: 1,
     padding: 16,
-    justifyContent: "center",
   },
   entryTextBoxTitle: {
     width: "100%",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  mapBox: {
+    height: 150,
+    width: "100%",
+    borderRadius: 15,
+    borderCurve: "continuous",
+    overflow: "hidden",
+    backgroundColor: "yellow",
+  },
+  mapView: {
+    height: "100%",
+    width: "100%",
   },
   deleteButton: {
     height: 40,
