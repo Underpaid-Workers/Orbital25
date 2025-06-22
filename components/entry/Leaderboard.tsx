@@ -2,22 +2,22 @@ import { deleteImage } from "@/constants/Image";
 import React from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-type LeaderboardItem = {
+type SpeciesLeaderboardItem = {
   name: string,
   speciesNum: number,
   isSelf?: boolean,
 };
 
-type Leaderboard = {
-  pulledData: LeaderboardItem[],
+type SpeciesLeaderboard = {
+  pulledData: SpeciesLeaderboardItem[],
   showDelete?: boolean,
   onDelete?: (name:string) => void,
 }
 
-export default function Leaderboard({pulledData, showDelete = false, onDelete,}: Leaderboard){
+export default function Leaderboard({pulledData, showDelete = false, onDelete,}: SpeciesLeaderboard){
     const sortedData = [...pulledData].sort((a, b) => b.speciesNum - a.speciesNum);
 
-    const renderItem = ({item, index }: {item: LeaderboardItem, index: number}) => (
+    const renderItem = ({item, index }: {item: SpeciesLeaderboardItem, index: number}) => (
         <View
         style={[
             styles.container,
@@ -28,7 +28,7 @@ export default function Leaderboard({pulledData, showDelete = false, onDelete,}:
             <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>{item.name}</Text>
 
             <View style={styles.speciesContainer}>
-              <Text style= {styles.speciesNum}>{item.speciesNum }</Text>
+              <Text style= {styles.criteria}>{item.speciesNum }</Text>              
               <Text style={styles.species}> species collected</Text>
             </View>
 
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
-  speciesNum: {
+  criteria: {
     fontSize: 15,
     fontWeight: 'bold',
     marginRight: 5,

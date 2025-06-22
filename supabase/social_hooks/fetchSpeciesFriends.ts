@@ -1,14 +1,14 @@
 import supabase from "@/supabase/main";
 import { useEffect, useState } from "react";
 
-type Friend = {
+type SpeciesFriend = {
   name: string;
   speciesNum: number;
   isSelf?: boolean;
 };
 
-export const fetchFriends = () => {
-  const [friends, setFriends] = useState<Friend[]>([]);
+export const fetchSpeciesFriends = () => {
+  const [friends, setFriends] = useState<SpeciesFriend[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export const fetchFriends = () => {
         return;
       }
 
-      const results: Friend[] = [
+      const results: SpeciesFriend[] = [
         {
           name: userName,
           speciesNum: mySpeciesCount || 0,

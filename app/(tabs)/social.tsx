@@ -1,7 +1,7 @@
 import Leaderboard from "@/components/entry/Leaderboard";
 import { addFriend } from "@/supabase/social_hooks/addFriend";
-import { fetchFriends } from "@/supabase/social_hooks/fetchFriends";
-import { getLeaderboardData } from "@/supabase/social_hooks/fetchLeaderboard";
+import { fetchSpeciesFriends } from "@/supabase/social_hooks/fetchSpeciesFriends";
+import { getSpeciesLeaderboardData } from "@/supabase/social_hooks/fetchSpeciesLeaderboard";
 import { removeFriend } from "@/supabase/social_hooks/removeFriend";
 import React, { useEffect, useState } from "react";
 import {
@@ -20,7 +20,7 @@ const Social = () => {
   const [leaderboardData, setLeaderboardData] = useState<{ name: string; speciesNum: number }[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getLeaderboardData();
+      const data = await getSpeciesLeaderboardData();
       setLeaderboardData(data);
     };
 
@@ -29,7 +29,7 @@ const Social = () => {
 
   const searchFriendsData = leaderboardData;
 
-  const { friends, loading } = fetchFriends();
+  const { friends, loading } = fetchSpeciesFriends();
   const [friendsList, setFriendsList] = useState<{ name: string; speciesNum: number}[]>([]);
 
   useEffect(() => {

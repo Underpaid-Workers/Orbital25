@@ -1,6 +1,6 @@
 import supabase from "@/supabase/main";
 
-export const getLeaderboardData = async () => {
+export const getSpeciesLeaderboardData = async () => {
   const { data: users, error: userError } = await supabase
     .from("users")
     .select("id, email");
