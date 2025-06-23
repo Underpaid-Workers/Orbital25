@@ -34,6 +34,11 @@ export default ({ config }) => {
            "foregroundImage": "./assets/images/AppIcon.png",
            "backgroundColor": "#ffffff",
          },
+         "config": {
+          "googleMaps": {
+            "apiKey": "AIzaSyBuL5Lh90WPEdrewmD4JqiIM3m7LIsM-Sc",
+          },
+        },
          "edgeToEdgeEnabled": true,
          hfToken: process.env.HF_TOKEN,
          hfModelUrl: process.env.HF_MODEL_URL,
