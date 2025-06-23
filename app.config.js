@@ -16,6 +16,7 @@ export default ({ config }) => {
         },
         hfToken: process.env.HF_TOKEN,
         hfModelUrl: process.env.HF_MODEL_URL,
+        geminiAPIKey: process.env.GEMINI_API_KEY
       },
        "name": "Orbital25",
        "slug": "Orbital25",
@@ -34,9 +35,15 @@ export default ({ config }) => {
            "foregroundImage": "./assets/images/AppIcon.png",
            "backgroundColor": "#ffffff",
          },
+         "config": {
+          "googleMaps": {
+            "apiKey": "process.env.GOOGLE_MAPS_API_KEY",
+          },
+        },
          "edgeToEdgeEnabled": true,
          hfToken: process.env.HF_TOKEN,
          hfModelUrl: process.env.HF_MODEL_URL,
+         geminiAPIKey: process.env.GEMINI_API_KEY
        },
        "web": {
          "bundler": "metro",

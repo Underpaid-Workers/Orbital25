@@ -97,10 +97,11 @@ const styles = StyleSheet.create({
   index: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "grey",
+    color: "gray",
   },
   name: {
     fontSize: 24,
     fontWeight: "bold",
+    color: colors.text,
   },
 });

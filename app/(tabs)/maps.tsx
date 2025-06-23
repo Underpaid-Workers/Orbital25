@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 type marker = {
   name: string;
@@ -141,6 +141,7 @@ export default function maps() {
     <View style={styles.container}>
       <MapView
         style={styles.mapView}
+        provider={PROVIDER_GOOGLE}
         onRegionChangeComplete={(region) => {
           setCurrentLocation({ lat: region.latitude, long: region.longitude });
           // console.log(region.latitude + " " + region.longitude);
