@@ -1,6 +1,13 @@
 import Constants from "expo-constants";
 
-export default async function fetchSpeciesName(base64Image: string) {
+/**
+ * @description Retrieves species name from image through the Hugging face API
+ * @param base64Image as string
+ * @returns Promise<string> ("nothing" returned if no species found)
+ */
+export default async function fetchSpeciesName(
+  base64Image: string
+): Promise<string> {
   let hfToken: any = null;
   let hfModelUrl: any = null;
 

@@ -2,6 +2,11 @@ import { EntryMetadata } from "@/supabase/entrySchema";
 import { GoogleGenAI } from "@google/genai";
 import Constants from "expo-constants";
 
+/**
+ * @description Fetch all species information from species name through Gemini API
+ * @param speciesName as string
+ * @returns Promise<Partial<EntryMetadata> | "NONE" | null>
+ */
 export default async function fetchSpeciesSummary(
   speciesName: string
 ): Promise<Partial<EntryMetadata> | "NONE" | null> {
