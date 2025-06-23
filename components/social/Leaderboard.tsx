@@ -40,7 +40,7 @@ export default function Leaderboard({
     <View
       style={[
         styles.container,
-        { backgroundColor: index % 2 === 0 ? colors.gray : colors.background },
+        { backgroundColor: index % 2 === 0 ? "D9D9D9" : colors.background },
       ]}
     >
       <Text style={styles.rank}>{index + 1}</Text>

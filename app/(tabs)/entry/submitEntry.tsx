@@ -77,9 +77,9 @@ export default function submitEntry() {
   {
     "description": "Brief description of the species with 2 fun facts integrated into the description, under 100 words. 
                     Make sure the sentences flow smoothly, and make it engaging for a reader",
-    "weight": "xx-xx unit of measurement (kg or g)",
-    "height": "xx-xx unit of measurement (m or cm)",
-    "lifespan": "xx-xx unit of measurement (days, months, or years)",
+    "weight": "xx - xx unit of measurement (kg or g)",
+    "height": "xx - xx unit of measurement (m or cm)",
+    "lifespan": "xx - xx unit of measurement (days, months, or years)",
     "speciesType": "Plant" or "Animal",
     "environmentType": "Terrestrial", "Aquatic", or "Flying",
     "rarity": "Common", "Uncommon", "Rare", "Very Rare", or "Unique"
@@ -157,19 +157,18 @@ export default function submitEntry() {
         const aiSummary = await fetchAiSummary(speciesName);
 
         if (aiSummary === "NONE") {
-          setIsFetchingAPI(false); // stop spinner
           Alert.alert(
             "Not a plant or animal!",
             "Please upload a photo of a plant or an animal.",
-            [{ text: "OK", onPress: () => router.replace("/(tabs)/camera") }],
+            [{ text: "OK" }],
             { cancelable: false }
           );
+          router.back();
           return; // bail out before setEntryMetaData
         }
-        /* =================== */
 
         if (!aiSummary) {
-          throw new Error("error with returning summary");
+          throw new Error("Error with returning summary");
         } else {
           setEntryMetaData({
             name: speciesNameUppercased,
@@ -181,7 +180,6 @@ export default function submitEntry() {
             height: aiSummary.height || "",
             lifespan: aiSummary.lifespan || "",
           });
-          setIsFetchingAPI(false);
         }
       }
     } catch (error) {
@@ -191,10 +189,11 @@ export default function submitEntry() {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      setIsFetchingAPI(false);
+
       Alert.alert("AI Identification Failed", errorMessage);
       router.replace("/(tabs)/camera");
     } finally {
+      //ensure fetching state is false no matter what
       setIsFetchingAPI(false);
     }
   };
@@ -450,6 +449,7 @@ const styles = StyleSheet.create({
   },
   observationBox: {
     fontSize: 16,
+    color: "black",
     minHeight: 120,
     width: "100%",
     borderRadius: 15,
