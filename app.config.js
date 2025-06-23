@@ -16,6 +16,7 @@ export default ({ config }) => {
         },
         hfToken: process.env.HF_TOKEN,
         hfModelUrl: process.env.HF_MODEL_URL,
+        geminiAPIKey: process.env.GEMINI_API_KEY
       },
        "name": "Orbital25",
        "slug": "Orbital25",
@@ -42,6 +43,7 @@ export default ({ config }) => {
          "edgeToEdgeEnabled": true,
          hfToken: process.env.HF_TOKEN,
          hfModelUrl: process.env.HF_MODEL_URL,
+         geminiAPIKey: process.env.GEMINI_API_KEY
        },
        "web": {
          "bundler": "metro",
