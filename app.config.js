@@ -24,7 +24,7 @@ export default ({ config }) => {
        "icon": "./assets/images/AppIcon.png",
        "scheme": "orbital25",
        "userInterfaceStyle": "automatic",
-       "newArchEnabled": true,
+       "newArchEnabled": false,
        "ios": {
          "supportsTablet": true
        },
