@@ -73,7 +73,7 @@ export default function submitEntry() {
         return; // bail out before setEntryMetaData
       }
 
-      if (!aiSummary) {
+if (!aiSummary) {
         throw new Error("error with returning summary");
       } else {
         setEntryMetaData({
@@ -352,6 +352,7 @@ const styles = StyleSheet.create({
   },
   observationBox: {
     fontSize: 16,
+    color: "black",
     minHeight: 120,
     width: "100%",
     borderRadius: 15,

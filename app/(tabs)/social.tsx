@@ -125,6 +125,7 @@ export default function social() {
           <TextInput
             style={styles.searchBar}
             placeholder="Add new friend..."
+            placeholderTextColor={"gray"}
             value={searchInput}
             onChangeText={setSearchInput}
           />
