@@ -74,6 +74,7 @@ export default function inventory() {
           data={data}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <View style={{ height: 16 }}></View>}
+          ListHeaderComponent={<View style={{ height: 16 }} />}
           renderItem={({ item }) => (
             <EntryCard
               id={item.id}
@@ -95,10 +96,10 @@ export default function inventory() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     height: "100%",
     width: "100%",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
     alignItems: "center",
   },
   loadingContainer: {

@@ -23,12 +23,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 16,
     height: 70,
+    paddingHorizontal: 16,
     width: "100%",
     borderRadius: 15,
     borderCurve: "circular",
     backgroundColor: colors.primary,
-    marginBottom: 16,
   },
 });
