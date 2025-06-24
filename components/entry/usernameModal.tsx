@@ -1,0 +1,82 @@
+import { useState } from "react";
+import { Alert, Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+
+type Props = {
+  visible: boolean;
+  onSubmit: (username: string) => Promise<void>;
+};
+
+export default function UsernameModal({ visible, onSubmit }: Props) {
+  const [input, setInput] = useState("");
+
+  const handleSave = async () => {
+  const trimmed = input.trim();
+
+  //max 20 characters
+  if (!trimmed) {
+    Alert.alert("Error", "Username cannot be empty");
+    return;
+  }
+
+  //no spacing allowed
+  if (/\s/.test(trimmed)) {
+    Alert.alert("Error", "Username cannot contain spaces");
+    return;
+  }
+
+  if (trimmed.length > 20) {
+    Alert.alert("Error", "Username cannot exceed 20 characters");
+    return;
+  }
+
+  await onSubmit(trimmed);
+  setInput("");
+};
+
+
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <View style={styles.overlay}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.label}>Enter a username:</Text>
+          <TextInput
+            placeholder="Username"
+            value={input}
+            onChangeText={setInput}
+            maxLength={20}
+            style={styles.input}
+          />
+          <Button title="Save Username" onPress={handleSave} />
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.4)",
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    gap: 12,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: "500",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 12,
+  },
+});
+
