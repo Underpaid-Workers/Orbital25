@@ -70,4 +70,13 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   );
 }
 
+/**
+ * @description (auth)-wide context for managing authentication sessions
+ * @param session the user session as Session | null
+ * @param loading the boolean of loading state. True when doing authentication. else False
+ * @param logIn a function which initiates a log in request with supabase auth
+ * @param logOut a function which initiates a log out request with supabase auth
+ * @param signUpWithEmail a function which initiates a sign up request with supabase auth
+ * @example const { session, loading, logIn } = useAuthContext();
+ */
 export const useAuthContext = () => useContext(AuthContext);

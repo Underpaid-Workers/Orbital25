@@ -3,8 +3,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-//Header icon components used for header tab
-
 export default function HeaderBar({ navigation }: BottomTabHeaderProps) {
   return (
     <View style={styles.headerTab}>
