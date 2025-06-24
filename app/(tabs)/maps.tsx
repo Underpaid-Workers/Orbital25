@@ -2,13 +2,14 @@ import FilterBar from "@/components/maps/FilterBar";
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
+import { useAuthContext } from "@/providers/AuthProvider";
 import fetchGlobalEntriesByLocation, {
   location,
 } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 type marker = {
@@ -22,6 +23,7 @@ type marker = {
 };
 
 export default function maps() {
+  const { session } = useAuthContext();
   //starter location defaulted to center of Singapore.
   const [currentLocation, setCurrentLocation] = useState<location>({
     lat: 1.3518865175286692,
@@ -37,6 +39,7 @@ export default function maps() {
   const [filterRarity, setFilterRarity] = useState<string>("");
   const [filterSpecies, setFilterSpecies] = useState<string>("");
   const [filterEnv, setFilterEnv] = useState<string>("");
+  const [filterUser, setFilterUser] = useState<boolean>(true);
 
   const animateToLocation = (pos: location) => {
     mapRef.current?.animateToRegion(
@@ -79,8 +82,19 @@ export default function maps() {
       );
       return [...fromOld, ...fromNew];
     };
-    await fetchGlobalEntriesByLocation(currentLocation).then((entries) => {
+
+    if (filterUser) {
+      console.log("Filtering by user");
+    } else {
+      console.log("Filtering by global");
+    }
+    await fetchGlobalEntriesByLocation(
+      currentLocation,
+      filterUser,
+      session
+    ).then((entries) => {
       const result = updateMarkers(data, entries);
+      console.log(`${result.length} entries fetched`);
       let filteredResult = result;
       if (filterRarity !== "") {
         console.log(`${filterRarity} filtered`);
@@ -100,6 +114,7 @@ export default function maps() {
           (entry) => entry.env_type === filterEnv
         );
       }
+      console.log(`${filteredResult.length} entries left after filter`);
       setData(filteredResult);
     });
   };
@@ -144,7 +159,6 @@ export default function maps() {
         provider={PROVIDER_GOOGLE}
         onRegionChangeComplete={(region) => {
           setCurrentLocation({ lat: region.latitude, long: region.longitude });
-          // console.log(region.latitude + " " + region.longitude);
           getMarkers();
         }}
         onMapReady={() => setMapReady(true)}
@@ -188,6 +202,15 @@ export default function maps() {
       >
         <MaterialCommunityIcons name="crosshairs-gps" size={24} />
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setFilterUser(!filterUser);
+          getMarkers();
+        }}
+        style={styles.userOrGlobaltoggle}
+      >
+        <Text>{filterUser ? "Your Entries" : "Global Entries"}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -217,7 +240,7 @@ const styles = StyleSheet.create({
   locationButton: {
     position: "absolute",
     right: 16,
-    bottom: 70,
+    bottom: 80,
     width: 50,
     height: 50,
     alignItems: "center",
@@ -225,5 +248,16 @@ const styles = StyleSheet.create({
     borderRadius: "100%",
     borderCurve: "circular",
     backgroundColor: colors.primary,
+  },
+  userOrGlobaltoggle: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
+    width: 120,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primary,
+    borderRadius: 15,
   },
 });
