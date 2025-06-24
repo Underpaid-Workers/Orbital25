@@ -23,6 +23,9 @@
         "HF_TOKEN":"HF_TOKEN",
         "HF_MODEL_URL" : "HF_MODEL_URL",
         "GEMINI_API_KEY":"GEMINI_API_KEY"
+      },
+      "android": {
+        "buildType": "apk"
       }
     }
   },
