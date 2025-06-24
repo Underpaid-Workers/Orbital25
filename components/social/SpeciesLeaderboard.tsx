@@ -9,23 +9,23 @@ import {
   View,
 } from "react-native";
 
-type LeaderboardItem = {
+type SpeciesLeaderboardItem = {
   name: string;
   speciesNum: number;
   isSelf?: boolean;
 };
 
-type Leaderboard = {
-  pulledData: LeaderboardItem[];
+type SpeciesLeaderboard = {
+  pulledData: SpeciesLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
 };
 
-export default function Leaderboard({
+export default function SpeciesLeaderboard({
   pulledData,
   showDelete = false,
   onDelete,
-}: Leaderboard) {
+}: SpeciesLeaderboard) {
   const sortedData = [...pulledData].sort(
     (a, b) => b.speciesNum - a.speciesNum
   );
@@ -34,7 +34,7 @@ export default function Leaderboard({
     item,
     index,
   }: {
-    item: LeaderboardItem;
+    item: SpeciesLeaderboardItem;
     index: number;
   }) => (
     <View

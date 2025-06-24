@@ -1,104 +1,173 @@
 import supabase from "@/supabase/main";
-import { useEffect, useState } from "react";
 
-type Friend = {
+type FriendSpecies = {
   name: string;
   speciesNum: number;
   isSelf?: boolean;
 };
 
-/**
- * @description Fetch friends list of user from database
- * @params none
- * @returns Object of {friends, loading}
- */
-export default function fetchFriends() {
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [loading, setLoading] = useState(true);
+type FriendRarity = {
+  name: string;
+  rarityScore: number;
+};
 
-  useEffect(() => {
-    const fetchFriends = async () => {
-      setLoading(true);
+export async function fetchFriendsSpecies(): Promise<FriendSpecies[]> {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+  if (userError || !user) {
+    console.error("User not logged in.");
+    return [];
+  }
 
-      if (userError || !user) {
-        console.error("User not logged in.");
-        setLoading(false);
-        return;
-      }
+  const userId = user.id;
+  const userEmail = user.email ?? "unknown@example.com";
+  const userName = userEmail.split("@")[0];
 
-      //add user's own data to friend list
-      const userId = user.id;
-      const userEmail = user.email ?? "unknown@example.com";
-      const userName = userEmail.split("@")[0];
+  const { count: mySpeciesCount, error: mySpeciesErr } = await supabase
+    .from("entriestest")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
 
-      const { count: mySpeciesCount, error: mySpeciesErr } = await supabase
-        .from("entriestest")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", userId);
+  if (mySpeciesErr) {
+    console.error("Error fetching own species count:", mySpeciesErr);
+    return [];
+  }
 
-      if (mySpeciesErr) {
-        console.error("Error fetching own species count:", mySpeciesErr);
-        setLoading(false);
-        return;
-      }
+  const results: FriendSpecies[] = [
+    {
+      name: userName,
+      speciesNum: mySpeciesCount || 0,
+      isSelf: true,
+    },
+  ];
 
-      const results: Friend[] = [
-        {
-          name: userName,
-          speciesNum: mySpeciesCount || 0,
-          isSelf: true,
-        },
-      ];
+  const { data: friendships, error: friendErr } = await supabase
+    .from("friendships")
+    .select("friend_id")
+    .eq("user_id", user.id);
 
-      // friend ids
-      const { data: friendships, error: friendErr } = await supabase
-        .from("friendships")
-        .select("friend_id")
-        .eq("user_id", user.id);
+  if (friendErr || !friendships) {
+    console.error("Failed to fetch friendships", friendErr);
+    return results;
+  }
 
-      if (friendErr || !friendships) {
-        console.error("Failed to fetch friendships", friendErr);
-        setLoading(false);
-        return;
-      }
+  for (const f of friendships) {
+    const friendId = f.friend_id;
 
-      for (const f of friendships) {
-        const friendId = f.friend_id;
+    const { data: userData, error: userErr } = await supabase
+      .from("users")
+      .select("email")
+      .eq("id", friendId)
+      .single();
 
-        const { data: userData, error: userErr } = await supabase
-          .from("users")
-          .select("email")
-          .eq("id", friendId)
-          .single();
+    if (userErr || !userData) continue;
 
-        if (userErr || !userData) continue;
+    const name = userData.email.split("@")[0];
 
-        const name = userData.email.split("@")[0];
+    const { count, error: entryErr } = await supabase
+      .from("entriestest")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", friendId);
 
-        const { count, error: entryErr } = await supabase
-          .from("entriestest")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", friendId);
+    if (entryErr) continue;
 
-        if (entryErr) continue;
+    results.push({
+      name,
+      speciesNum: count || 0,
+    });
+  }
 
-        results.push({
-          name,
-          speciesNum: count || 0,
-        });
-      }
-
-      setFriends(results);
-      setLoading(false);
-    };
-
-    fetchFriends();
-  }, []);
-
-  return { friends, loading };
+  return results;
 }
+
+export async function fetchFriendsRarity(): Promise<FriendRarity[]> {
+  const rarityPoints = {
+    Common: 10,
+    Uncommon: 20,
+    Rare: 50,
+    "Very Rare": 100,
+    Unique: 1000,
+  };
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not logged in.");
+    return [];
+  }
+
+  const userId = user.id;
+  const userEmail = user.email ?? "unknown@example.com";
+  const userName = userEmail.split("@")[0];
+
+  const results: FriendRarity[] = [];
+
+  const { data: userEntries, error: userEntriesErr } = await supabase
+    .from("entriestest")
+    .select("rarity")
+    .eq("user_id", userId);
+
+  if (!userEntriesErr && userEntries) {
+    let rarityScore = 0;
+    for (const entry of userEntries) {
+      const score = rarityPoints[entry.rarity as keyof typeof rarityPoints] || 0;
+      rarityScore += score;
+    }
+
+    results.push({
+      name: userName,
+      rarityScore,
+    });
+  }
+
+  const { data: friendships, error: friendErr } = await supabase
+    .from("friendships")
+    .select("friend_id")
+    .eq("user_id", userId);
+
+  if (friendErr || !friendships) {
+    console.error("Failed to fetch friendships", friendErr);
+    return results;
+  }
+
+  for (const f of friendships) {
+    const friendId = f.friend_id;
+
+    const { data: userData, error: userErr } = await supabase
+      .from("users")
+      .select("email")
+      .eq("id", friendId)
+      .single();
+
+    if (userErr || !userData) continue;
+
+    const name = userData.email.split("@")[0];
+
+    const { data: entries, error: entriesErr } = await supabase
+      .from("entriestest")
+      .select("rarity")
+      .eq("user_id", friendId);
+
+    if (entriesErr || !entries) continue;
+
+    let rarityScore = 0;
+    for (const entry of entries) {
+      const score = rarityPoints[entry.rarity as keyof typeof rarityPoints] || 0;
+      rarityScore += score;
+    }
+
+    results.push({
+      name,
+      rarityScore,
+    });
+  }
+
+  return results;
+}
+
