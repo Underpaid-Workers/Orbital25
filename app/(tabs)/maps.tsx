@@ -209,7 +209,9 @@ export default function maps() {
         }}
         style={styles.userOrGlobaltoggle}
       >
-        <Text>{filterUser ? "Your Entries" : "Global Entries"}</Text>
+        <Text style={styles.userOrGlobaltoggleText}>
+          {filterUser ? "Your Entries" : "Global Entries"}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -259,5 +261,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.primary,
     borderRadius: 15,
+  },
+  userOrGlobaltoggleText: {
+    fontSize: 16,
+    color: "black",
   },
 });
