@@ -12,7 +12,7 @@ const rarityPoints = {
 export async function getSpeciesData() {
   const { data: users, error: userError } = await supabase
     .from("users")
-    .select("id, email");
+    .select("id, displayname");
 
   if (userError) {
     console.error("Error fetching users:", userError);
@@ -30,9 +30,11 @@ export async function getSpeciesData() {
         console.error(`Error counting entries for ${user.id}:`, entryError);
         return null;
       }
+      
+      const name = user.displayname?.trim() || "anonymous";
 
       return {
-        name: user.email?.split("@")[0] ?? "unknown",
+        name,
         speciesNum: count ?? 0,
       };
     })
@@ -47,7 +49,7 @@ export async function getSpeciesData() {
 export async function getRarityData() {
   const { data: users, error: userError } = await supabase
     .from("users")
-    .select("id, email");
+    .select("id, displayname");
 
   if (userError) {
     console.error("Error fetching users:", userError);
@@ -60,6 +62,8 @@ export async function getRarityData() {
         .from("entriestest")
         .select("rarity")
         .eq("user_id", user.id);
+      
+      const name = user.displayname?.trim() || "anonymous";
 
       if (entryError || !entries) {
         console.error(`Error fetching entries for ${user.id}:`, entryError);
@@ -72,7 +76,7 @@ export async function getRarityData() {
       }, 0);
 
       return {
-        name: user.email?.split("@")[0] ?? "unknown",
+        name,
         rarityScore,
       };
     })

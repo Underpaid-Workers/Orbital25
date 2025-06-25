@@ -38,9 +38,9 @@ export const useUsernameCheck = () => {
   const validateDisplayName = async (newName: string): Promise<SaveResult> => {
     const trimmed = newName.trim();
 
-    if (!trimmed) return { success: false, error: "Username cannot be empty" };
-    if (/\s/.test(trimmed)) return { success: false, error: "Username cannot contain spaces" };
-    if (trimmed.length > 20) return { success: false, error: "Username too long" };
+    if (!trimmed) return { success: false, error: "Username cannot be empty" }; //check if no user input
+    if (/\s/.test(trimmed)) return { success: false, error: "Username cannot contain spaces" }; //check if username has spaces
+    if (trimmed.length > 20) return { success: false, error: "Username too long" }; //second round check to prevent exceeding char limit
 
     const { data: existing, error: fetchError } = await supabase
       .from("users")
@@ -52,7 +52,7 @@ export const useUsernameCheck = () => {
     }
 
     if (existing && existing.length > 0) {
-      return { success: false, error: "Username already taken" };
+      return { success: false, error: "Username already taken" }; //check if username is already in use
     }
 
     return { success: true };

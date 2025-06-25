@@ -23,8 +23,15 @@ export async function fetchFriendsSpecies(): Promise<FriendSpecies[]> {
   }
 
   const userId = user.id;
-  const userEmail = user.email ?? "unknown@example.com";
-  const userName = userEmail.split("@")[0];
+
+  const { data: currentUserData, error: currentUserErr } = await supabase
+    .from("users")
+    .select("displayname")
+    .eq("id", userId)
+    .single();
+
+  const userName =
+    currentUserData?.displayname?.trim() || "anonymous"; //return "anonymous" if no displayname
 
   const { count: mySpeciesCount, error: mySpeciesErr } = await supabase
     .from("entriestest")
@@ -59,13 +66,13 @@ export async function fetchFriendsSpecies(): Promise<FriendSpecies[]> {
 
     const { data: userData, error: userErr } = await supabase
       .from("users")
-      .select("email")
+      .select("displayname")
       .eq("id", friendId)
       .single();
 
     if (userErr || !userData) continue;
 
-    const name = userData.email.split("@")[0];
+    const name = userData.displayname?.trim() || "anonymous";
 
     const { count, error: entryErr } = await supabase
       .from("entriestest")
@@ -103,10 +110,16 @@ export async function fetchFriendsRarity(): Promise<FriendRarity[]> {
   }
 
   const userId = user.id;
-  const userEmail = user.email ?? "unknown@example.com";
-  const userName = userEmail.split("@")[0];
-
   const results: FriendRarity[] = [];
+
+   const { data: currentUserData, error: currentUserErr } = await supabase
+    .from("users")
+    .select("displayname")
+    .eq("id", userId)
+    .single();
+
+  const userName =
+    currentUserData?.displayname?.trim() || "anonymous";
 
   const { data: userEntries, error: userEntriesErr } = await supabase
     .from("entriestest")
@@ -141,13 +154,13 @@ export async function fetchFriendsRarity(): Promise<FriendRarity[]> {
 
     const { data: userData, error: userErr } = await supabase
       .from("users")
-      .select("email")
+      .select("displayname")
       .eq("id", friendId)
       .single();
 
     if (userErr || !userData) continue;
 
-    const name = userData.email.split("@")[0];
+    const name = userData.displayname?.trim() || "anonymous";
 
     const { data: entries, error: entriesErr } = await supabase
       .from("entriestest")
