@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 
 type Props = {
   visible: boolean;
@@ -10,29 +10,10 @@ export default function UsernameModal({ visible, onSubmit }: Props) {
   const [input, setInput] = useState("");
 
   const handleSave = async () => {
-  const trimmed = input.trim();
-
-  //max 20 characters
-  if (!trimmed) {
-    Alert.alert("Error", "Username cannot be empty");
-    return;
-  }
-
-  //no spacing allowed
-  if (/\s/.test(trimmed)) {
-    Alert.alert("Error", "Username cannot contain spaces");
-    return;
-  }
-
-  if (trimmed.length > 20) {
-    Alert.alert("Error", "Username cannot exceed 20 characters");
-    return;
-  }
-
-  await onSubmit(trimmed);
-  setInput("");
-};
-
+    const trimmed = input.trim();
+    await onSubmit(trimmed);
+    setInput("");
+  };
 
   return (
     <Modal visible={visible} transparent animationType="slide">

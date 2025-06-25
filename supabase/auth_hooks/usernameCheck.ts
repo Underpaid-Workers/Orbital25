@@ -12,7 +12,11 @@ export const useUsernameCheck = () => {
 
   useEffect(() => {
     const checkDisplayName = async () => {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (userError || !user) return;
 
       setUserId(user.id);
@@ -31,19 +35,17 @@ export const useUsernameCheck = () => {
     checkDisplayName();
   }, []);
 
-  const saveDisplayName = async (newName: string): Promise<SaveResult> => {
+  const validateDisplayName = async (newName: string): Promise<SaveResult> => {
     const trimmed = newName.trim();
 
     if (!trimmed) return { success: false, error: "Username cannot be empty" };
     if (/\s/.test(trimmed)) return { success: false, error: "Username cannot contain spaces" };
     if (trimmed.length > 20) return { success: false, error: "Username too long" };
-    
-    if (!userId) return { success: false, error: "User not loaded yet" };
 
     const { data: existing, error: fetchError } = await supabase
       .from("users")
       .select("id")
-      .eq("displayname", newName.trim());
+      .eq("displayname", trimmed);
 
     if (fetchError) {
       return { success: false, error: fetchError.message };
@@ -53,9 +55,17 @@ export const useUsernameCheck = () => {
       return { success: false, error: "Username already taken" };
     }
 
+    return { success: true };
+  };
+
+  const saveDisplayName = async (newName: string): Promise<SaveResult> => {
+    const trimmed = newName.trim();
+
+    if (!userId) return { success: false, error: "User not loaded yet" };
+
     const { error: updateError } = await supabase
       .from("users")
-      .update({ displayname: newName.trim() })
+      .update({ displayname: trimmed })
       .eq("id", userId);
 
     if (updateError) return { success: false, error: updateError.message };
@@ -64,6 +74,10 @@ export const useUsernameCheck = () => {
     return { success: true };
   };
 
-  return { needsUsername, saveDisplayName };
+  return {
+    needsUsername,
+    validateDisplayName,
+    saveDisplayName,
+  };
 };
 

@@ -22,7 +22,7 @@ export default function inventory() {
   const { data, entryCount, speciesCount, score, loading, getEntries } =
     useEntryDataContext();
 
-  const { needsUsername, saveDisplayName } = useUsernameCheck();
+  const { needsUsername, validateDisplayName, saveDisplayName } = useUsernameCheck();
 
   useEffect(() => {
     getEntries(); // Refetch data on mount
@@ -31,11 +31,17 @@ export default function inventory() {
   const [error, setError] = useState(false);
 
   const handleUsernameSubmit = async (username: string) => {
-    const result = await saveDisplayName(username);
-    if (!result.success) {
-      Alert.alert("Username Error", result.error || "Failed to save username");
-    }
-  };
+    const validation = await validateDisplayName(username);
+  if (!validation.success) {
+    Alert.alert("Username Error", validation.error || "Invalid username");
+    return;
+  }
+
+  const result = await saveDisplayName(username);
+  if (!result.success) {
+    Alert.alert("Username Error", result.error || "Failed to save username");
+  }
+};
 
   return (
     <>
@@ -100,7 +106,6 @@ export default function inventory() {
         </View>
       )}
 
-      {/* ✅ Always rendered, outside the condition */}
       <UsernameModal visible={needsUsername} onSubmit={handleUsernameSubmit} />
     </>
   );
@@ -134,7 +139,7 @@ const styles = StyleSheet.create({
     borderCurve: "continuous",
   },
   missingText: {
-    position: "fixed",
+    position: "absolute",
     top: "70%",
     transform: [{ translateY: "-50%" }],
     flex: 0.1,
@@ -143,7 +148,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   missingIconContainer: {
-    position: "fixed",
+    position: "absolute",
     top: "75%",
     transform: [{ translateY: "-50%" }],
   },
