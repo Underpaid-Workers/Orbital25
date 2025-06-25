@@ -25,7 +25,7 @@ export default function inventory() {
   const { needsUsername, validateDisplayName, saveDisplayName } = useUsernameCheck();
 
   useEffect(() => {
-    getEntries(); // Refetch data on mount
+    getEntries();
   }, []);
 
   const [error, setError] = useState(false);

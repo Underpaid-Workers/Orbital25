@@ -152,9 +152,9 @@ export default function social() {
 
 const styles = StyleSheet.create({
   container: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center" 
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonRow: {
     flexDirection: "row",
@@ -162,11 +162,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 30,
   },
-  activeButton: { 
-    backgroundColor: colors.primary 
+  activeButton: {
+    backgroundColor: colors.primary,
   },
-  inactiveButton: { 
-    backgroundColor: "rgba(78, 180, 107, 0.3)" 
+  inactiveButton: {
+    backgroundColor: "rgba(78, 180, 107, 0.3)",
   },
   button: {
     borderRadius: 10,
@@ -176,14 +176,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 10,
   },
-  buttonText: { 
-    fontSize: 20, 
-    fontWeight: "bold" 
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
-  friendContainer: { 
-    flex: 1, 
-    alignItems: "center", 
-    justifyContent: "center" 
+  friendContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   searchRow: {
     flexDirection: "row",
@@ -210,8 +210,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchContainer: { 
-    flex: 1, 
-    width: "100%" 
+    flex: 1,
+    width: "100%",
   },
   resultsContainer: { 
     alignItems: "center" 
@@ -229,10 +229,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
   },
-  friendName: { 
-    fontSize: 16, 
-    fontWeight: "bold", 
-    marginLeft: 30 
+  friendName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 30,
   },
   addFriendButton: {
     backgroundColor: "#4EB46B",
@@ -240,9 +240,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
   },
-  addFriendButtonText: { 
-    color: "black", 
-    fontWeight: "bold" 
+  addFriendButtonText: {
+    color: "black",
+    fontWeight: "bold",
   },
 });
 
