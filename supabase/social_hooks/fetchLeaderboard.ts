@@ -1,14 +1,18 @@
 import supabase from "@/supabase/main";
 
-/**
- * @description Fetch data for the global leaderboard
- * @params none
- * @returns Array of entries?
- */
-export default async function getLeaderboardData() {
+const rarityPoints = {
+  Common: 10,
+  Uncommon: 20,
+  Rare: 50,
+  "Very Rare": 100,
+  Unique: 1000,
+};
+
+// species leaderboard
+export async function getSpeciesData() {
   const { data: users, error: userError } = await supabase
     .from("users")
-    .select("id, email");
+    .select("id, displayname");
 
   if (userError) {
     console.error("Error fetching users:", userError);
@@ -24,21 +28,62 @@ export default async function getLeaderboardData() {
 
       if (entryError) {
         console.error(`Error counting entries for ${user.id}:`, entryError);
-        return;
+        return null;
       }
+      
+      const name = user.displayname?.trim() || "anonymous";
 
       return {
-        name: user.email?.split("@")[0] ?? "unknown",
+        name,
         speciesNum: count ?? 0,
       };
     })
   );
 
-  const filteredData = userData.filter(
+  return userData.filter(
     (item): item is { name: string; speciesNum: number } => item !== null
   );
-
-  //const top20 = filteredData.sort((a,b) => b.speciesNum - a.speciesNum).slice(0,20);
-
-  return filteredData;
 }
+
+// rarity score leaderboard
+export async function getRarityData() {
+  const { data: users, error: userError } = await supabase
+    .from("users")
+    .select("id, displayname");
+
+  if (userError) {
+    console.error("Error fetching users:", userError);
+    return [];
+  }
+
+  const userData = await Promise.all(
+    users.map(async (user) => {
+      const { data: entries, error: entryError } = await supabase
+        .from("entriestest")
+        .select("rarity")
+        .eq("user_id", user.id);
+      
+      const name = user.displayname?.trim() || "anonymous";
+
+      if (entryError || !entries) {
+        console.error(`Error fetching entries for ${user.id}:`, entryError);
+        return null;
+      }
+
+      const rarityScore = entries.reduce((total, entry) => {
+        const rarity = entry.rarity as keyof typeof rarityPoints;
+        return total + (rarityPoints[rarity] || 0);
+      }, 0);
+
+      return {
+        name,
+        rarityScore,
+      };
+    })
+  );
+
+  return userData.filter(
+    (item): item is { name: string; rarityScore: number } => item !== null
+  );
+}
+

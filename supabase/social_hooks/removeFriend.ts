@@ -23,11 +23,10 @@ export default async function removeFriend(
   const currentUserId = session.user.id;
 
   //friend
-  const friendEmail = `${friendName}@gmail.com`;
   const { data: friendUser, error: friendLookupError } = await supabase
     .from("users")
-    .select("id")
-    .eq("email", friendEmail)
+    .select("id, displayname")
+    .eq("displayname", friendName)
     .maybeSingle();
 
   if (friendLookupError) {
