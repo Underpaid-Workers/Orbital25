@@ -1,4 +1,5 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
+import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
@@ -6,6 +7,7 @@ import fetchLocation from "@/hooks/fetchLocation";
 import fetchSpeciesName from "@/hooks/fetchSpeciesName";
 import fetchSpeciesSummary from "@/hooks/fetchSpeciesSummary";
 import formatNumber from "@/hooks/formatNumber";
+import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { location } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
 import Entry, { EntryMetadata } from "@/supabase/entrySchema";
@@ -73,7 +75,7 @@ export default function submitEntry() {
         return; // bail out before setEntryMetaData
       }
 
-if (!aiSummary) {
+      if (!aiSummary) {
         throw new Error("error with returning summary");
       } else {
         setEntryMetaData({
@@ -194,6 +196,11 @@ if (!aiSummary) {
             autoCapitalize="words"
             placeholderTextColor="gray"
           />
+          <MaterialCommunityIcons
+            name="cards-playing-diamond-multiple"
+            size={30}
+            color={formatRarityToGradient(entryMetaData.rarity)[0]}
+          />
         </View>
 
         <Image
@@ -219,7 +226,7 @@ if (!aiSummary) {
               : "There's no description..."}
           </Text>
         </ScrollView>
-
+        <Text style={styles.dateTimeBoxText}>Captured Time</Text>
         <View style={styles.datetimeBox}>
           <DateTimeBox
             day={parsedDateTime[0]}
@@ -228,6 +235,10 @@ if (!aiSummary) {
             time={parsedDateTime[3]}
           />
         </View>
+        <InfoBox title="Height" text={entryMetaData.height} />
+        <InfoBox title="Weight" text={entryMetaData.weight} />
+        <InfoBox title="Lifespan" text={entryMetaData.lifespan} />
+
         <View style={styles.observationContainer}>
           <Text style={styles.observationBoxTitle}>Observations</Text>
           <TextInput
@@ -345,7 +356,12 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     flexWrap: "wrap",
   },
-  datetimeBox: { height: 60, width: "100%" },
+  datetimeBox: { height: 50, width: "100%" },
+  dateTimeBoxText: {
+    fontSize: 16,
+    textAlign: "left",
+    textAlignVertical: "center",
+  },
   observationContainer: {
     width: "100%",
     gap: 6,
