@@ -1,6 +1,16 @@
 import { EntryMetadata } from "@/supabase/entrySchema";
 import { GoogleGenAI } from "@google/genai";
-import Constants from "expo-constants";
+
+// let geminiAPIKey: any = null;
+// let ai: any = null;
+
+// if (Constants.expoConfig && Constants.expoConfig.extra) {
+//   geminiAPIKey = Constants.expoConfig.extra.geminiAPIKey as string;
+// } else {
+//   console.error(
+//     "Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys."
+//   );
+// }
 
 /**
  * @description Fetch all species information from species name through Gemini API
@@ -8,21 +18,12 @@ import Constants from "expo-constants";
  * @returns Promise<Partial<EntryMetadata> | "NONE" | null>
  */
 export default async function fetchSpeciesSummary(
-  speciesName: string
+  speciesName: string,
+  geminiAPIKey: string
 ): Promise<Partial<EntryMetadata> | "NONE" | null> {
-  let geminiAPIKey: any = null;
-  let ai: any = null;
-
-  if (Constants.expoConfig && Constants.expoConfig.extra) {
-    geminiAPIKey = Constants.expoConfig.extra.geminiAPIKey as string;
-    ai = new GoogleGenAI({
-      apiKey: geminiAPIKey,
-    });
-  } else {
-    console.error(
-      "Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys."
-    );
-  }
+  let ai = new GoogleGenAI({
+    apiKey: geminiAPIKey,
+  });
 
   if (ai) {
     try {
