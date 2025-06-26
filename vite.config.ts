@@ -1,15 +1,15 @@
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
 
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   define: {
     // __DEV__ will be true unless NODE_ENV=production
     __DEV__: process.env.NODE_ENV !== "production",
   },
-  plugins: [react()],
+  plugins: [tsconfigPaths()],
   resolve: {
     // 1) Redirect plain `react-native` → `react-native-web`
     // 2) Redirect deep imports (`react-native/Libraries/...`) to RNW’s exports
@@ -32,5 +32,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    setupFiles: ["dotenv/config", "vitest.setup.ts"], //this line,
   },
 });
