@@ -29,7 +29,6 @@ export default function SpeciesLeaderboard({
   const sortedData = [...pulledData].sort(
     (a, b) => b.speciesNum - a.speciesNum
   );
-  console.log(sortedData);
 
   const renderItem = ({
     item,

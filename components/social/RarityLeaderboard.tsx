@@ -29,7 +29,7 @@ export default function RarityLeaderboard({
   const sortedData = [...pulledData].sort(
     (a, b) => b.rarityScore - a.rarityScore
   );
-  console.log(sortedData);
+
   const renderItem = ({
     item,
     index,
