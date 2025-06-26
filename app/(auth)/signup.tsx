@@ -16,8 +16,7 @@ import {
 export default function signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const { loading, signUpWithEmail } = useAuthContext();
+  const { loading, signUpWithEmail, setIsNewUser } = useAuthContext();
 
   return (
     <KeyboardAvoidingView
@@ -60,21 +59,21 @@ export default function signup() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => signUpWithEmail(email, password)}
+          onPress={() => {
+            setIsNewUser(true);
+            signUpWithEmail(email, password);
+          }}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
-            {loading ? "Creating an Account..." : "Create an Account"}
-          </Text>
+          <Text style={styles.buttonText}>Create an Account</Text>
         </TouchableOpacity>
 
-        <Link replace href="/(auth)/login" disabled={loading}>
+        <Link replace href="/(auth)/login">
           <Text style={{ textDecorationLine: "underline" }}>
             Already have an account? Log in here.
           </Text>
         </Link>
       </View>
-      {/* </KeyboardAvoidingView> */}
     </KeyboardAvoidingView>
   );
 }

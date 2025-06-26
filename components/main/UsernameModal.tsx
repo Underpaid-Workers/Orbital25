@@ -4,9 +4,10 @@ import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 type Props = {
   visible: boolean;
   onSubmit: (username: string) => Promise<void>;
+  onClose: () => void;
 };
 
-export default function UsernameModal({ visible, onSubmit }: Props) {
+export default function UsernameModal({ visible, onSubmit, onClose }: Props) {
   const [input, setInput] = useState("");
 
   const handleSave = async () => {
@@ -16,7 +17,12 @@ export default function UsernameModal({ visible, onSubmit }: Props) {
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.label}>Enter a username:</Text>
@@ -60,4 +66,3 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 });
-

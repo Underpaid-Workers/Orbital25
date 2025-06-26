@@ -235,6 +235,7 @@ export default function submitEntry() {
             time={parsedDateTime[3]}
           />
         </View>
+        <Text style={styles.informationBoxText}>Information</Text>
         <InfoBox title="Height" text={entryMetaData.height} />
         <InfoBox title="Weight" text={entryMetaData.weight} />
         <InfoBox title="Lifespan" text={entryMetaData.lifespan} />
@@ -359,6 +360,13 @@ const styles = StyleSheet.create({
   datetimeBox: { height: 50, width: "100%" },
   dateTimeBoxText: {
     fontSize: 16,
+    width: "100%",
+    textAlign: "left",
+    textAlignVertical: "center",
+  },
+  informationBoxText: {
+    fontSize: 16,
+    width: "100%",
     textAlign: "left",
     textAlignVertical: "center",
   },

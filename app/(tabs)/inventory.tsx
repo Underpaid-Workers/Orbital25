@@ -1,16 +1,13 @@
 import EntryCard from "@/components/entry/EntryCard";
 import FloatingInfoBar from "@/components/entry/FloatingInfoBar";
-import UsernameModal from "@/components/entry/UsernameModal";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
-import { useUsernameCheck } from "@/supabase/auth_hooks/usernameCheck";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -22,26 +19,11 @@ export default function inventory() {
   const { data, entryCount, speciesCount, score, loading, getEntries } =
     useEntryDataContext();
 
-  const { needsUsername, validateDisplayName, saveDisplayName } = useUsernameCheck();
-
   useEffect(() => {
     getEntries();
   }, []);
 
   const [error, setError] = useState(false);
-
-  const handleUsernameSubmit = async (username: string) => {
-    const validation = await validateDisplayName(username);
-  if (!validation.success) {
-    Alert.alert("Username Error", validation.error || "Invalid username");
-    return;
-  }
-
-  const result = await saveDisplayName(username);
-  if (!result.success) {
-    Alert.alert("Username Error", result.error || "Failed to save username");
-  }
-};
 
   return (
     <>
@@ -105,8 +87,6 @@ export default function inventory() {
           />
         </View>
       )}
-
-      <UsernameModal visible={needsUsername} onSubmit={handleUsernameSubmit} />
     </>
   );
 }

@@ -13,7 +13,6 @@ export default async function fetchGlobalEntriesByLocation(
   session: Session | null
 ) {
   if (filterUser) {
-    console.log(session?.user.id);
     if (session) {
       const { data, error } = await supabase
         .schema("public")

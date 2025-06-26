@@ -1,3 +1,8 @@
+export interface User {
+  email: string;
+  username: string;
+}
+
 //Full entry fetched to local
 export interface Entry {
   id: number;

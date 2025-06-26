@@ -29,6 +29,7 @@ export default function SpeciesLeaderboard({
   const sortedData = [...pulledData].sort(
     (a, b) => b.speciesNum - a.speciesNum
   );
+  console.log(sortedData);
 
   const renderItem = ({
     item,
@@ -40,7 +41,7 @@ export default function SpeciesLeaderboard({
     <View
       style={[
         styles.container,
-        { backgroundColor: index % 2 === 0 ? "D9D9D9" : colors.background },
+        { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
       ]}
     >
       <Text style={styles.rank}>{index + 1}</Text>

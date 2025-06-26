@@ -1,34 +1,40 @@
-import UsernameModal from "@/components/entry/UsernameModal";
+import UsernameModal from "@/components/main/UsernameModal";
+import validateTrimmedUsername from "@/hooks/validateTrimmedUsername";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { useUsernameCheck } from "@/supabase/auth_hooks/usernameCheck";
+import checkUsername from "@/supabase/auth_hooks/checkUsername";
 import { useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function settings() {
-  const { logOut } = useAuthContext();
-  const { validateDisplayName, saveDisplayName } = useUsernameCheck();
+  const { logOut, fetchUsername, updateUsername, loading } = useAuthContext();
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleChangeDisplayName = () => {
+  const onUsernameChange = () => {
     setModalVisible(true);
   };
 
-  const handleSubmit = async (username: string) => {
-    const validation = await validateDisplayName(username);
-    if (!validation.success) {
+  const onSubmitUsername = async (username: string) => {
+    const trimmed = username.trim();
+    const validation = validateTrimmedUsername(trimmed);
+    if (!validation.success && validation.error) {
       Alert.alert("Username Error", validation.error || "Invalid username");
       return;
     }
 
-    const result = await saveDisplayName(username);
+    const result = await checkUsername(trimmed);
     if (!result.success) {
-      Alert.alert("Username Error", result.error || "Failed to save username");
+      Alert.alert("Username Error", result.error || "Invalid username");
       return;
     }
 
-    Alert.alert("Success", "Display name updated!");
-    setModalVisible(false);
+    updateUsername(username);
+    //TODO: Do not display alert when updateUsername error
+    if (!loading) {
+      Alert.alert("Success", "Display name updated!");
+      fetchUsername();
+      setModalVisible(false);
+    }
   };
 
   return (
@@ -37,11 +43,15 @@ export default function settings() {
         <Text style={styles.text}>Sign Out</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleChangeDisplayName}>
+      <TouchableOpacity onPress={onUsernameChange}>
         <Text style={styles.changeText}>Change Display Name</Text>
       </TouchableOpacity>
 
-      <UsernameModal visible={modalVisible} onSubmit={handleSubmit} />
+      <UsernameModal
+        visible={modalVisible}
+        onSubmit={onSubmitUsername}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 }
@@ -63,4 +73,3 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
-

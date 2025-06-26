@@ -2,26 +2,46 @@ import RarityLeaderboard from "@/components/social/RarityLeaderboard";
 import SpeciesLeaderboard from "@/components/social/SpeciesLeaderboard";
 import colors from "@/constants/Colors";
 import addFriend from "@/supabase/social_hooks/addFriend";
-import { fetchFriendsRarity, fetchFriendsSpecies } from "@/supabase/social_hooks/fetchFriends";
-import { getRarityData, getSpeciesData } from "@/supabase/social_hooks/fetchLeaderboard";
+import { fetchFriendsRarity } from "@/supabase/social_hooks/fetchFriendsRarity";
+import { fetchFriendsSpecies } from "@/supabase/social_hooks/fetchFriendsSpecies";
+import { fetchRarityScoreLeaderboard } from "@/supabase/social_hooks/fetchRarityScoreLeaderboard";
+import { fetchSpeciesLeaderboard } from "@/supabase/social_hooks/fetchSpeciesLeaderboard";
 import removeFriend from "@/supabase/social_hooks/removeFriend";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function social() {
   const [board, setBoard] = useState<1 | 2>(1);
   const [searchInput, setSearchInput] = useState("");
   const [showRarity, setShowRarity] = useState(false);
 
-  const [speciesLeaderboardData, setSpeciesLeaderboardData] = useState<{ name: string; speciesNum: number }[]>([]);
-  const [rarityLeaderboardData, setRarityLeaderboardData] = useState<{ name: string; rarityScore: number }[]>([]);
-  const [friendsListSpecies, setFriendsListSpecies] = useState<{ name: string; speciesNum: number }[]>([]);
-  const [friendsListRarity, setFriendsListRarity] = useState<{ name: string; rarityScore: number }[]>([]);
+  const [speciesLeaderboardData, setSpeciesLeaderboardData] = useState<
+    { name: string; speciesNum: number }[]
+  >([]);
+  const [rarityLeaderboardData, setRarityLeaderboardData] = useState<
+    { name: string; rarityScore: number }[]
+  >([]);
+  const [friendsListSpecies, setFriendsListSpecies] = useState<
+    { name: string; speciesNum: number }[]
+  >([]);
+  const [friendsListRarity, setFriendsListRarity] = useState<
+    { name: string; rarityScore: number }[]
+  >([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [species, rarity] = await Promise.all([getSpeciesData(), getRarityData()]);
+      const [species, rarity] = await Promise.all([
+        fetchSpeciesLeaderboard(),
+        fetchRarityScoreLeaderboard(),
+      ]);
       setSpeciesLeaderboardData(species);
       setRarityLeaderboardData(rarity);
     };
@@ -31,12 +51,17 @@ export default function social() {
   }, []);
 
   const refreshFriends = async () => {
-    const [species, rarity] = await Promise.all([fetchFriendsSpecies(), fetchFriendsRarity()]);
+    const [species, rarity] = await Promise.all([
+      fetchFriendsSpecies(),
+      fetchFriendsRarity(),
+    ]);
     setFriendsListSpecies(species);
     setFriendsListRarity(rarity);
   };
 
-  const searchFriendsData = showRarity ? rarityLeaderboardData : speciesLeaderboardData;
+  const searchFriendsData = showRarity
+    ? rarityLeaderboardData
+    : speciesLeaderboardData;
 
   const filteredFriends = searchFriendsData.filter(
     (friend) =>
@@ -46,7 +71,11 @@ export default function social() {
         : friendsListSpecies.some((f) => f.name === friend.name))
   );
 
-  const handleAddFriend = async (friendToAdd: { name: string; speciesNum?: number; rarityScore?: number }) => {
+  const handleAddFriend = async (friendToAdd: {
+    name: string;
+    speciesNum?: number;
+    rarityScore?: number;
+  }) => {
     const response = await addFriend(friendToAdd.name);
     if (response.success) {
       await refreshFriends();
@@ -70,7 +99,10 @@ export default function social() {
             const response = await removeFriend(friendName);
             if (response.success) {
               await refreshFriends();
-              Alert.alert("Removed", `${friendName} has been removed from your friends`);
+              Alert.alert(
+                "Removed",
+                `${friendName} has been removed from your friends`
+              );
             } else {
               Alert.alert("Error", response.message);
             }
@@ -85,13 +117,19 @@ export default function social() {
     <View style={styles.container}>
       <View style={styles.buttonRow}>
         <TouchableOpacity
-          style={[styles.button, board === 1 ? styles.activeButton : styles.inactiveButton]}
+          style={[
+            styles.button,
+            board === 1 ? styles.activeButton : styles.inactiveButton,
+          ]}
           onPress={() => setBoard(1)}
         >
           <Text style={styles.buttonText}>Friends</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, board === 2 ? styles.activeButton : styles.inactiveButton]}
+          style={[
+            styles.button,
+            board === 2 ? styles.activeButton : styles.inactiveButton,
+          ]}
           onPress={() => setBoard(2)}
         >
           <Text style={styles.buttonText}>Leaderboard</Text>
@@ -113,16 +151,28 @@ export default function social() {
               onPress={() => setShowRarity((prev) => !prev)}
               accessibilityLabel="Toggle leaderboard type"
             >
-              <MaterialCommunityIcons name="swap-horizontal" size={20} color={colors.primary} />
+              <MaterialCommunityIcons
+                name="swap-horizontal"
+                size={20}
+                color={colors.primary}
+              />
             </TouchableOpacity>
           </View>
 
           <View style={styles.searchContainer}>
             {searchInput.trim().length === 0 ? (
               showRarity ? (
-                <RarityLeaderboard pulledData={friendsListRarity} showDelete onDelete={deleteFriend} />
+                <RarityLeaderboard
+                  pulledData={friendsListRarity}
+                  showDelete
+                  onDelete={deleteFriend}
+                />
               ) : (
-                <SpeciesLeaderboard pulledData={friendsListSpecies} showDelete onDelete={deleteFriend} />
+                <SpeciesLeaderboard
+                  pulledData={friendsListSpecies}
+                  showDelete
+                  onDelete={deleteFriend}
+                />
               )
             ) : (
               <View style={styles.resultsContainer}>
@@ -151,7 +201,7 @@ export default function social() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -179,6 +229,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: "bold",
+    color: colors.text,
   },
   friendContainer: {
     flex: 1,
@@ -209,12 +260,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  searchContainer: { 
+  searchContainer: {
     flex: 1,
     width: "100%",
   },
-  resultsContainer: { 
-    alignItems: "center" 
+  resultsContainer: {
+    alignItems: "center",
   },
   friendRow: {
     width: "100%",
@@ -233,6 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 30,
+    color: colors.text,
   },
   addFriendButton: {
     backgroundColor: "#4EB46B",
@@ -241,8 +293,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   addFriendButtonText: {
-    color: "black",
+    color: colors.text,
     fontWeight: "bold",
   },
 });
-

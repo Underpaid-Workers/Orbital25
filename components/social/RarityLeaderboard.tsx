@@ -2,11 +2,11 @@ import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
-    FlatList,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type RarityLeaderboardItem = {
@@ -29,7 +29,7 @@ export default function RarityLeaderboard({
   const sortedData = [...pulledData].sort(
     (a, b) => b.rarityScore - a.rarityScore
   );
-
+  console.log(sortedData);
   const renderItem = ({
     item,
     index,
@@ -40,7 +40,7 @@ export default function RarityLeaderboard({
     <View
       style={[
         styles.container,
-        { backgroundColor: index % 2 === 0 ? "D9D9D9" : colors.background },
+        { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
       ]}
     >
       <Text style={styles.rank}>{index + 1}</Text>

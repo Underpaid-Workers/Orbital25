@@ -15,7 +15,7 @@ import { View } from "react-native";
 export default function ProtectedLayout() {
   const altHeaderTabs = ["camera", "entry/submitEntry", "entry/[id]"];
 
-  const { session, loading } = useAuthContext();
+  const { session, loading, username } = useAuthContext();
 
   if (loading) {
     return (
@@ -43,7 +43,7 @@ export default function ProtectedLayout() {
             altHeaderTabs.includes(props.route.name) ? (
               <AltHeaderTab {...props} />
             ) : (
-              <HeaderBar {...props} />
+              <HeaderBar headerProps={props} username={username} />
             ),
         }}
       >

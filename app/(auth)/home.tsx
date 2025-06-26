@@ -6,24 +6,22 @@ export default function home() {
   const router = useRouter();
 
   return (
-    <>
-      <View style={styles.container}>
-        <Image source={logoTransparent} style={styles.logoTransparent} />
-        <Text style={styles.text}>EcoDex</Text>
-        <Image source={loginImage} style={styles.loginImage} />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/(auth)/login")}
-        >
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
-        <Link href="/(auth)/signup">
-          <Text style={{ textDecorationLine: "underline" }}>
-            Don't have an account? Sign up here
-          </Text>
-        </Link>
-      </View>
-    </>
+    <View style={styles.container}>
+      <Image source={logoTransparent} style={styles.logoTransparent} />
+      <Text style={styles.text}>EcoDex</Text>
+      <Image source={loginImage} style={styles.loginImage} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/(auth)/login")}
+      >
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
+      <Link href="/(auth)/signup">
+        <Text style={{ textDecorationLine: "underline" }}>
+          Don't have an account? Sign up here
+        </Text>
+      </Link>
+    </View>
   );
 }
 
