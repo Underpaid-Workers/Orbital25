@@ -10,8 +10,6 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "vitest"
-    "lint": "expo lint",
-    "test": "vitest"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -22,7 +20,6 @@
     "@react-navigation/native": "^7.1.6",
     "@supabase/supabase-js": "^2.49.8",
     "@types/react-native": "^0.72.8",
-    "@vitejs/plugin-react": "^4.6.0",
     "@vitejs/plugin-react": "^4.6.0",
     "base64-arraybuffer": "^1.0.2",
     "dotenv": "^16.5.0",
