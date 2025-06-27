@@ -32,7 +32,6 @@ export async function fetchSpeciesLeaderboard() {
   );
 
   return userData.filter(
-    (item): item is { name: string; speciesNum: number } =>
-      item !== null && item.speciesNum > 0
+    (item): item is { name: string; speciesNum: number } => item !== null
   );
 }

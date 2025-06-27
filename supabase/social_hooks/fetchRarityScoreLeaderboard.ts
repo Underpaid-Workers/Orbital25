@@ -44,7 +44,6 @@ export async function fetchRarityScoreLeaderboard() {
   );
 
   return userData.filter(
-    (item): item is { name: string; rarityScore: number } =>
-      item !== null && item.rarityScore > 0
+    (item): item is { name: string; rarityScore: number } => item !== null
   );
 }
