@@ -1,8 +1,8 @@
-import { describe } from "vitest";
-import fetchSpeciesSummary from "../../hooks/fetchSpeciesSummary";
-import { EntryMetadata } from "../../supabase/entrySchema";
+import fetchSpeciesSummary from "@/hooks/fetchSpeciesSummary";
+import { EntryMetadata } from "@/supabase/schema";
+import { beforeAll, describe, expect, test } from "vitest";
 
-describe("Check AI Summary", async () => {
+describe("Check AI Summary", () => {
   let resultValid: Partial<EntryMetadata> | "NONE" | null;
   let resultInvalid: Partial<EntryMetadata> | "NONE" | null;
 

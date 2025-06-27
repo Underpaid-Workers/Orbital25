@@ -1,14 +1,10 @@
 import supabase from "@/supabase/main";
+import { Response } from "@/supabase/schema";
 import { PostgrestError } from "@supabase/supabase-js";
-
-type SaveResult = {
-  success: boolean;
-  error?: string;
-};
 
 export default async function checkUsername(
   trimmed: string
-): Promise<SaveResult> {
+): Promise<Response> {
   try {
     const { data, error } = await supabase
       .from("users")

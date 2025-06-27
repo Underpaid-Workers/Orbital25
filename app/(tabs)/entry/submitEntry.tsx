@@ -10,7 +10,7 @@ import formatNumber from "@/hooks/formatNumber";
 import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { location } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
-import Entry, { EntryMetadata } from "@/supabase/entrySchema";
+import Entry, { EntryMetadata } from "@/supabase/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";

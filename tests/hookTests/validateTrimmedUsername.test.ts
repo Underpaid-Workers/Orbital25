@@ -1,4 +1,5 @@
-import validateTrimmedUsername from "../../hooks/validateTrimmedUsername";
+import validateTrimmedUsername from "@/hooks/validateTrimmedUsername";
+import { describe, expect, test } from "vitest";
 
 describe("Check Username string validator", () => {
   test("Handle normal valid string", () => {
