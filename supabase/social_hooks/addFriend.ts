@@ -32,7 +32,7 @@ export default async function addFriend(displayName: string) {
   }
 
   const friendId = friendUser.id;
-  console.log(friendId);
+  // console.log(friendId);
 
   // Insert friendship row
   const { error: insertError } = await supabase.from("friendships").insert([

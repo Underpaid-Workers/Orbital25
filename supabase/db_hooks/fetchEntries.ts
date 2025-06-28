@@ -1,6 +1,6 @@
 import { EntryData } from "@/providers/EntryDataProvider";
-import { Entry } from "@/supabase/entrySchema";
 import supabase from "@/supabase/main";
+import { Entry } from "@/supabase/schema";
 import { Session } from "@supabase/supabase-js";
 import { Alert } from "react-native";
 /**

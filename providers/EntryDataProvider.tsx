@@ -2,7 +2,7 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import deleteEntry from "@/supabase/db_hooks/deleteEntry";
 import fetchEntries from "@/supabase/db_hooks/fetchEntries";
 import insertEntry from "@/supabase/db_hooks/insertEntry";
-import Entry from "@/supabase/entrySchema";
+import Entry from "@/supabase/schema";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 export type EntryData = {

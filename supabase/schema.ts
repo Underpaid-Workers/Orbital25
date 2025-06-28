@@ -39,4 +39,9 @@ export interface EntryMetadata {
   lifespan: string;
 }
 
+export type Response = {
+  success: boolean;
+  error?: string;
+};
+
 export default Entry;

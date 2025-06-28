@@ -1,5 +1,5 @@
-import { User } from "@/supabase/entrySchema";
 import supabase from "@/supabase/main";
+import { User } from "@/supabase/schema";
 
 export default async function fetchUserdata(user_id: string): Promise<User> {
   const result = <User>{

@@ -1,4 +1,4 @@
-import { EntryMetadata } from "@/supabase/entrySchema";
+import { EntryMetadata } from "@/supabase/schema";
 import { GoogleGenAI } from "@google/genai";
 import Constants from "expo-constants";
 
@@ -23,6 +23,8 @@ export default async function fetchSpeciesSummary(
       "Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys."
     );
   }
+  // console.log(process.env.GEMINI_API_KEY);
+  // ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   if (ai) {
     try {
@@ -59,7 +61,7 @@ export default async function fetchSpeciesSummary(
       if (!match) throw new Error("No valid JSON block found in response");
 
       const parsed = JSON.parse(match[0]);
-      console.log(parsed);
+      // console.log(parsed);
 
       if (!parsed || typeof parsed !== "object") return null;
 
