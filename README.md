@@ -2,7 +2,7 @@
 EcoDex is a nature discovery app that combines automated species identification with a Pokédex-style inventory, rarity-based scoring, and social features to make biodiversity exploration educational, gamified, and community-driven.
 
 ## How to use
-**Android Users** can download the following apk for testing: [EcoDex_Milestone1](https://drive.google.com/file/d/1JoAmgcpQEv65dcTd1lmKYvZlc9su7ADq/view?usp=drive_link)
+**Android Users** can download the following apk for testing: [EcoDex_Milestone2](https://drive.google.com/file/d/1Eia5uSv5JmlyR9LZ7INyslp70VUvKBp2/view?usp=drive_link)
 
 ## Features
 ### User Account Management
@@ -26,13 +26,16 @@ For adding entries, users will:
 </p>
 
 ### Identifying Entries (with API)
-- Entries are identified using captured images through the [HuggingFaceAPI](https://huggingface.co/).
+- Entries are identified using captured images through the [HuggingFaceAPI](https://huggingface.co/). Species information is then retrieved using Google's [Gemini API](https://ai.google.dev/)
 - Various data about the entry will be returned, such as:
     - Description of the species, some fun facts
     - Height, Weight, Lifespan
+ 
+### Maps
 
 ## Tech Stack
 - React Native
 - Supabase
 - Expo, Expo EAS
+- Vitest 
 - Git, Github
