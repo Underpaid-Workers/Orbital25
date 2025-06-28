@@ -37,7 +37,7 @@ export default ({ config }) => {
          },
          "config": {
           "googleMaps": {
-            "apiKey": "process.env.GOOGLE_MAPS_API_KEY",
+            "apiKey": process.env.GOOGLE_MAPS_API_KEY,
           },
         },
          "edgeToEdgeEnabled": true,
