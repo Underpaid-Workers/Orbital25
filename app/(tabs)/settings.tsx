@@ -24,7 +24,7 @@ export default function settings() {
 
     const result = await checkUsername(trimmed);
     if (!result.success) {
-      Alert.alert("Username Error", result.error || "Invalid username");
+      Alert.alert("Username Error", result.message || "Invalid username");
       return;
     }
 

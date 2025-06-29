@@ -1,11 +1,14 @@
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
 
 /**
  * @description Add a friend based on email to friends list
  * @param friendEmail as string
  * @returns Object of {sucess:string, message:string}
  */
-export default async function addFriend(displayName: string) {
+export default async function addFriend(
+  displayName: string
+): Promise<ResponseState> {
   // Get cur user
   const {
     data: { user },

@@ -1,8 +1,5 @@
 import supabase from "@/supabase/main";
-
-type RemoveFriendResult =
-  | { success: true }
-  | { success: false; message: string };
+import { ResponseState } from "@/supabase/schema";
 
 /**
  * @description Removes friend from friends list of user
@@ -11,7 +8,7 @@ type RemoveFriendResult =
  */
 export default async function removeFriend(
   friendName: string
-): Promise<RemoveFriendResult> {
+): Promise<ResponseState> {
   const {
     data: { session },
     error: sessionError,

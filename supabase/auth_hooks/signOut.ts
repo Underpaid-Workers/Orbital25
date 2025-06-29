@@ -1,14 +1,14 @@
 import supabase from "@/supabase/main";
 import { AuthError } from "@supabase/supabase-js";
 import { Alert } from "react-native";
-import { Response } from "../schema";
+import { ResponseState } from "../schema";
 
 /**
  * @description Uses supabase authentication to sign out
  * @params none
  * @returns void
  */
-export default async function signOut(): Promise<Response> {
+export default async function signOut(): Promise<ResponseState> {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -19,6 +19,6 @@ export default async function signOut(): Promise<Response> {
   } catch (error) {
     const errorMessage = error as AuthError;
     Alert.alert("Error when signing out!");
-    return { success: false, error: errorMessage.message };
+    return { success: false, message: errorMessage.message };
   }
 }

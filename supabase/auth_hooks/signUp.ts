@@ -1,5 +1,5 @@
 import supabase from "@/supabase/main";
-import { Response } from "@/supabase/schema";
+import { ResponseState } from "@/supabase/schema";
 import { AuthError } from "@supabase/supabase-js";
 import { Alert } from "react-native";
 
@@ -12,7 +12,7 @@ import { Alert } from "react-native";
 export default async function signUp(
   email: string,
   password: string
-): Promise<Response> {
+): Promise<ResponseState> {
   try {
     const {
       data: { session },
@@ -33,6 +33,6 @@ export default async function signUp(
   } catch (error) {
     const errorMessage = error as AuthError;
     Alert.alert("Error signing up!");
-    return { success: false, error: errorMessage.message };
+    return { success: false, message: errorMessage.message };
   }
 }
