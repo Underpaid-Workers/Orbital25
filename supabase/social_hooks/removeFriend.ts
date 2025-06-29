@@ -4,7 +4,7 @@ import { ResponseState } from "@/supabase/schema";
 /**
  * @description Removes friend from friends list of user
  * @param friendName as string
- * @returns Promise<RemoveFriendResult>
+ * @returns Promise<ResponseState>
  */
 export default async function removeFriend(
   friendName: string
