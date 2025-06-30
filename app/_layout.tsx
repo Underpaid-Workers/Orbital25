@@ -11,6 +11,10 @@ export default function RootLayout() {
       <SafeAreaView style={styles.container}>
         <AuthProvider>
           <Stack initialRouteName={"(auth)"}>
+            <Stack.Screen
+              name="(onboarding)"
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           </Stack>

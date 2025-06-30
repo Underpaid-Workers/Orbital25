@@ -1,15 +1,17 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
+import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
+import fetchSpeciesName from "@/hooks/fetchSpeciesName";
+import fetchSpeciesSummary from "@/hooks/fetchSpeciesSummary";
 import formatNumber from "@/hooks/formatNumber";
+import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
 import { location } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
-import Entry, { EntryMetadata } from "@/supabase/entrySchema";
+import Entry, { EntryMetadata } from "@/supabase/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { GoogleGenAI } from "@google/genai";
-import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -25,18 +27,6 @@ import {
   View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-
-let hfToken: any = null;
-let hfModelUrl: any = null;
-
-if (Constants.expoConfig && Constants.expoConfig.extra) {
-  hfToken = Constants.expoConfig.extra.hfToken as string;
-  hfModelUrl = Constants.expoConfig.extra.hfModelUrl as string;
-} else {
-  console.error(
-    "Expo config (Constants.expoConfig.extra) is missing. Cannot load API keys."
-  );
-}
 
 export default function submitEntry() {
   const router = useRouter();
@@ -63,67 +53,6 @@ export default function submitEntry() {
     lifespan: "",
   });
 
-  const ai = new GoogleGenAI({
-    apiKey: "AIzaSyCvvv5D5gE2Ydh6V6wxyummkjsyI-PYeWY",
-  });
-
-  const fetchAiSummary = async (
-    speciesName: string
-  ): Promise<Partial<EntryMetadata> | "NONE" | null> => {
-    try {
-      const prompt = `Firstly, check if "${speciesName}" sounds like a valid animal or plant. If it is NOT, immediately return the word "NONE"
-      and do not comply with the following instructions. If it is a valid animal or plant species, carry on with the following instructions.
-      Return only a raw JSON object with the following data about the species "${speciesName}":
-  {
-    "description": "Brief description of the species with 2 fun facts integrated into the description, under 100 words. 
-                    Make sure the sentences flow smoothly, and make it engaging for a reader",
-    "weight": "xx-xx unit of measurement (kg or g)",
-    "height": "xx-xx unit of measurement (m or cm)",
-    "lifespan": "xx-xx unit of measurement (days, months, or years)",
-    "speciesType": "Plant" or "Animal",
-    "environmentType": "Terrestrial", "Aquatic", or "Flying",
-    "rarity": "Common", "Uncommon", "Rare", "Very Rare", or "Unique"
-  }
-  
-  The rarity of a species is determined by its global population size. If its less than 1000, return "Unique". If its between 1000 to 100000, return "Very Rare".
-  If its between 100 000 to a million, return "Uncommon". Any number greater than that should return "Common".
-  Be completely certain that the data is returned in the exact format as described. 
-  Especially for "speciesType", "environmentType" and "rarity", make sure that the returned data is only limited to the options that were given to you.
-  Respond ONLY with this JSON and nothing else. Do not wrap it in code blocks or add any commentary.`;
-
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: prompt,
-      });
-
-      const raw = response.text?.trim();
-      if (!raw) throw new Error("No response from Gemini");
-
-      if (raw.toUpperCase() === "NONE") return "NONE";
-
-      const match = raw.match(/{[\s\S]*}/);
-      if (!match) throw new Error("No valid JSON block found in response");
-
-      const parsed = JSON.parse(match[0]);
-      console.log(parsed);
-
-      if (!parsed || typeof parsed !== "object") return null;
-
-      return {
-        description: parsed.description || "",
-        weight: parsed.weight || "",
-        height: parsed.height || "",
-        lifespan: parsed.lifespan || "",
-        speciesType: parsed.speciesType || "",
-        environmentType: parsed.environmentType || "",
-        rarity: parsed.rarity,
-      };
-    } catch (error) {
-      console.error("AI summary fetch error:", error);
-      return null;
-    }
-  };
-
   const classifyImage = async (photoUri: string) => {
     try {
       setIsFetchingAPI(true);
@@ -132,57 +61,33 @@ export default function submitEntry() {
         encoding: "base64",
       });
 
-      const response = await fetch(hfModelUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${hfToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ inputs: base64Image }),
-      });
+      const speciesName = await fetchSpeciesName(base64Image);
+      const aiSummary = await fetchSpeciesSummary(speciesName);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error: ${errorText}`);
+      if (aiSummary === "NONE") {
+        router.back();
+        Alert.alert(
+          "Not a plant or animal!",
+          "Please upload a photo of a plant or an animal.",
+          [{ text: "OK" }],
+          { cancelable: false }
+        );
+        return; // bail out before setEntryMetaData
       }
-      const data = await response.json();
-      const prediction = data?.[0];
 
-      if (prediction?.label) {
-        const speciesName = prediction.label.split(",")[0].trim() as string;
-        const speciesNameUppercased = speciesName
-          .split(" ")
-          .map((word) => word[0].toUpperCase() + word.substring(1))
-          .join(" ");
-        const aiSummary = await fetchAiSummary(speciesName);
-
-        if (aiSummary === "NONE") {
-          setIsFetchingAPI(false); // stop spinner
-          Alert.alert(
-            "Not a plant or animal!",
-            "Please upload a photo of a plant or an animal.",
-            [{ text: "OK", onPress: () => router.replace("/(tabs)/camera") }],
-            { cancelable: false }
-          );
-          return; // bail out before setEntryMetaData
-        }
-        /* =================== */
-
-        if (!aiSummary) {
-          throw new Error("error with returning summary");
-        } else {
-          setEntryMetaData({
-            name: speciesNameUppercased,
-            description: aiSummary.description || "",
-            speciesType: aiSummary.speciesType || "",
-            environmentType: aiSummary.environmentType || "",
-            rarity: aiSummary.rarity || "",
-            weight: aiSummary.weight || "",
-            height: aiSummary.height || "",
-            lifespan: aiSummary.lifespan || "",
-          });
-          setIsFetchingAPI(false);
-        }
+      if (!aiSummary) {
+        throw new Error("error with returning summary");
+      } else {
+        setEntryMetaData({
+          name: speciesName,
+          description: aiSummary.description || "",
+          speciesType: aiSummary.speciesType || "",
+          environmentType: aiSummary.environmentType || "",
+          rarity: aiSummary.rarity || "",
+          weight: aiSummary.weight || "",
+          height: aiSummary.height || "",
+          lifespan: aiSummary.lifespan || "",
+        });
       }
     } catch (error) {
       console.error("Classification error:", error);
@@ -191,7 +96,6 @@ export default function submitEntry() {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      setIsFetchingAPI(false);
       Alert.alert("AI Identification Failed", errorMessage);
       router.replace("/(tabs)/camera");
     } finally {
@@ -292,6 +196,11 @@ export default function submitEntry() {
             autoCapitalize="words"
             placeholderTextColor="gray"
           />
+          <MaterialCommunityIcons
+            name="cards-playing-diamond-multiple"
+            size={30}
+            color={formatRarityToGradient(entryMetaData.rarity)[0]}
+          />
         </View>
 
         <Image
@@ -317,7 +226,7 @@ export default function submitEntry() {
               : "There's no description..."}
           </Text>
         </ScrollView>
-
+        <Text style={styles.dateTimeBoxText}>Captured Time</Text>
         <View style={styles.datetimeBox}>
           <DateTimeBox
             day={parsedDateTime[0]}
@@ -326,6 +235,11 @@ export default function submitEntry() {
             time={parsedDateTime[3]}
           />
         </View>
+        <Text style={styles.informationBoxText}>Information</Text>
+        <InfoBox title="Height" text={entryMetaData.height} />
+        <InfoBox title="Weight" text={entryMetaData.weight} />
+        <InfoBox title="Lifespan" text={entryMetaData.lifespan} />
+
         <View style={styles.observationContainer}>
           <Text style={styles.observationBoxTitle}>Observations</Text>
           <TextInput
@@ -443,13 +357,26 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     flexWrap: "wrap",
   },
-  datetimeBox: { height: 60, width: "100%" },
+  datetimeBox: { height: 50, width: "100%" },
+  dateTimeBoxText: {
+    fontSize: 16,
+    width: "100%",
+    textAlign: "left",
+    textAlignVertical: "center",
+  },
+  informationBoxText: {
+    fontSize: 16,
+    width: "100%",
+    textAlign: "left",
+    textAlignVertical: "center",
+  },
   observationContainer: {
     width: "100%",
     gap: 6,
   },
   observationBox: {
     fontSize: 16,
+    color: "black",
     minHeight: 120,
     width: "100%",
     borderRadius: 15,

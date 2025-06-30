@@ -1,6 +1,6 @@
 import formatDateTimeInsert from "@/hooks/formatDateTimeInsert";
-import Entry from "@/supabase/entrySchema";
 import supabase from "@/supabase/main";
+import Entry from "@/supabase/schema";
 import { Session } from "@supabase/supabase-js";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
@@ -67,7 +67,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
       lifespan: entry.lifespan,
       observations: entry.observations,
     };
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("entriestest")
       .insert(inserted)
       .select();

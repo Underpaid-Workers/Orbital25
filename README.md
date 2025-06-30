@@ -2,7 +2,7 @@
 EcoDex is a nature discovery app that combines automated species identification with a Pokédex-style inventory, rarity-based scoring, and social features to make biodiversity exploration educational, gamified, and community-driven.
 
 ## How to use
-**Android Users** can download the following apk for testing: [EcoDex_Milestone1](https://drive.google.com/file/d/1JoAmgcpQEv65dcTd1lmKYvZlc9su7ADq/view?usp=drive_link)
+**Android Users** can download the following apk for testing: [EcoDex_Milestone2](https://drive.google.com/file/d/1Eia5uSv5JmlyR9LZ7INyslp70VUvKBp2/view?usp=drive_link)
 
 ## Features
 ### User Account Management
@@ -26,13 +26,32 @@ For adding entries, users will:
 </p>
 
 ### Identifying Entries (with API)
-- Entries are identified using captured images through the [HuggingFaceAPI](https://huggingface.co/).
+- Entries are identified using captured images through the [HuggingFaceAPI](https://huggingface.co/). Species information is then retrieved using Google's [Gemini API](https://ai.google.dev/)
 - Various data about the entry will be returned, such as:
-    - Description of the species, some fun facts
-    - Height, Weight, Lifespan
+  - Description of the species, some fun facts
+  - Height, Weight, Lifespan
+
+### Social Features
+Building on EcoDex’s community focus, the Social tab brings your discoveries into a shared space:
+- Friend Management
+  - Send and accept friend requests to build your exploration network.
+  - View each friend’s rarity score and total captures to compare progress side‑by‑side.\
+- Global Leaderboard
+  - See the top EcoDex users by rarity score or species count.
+  - Track your rank in real time and aim to climb higher with every new find.
+
+### Interactive Map
+Visualize biodiversity across your local area and the world with our Map tab:
+- Personal vs. Global Views
+  - Toggle between your own submitted entries and all public observations.
+- Advanced Filtering
+  - Filter markers by rarity tier, environment (e.g., aquatic, terrestrial), or species type (plant vs. animal).
+- Hotspot Discovery
+  - Identify concentration zones of rare or unique species to plan your next outing.
 
 ## Tech Stack
 - React Native
 - Supabase
 - Expo, Expo EAS
+- Vitest 
 - Git, Github

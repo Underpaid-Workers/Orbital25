@@ -1,4 +1,6 @@
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
+import { AuthError } from "@supabase/supabase-js";
 import { Alert } from "react-native";
 
 /**
@@ -7,13 +9,24 @@ import { Alert } from "react-native";
  * @param password as string
  * @returns void if successful, Alert if user credential invalid or user not exist
  */
-export default async function signIn(email: string, password: string) {
-  const { error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password,
-  });
+export default async function signIn(
+  email: string,
+  password: string
+): Promise<ResponseState> {
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
 
-  if (error) {
-    Alert.alert(error.message);
+    if (error) {
+      throw error;
+    } else {
+      return { success: true };
+    }
+  } catch (error) {
+    const errorMessage = error as AuthError;
+    Alert.alert(errorMessage.message);
+    return { success: false, message: errorMessage.message };
   }
 }

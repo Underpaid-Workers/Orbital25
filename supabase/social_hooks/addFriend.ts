@@ -1,11 +1,14 @@
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
 
 /**
  * @description Add a friend based on email to friends list
  * @param friendEmail as string
- * @returns Object of {sucess:string, message:string}
+ * @returns Promise<ResponseState>
  */
-export default async function addFriend(friendEmail: string) {
+export default async function addFriend(
+  displayName: string
+): Promise<ResponseState> {
   // Get cur user
   const {
     data: { user },
@@ -19,11 +22,11 @@ export default async function addFriend(friendEmail: string) {
 
   const userId = user.id;
 
-  // Find friend ID by email
+  // Find friend ID
   const { data: friendUser, error: friendError } = await supabase
     .from("users")
     .select("id")
-    .eq("email", `${friendEmail}@gmail.com`) // Only works for gmail.com as of now
+    .eq("displayname", displayName)
     .single();
 
   if (friendError || !friendUser) {
@@ -32,7 +35,7 @@ export default async function addFriend(friendEmail: string) {
   }
 
   const friendId = friendUser.id;
-  console.log(friendId);
+  // console.log(friendId);
 
   // Insert friendship row
   const { error: insertError } = await supabase.from("friendships").insert([

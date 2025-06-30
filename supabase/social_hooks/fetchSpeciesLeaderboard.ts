@@ -1,14 +1,9 @@
 import supabase from "@/supabase/main";
 
-/**
- * @description Fetch data for the global leaderboard
- * @params none
- * @returns Array of entries?
- */
-export default async function getLeaderboardData() {
+export async function fetchSpeciesLeaderboard() {
   const { data: users, error: userError } = await supabase
     .from("users")
-    .select("id, email");
+    .select("id, displayname");
 
   if (userError) {
     console.error("Error fetching users:", userError);
@@ -24,21 +19,19 @@ export default async function getLeaderboardData() {
 
       if (entryError) {
         console.error(`Error counting entries for ${user.id}:`, entryError);
-        return;
+        return null;
       }
 
+      const name = user.displayname?.trim() || "anonymous";
+
       return {
-        name: user.email?.split("@")[0] ?? "unknown",
+        name,
         speciesNum: count ?? 0,
       };
     })
   );
 
-  const filteredData = userData.filter(
+  return userData.filter(
     (item): item is { name: string; speciesNum: number } => item !== null
   );
-
-  //const top20 = filteredData.sort((a,b) => b.speciesNum - a.speciesNum).slice(0,20);
-
-  return filteredData;
 }

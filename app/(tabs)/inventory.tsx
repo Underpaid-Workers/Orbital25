@@ -14,91 +14,89 @@ import {
   Text,
   View,
 } from "react-native";
+
 export default function inventory() {
   const { data, entryCount, speciesCount, score, loading, getEntries } =
     useEntryDataContext();
 
-  //refetch data everytime user clicks back onto screen
   useEffect(() => {
     getEntries();
   }, []);
 
-  //temporary setting for error state TODO: ACCOUNT FOR LACK OF INTERNET
   const [error, setError] = useState(false);
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.tabBar} />
-      </View>
-    );
-  } else if (error) {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={missingImage}
-          contentFit="cover"
-          style={styles.missingImage}
-        />
-        <Text style={styles.missingText}>Error : Unable to load</Text>
-      </View>
-    );
-  } else {
-    return entryCount === 0 ? (
-      <View style={styles.container}>
-        <FloatingInfoBar
-          species={speciesCount}
-          entries={entryCount}
-          score={score}
-        />
-        <Image
-          source={emptyImage}
-          contentFit="cover"
-          style={styles.missingImage}
-        />
-        <Text style={styles.missingText}>
-          Start your collecting journey here!
-        </Text>
-        <View style={styles.missingIconContainer}>
-          <MaterialCommunityIcons name="arrow-down" size={60} />
+  return (
+    <>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.tabBar} />
         </View>
-      </View>
-    ) : (
-      <View style={styles.container}>
-        <FloatingInfoBar
-          species={speciesCount}
-          entries={entryCount}
-          score={score}
-        />
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id.toString()}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }}></View>}
-          renderItem={({ item }) => (
-            <EntryCard
-              id={item.id}
-              name={item.name}
-              image={item.image}
-              speciesType={item.speciesType}
-              envType={item.environmentType}
-              rarity={item.rarity}
-            />
-          )}
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={getEntries} />
-          }
-        />
-      </View>
-    );
-  }
+      ) : error ? (
+        <View style={styles.container}>
+          <Image
+            source={missingImage}
+            contentFit="cover"
+            style={styles.missingImage}
+          />
+          <Text style={styles.missingText}>Error : Unable to load</Text>
+        </View>
+      ) : entryCount === 0 ? (
+        <View style={styles.container}>
+          <FloatingInfoBar
+            species={speciesCount}
+            entries={entryCount}
+            score={score}
+          />
+          <Image
+            source={emptyImage}
+            contentFit="cover"
+            style={styles.missingImage}
+          />
+          <Text style={styles.missingText}>
+            Start your collecting journey here!
+          </Text>
+          <View style={styles.missingIconContainer}>
+            <MaterialCommunityIcons name="arrow-down" size={60} />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <FloatingInfoBar
+            species={speciesCount}
+            entries={entryCount}
+            score={score}
+          />
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id.toString()}
+            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+            ListHeaderComponent={<View style={{ height: 16 }} />}
+            renderItem={({ item }) => (
+              <EntryCard
+                id={item.id}
+                name={item.name}
+                image={item.image}
+                speciesType={item.speciesType}
+                envType={item.environmentType}
+                rarity={item.rarity}
+              />
+            )}
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={getEntries} />
+            }
+          />
+        </View>
+      )}
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     height: "100%",
     width: "100%",
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
     alignItems: "center",
   },
   loadingContainer: {
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     borderCurve: "continuous",
   },
   missingText: {
-    position: "fixed",
+    position: "absolute",
     top: "70%",
     transform: [{ translateY: "-50%" }],
     flex: 0.1,
@@ -130,7 +128,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   missingIconContainer: {
-    position: "fixed",
+    position: "absolute",
     top: "75%",
     transform: [{ translateY: "-50%" }],
   },

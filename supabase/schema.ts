@@ -1,3 +1,8 @@
+export interface User {
+  email: string;
+  username: string;
+}
+
 //Full entry fetched to local
 export interface Entry {
   id: number;
@@ -33,5 +38,10 @@ export interface EntryMetadata {
   weight: string;
   lifespan: string;
 }
+
+export type ResponseState = {
+  success: boolean;
+  message?: string;
+};
 
 export default Entry;

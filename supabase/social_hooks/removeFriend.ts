@@ -1,17 +1,14 @@
 import supabase from "@/supabase/main";
-
-type RemoveFriendResult =
-  | { success: true }
-  | { success: false; message: string };
+import { ResponseState } from "@/supabase/schema";
 
 /**
  * @description Removes friend from friends list of user
  * @param friendName as string
- * @returns Promise<RemoveFriendResult>
+ * @returns Promise<ResponseState>
  */
 export default async function removeFriend(
   friendName: string
-): Promise<RemoveFriendResult> {
+): Promise<ResponseState> {
   const {
     data: { session },
     error: sessionError,
@@ -23,11 +20,10 @@ export default async function removeFriend(
   const currentUserId = session.user.id;
 
   //friend
-  const friendEmail = `${friendName}@gmail.com`;
   const { data: friendUser, error: friendLookupError } = await supabase
     .from("users")
-    .select("id")
-    .eq("email", friendEmail)
+    .select("id, displayname")
+    .eq("displayname", friendName)
     .maybeSingle();
 
   if (friendLookupError) {

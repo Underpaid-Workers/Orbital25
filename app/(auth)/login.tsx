@@ -18,7 +18,7 @@ export default function login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { loading, logIn } = useAuthContext();
+  const { loading, logIn, setIsNewUser } = useAuthContext();
 
   return (
     <KeyboardAvoidingView
@@ -54,7 +54,10 @@ export default function login() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => logIn(email, password)}
+          onPress={() => {
+            setIsNewUser(false);
+            logIn(email, password);
+          }}
           disabled={loading}
         >
           <Text style={styles.buttonText}>

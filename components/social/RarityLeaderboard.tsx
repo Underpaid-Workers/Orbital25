@@ -9,38 +9,38 @@ import {
   View,
 } from "react-native";
 
-type LeaderboardItem = {
+type RarityLeaderboardItem = {
   name: string;
-  speciesNum: number;
+  rarityScore: number;
   isSelf?: boolean;
 };
 
-type Leaderboard = {
-  pulledData: LeaderboardItem[];
+type RarityLeaderboard = {
+  pulledData: RarityLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
 };
 
-export default function Leaderboard({
+export default function RarityLeaderboard({
   pulledData,
   showDelete = false,
   onDelete,
-}: Leaderboard) {
+}: RarityLeaderboard) {
   const sortedData = [...pulledData].sort(
-    (a, b) => b.speciesNum - a.speciesNum
+    (a, b) => b.rarityScore - a.rarityScore
   );
 
   const renderItem = ({
     item,
     index,
   }: {
-    item: LeaderboardItem;
+    item: RarityLeaderboardItem;
     index: number;
   }) => (
     <View
       style={[
         styles.container,
-        { backgroundColor: index % 2 === 0 ? colors.gray : colors.background },
+        { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
       ]}
     >
       <Text style={styles.rank}>{index + 1}</Text>
@@ -49,8 +49,8 @@ export default function Leaderboard({
       </Text>
 
       <View style={styles.speciesContainer}>
-        <Text style={styles.speciesNum}>{item.speciesNum}</Text>
-        <Text style={styles.species}> species collected</Text>
+        <Text style={styles.score}>{item.rarityScore}</Text>
+        <Text style={styles.rarityScore}>rarity score</Text>
       </View>
 
       {showDelete && !!onDelete && !item.isSelf ? (
@@ -102,12 +102,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
-  speciesNum: {
+  score: {
     fontSize: 15,
     fontWeight: "bold",
     marginRight: 5,
   },
-  species: {
+  rarityScore: {
     fontSize: 12,
     color: "gray",
   },
