@@ -24,6 +24,7 @@ describe("Check AI Summary", () => {
     expect(resultValid).toHaveProperty("speciesType");
     expect(resultValid).toHaveProperty("environmentType");
     expect(resultValid).toHaveProperty("rarity");
+    expect(resultValid).toHaveProperty("habitat");
   });
 
   test("Invalid species should return NONE", () => {

@@ -12,6 +12,7 @@ export interface Entry {
   environmentType: string;
   speciesType: string;
   rarity: string;
+  habitat: string;
   location: { lat: number; long: number };
   description: string;
   height: string;
@@ -20,19 +21,12 @@ export interface Entry {
   observations: string;
 }
 
-//Locally stored entry information
-export interface LocalEntry {
-  datetime: string;
-  image: string;
-  location: { lat: number; long: number };
-  observations: string;
-}
-
 export interface EntryMetadata {
   name: string;
   environmentType: string;
   speciesType: string;
   rarity: string;
+  habitat: string;
   description: string;
   height: string;
   weight: string;

@@ -50,12 +50,14 @@ export default async function fetchEntries(
           species_type,
           env_type,
           rarity,
+          habitat,
           location,
           description,
           height,
           weight,
           lifespan,
-          observations`,
+          observations
+          `,
 
           { count: "exact" }
         )
@@ -87,6 +89,7 @@ export default async function fetchEntries(
                 speciesType: entry.species_type,
                 environmentType: entry.env_type,
                 rarity: entry.rarity,
+                habitat: entry.habitat,
                 location: { lat: coord.lat, long: coord.long },
                 description: entry.description,
                 height: entry.height,

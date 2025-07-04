@@ -1,7 +1,8 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
+import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
-import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
+import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
 import fetchSpeciesName from "@/hooks/fetchSpeciesName";
@@ -51,6 +52,7 @@ export default function submitEntry() {
     height: "",
     weight: "",
     lifespan: "",
+    habitat: "",
   });
 
   const classifyImage = async (photoUri: string) => {
@@ -87,6 +89,7 @@ export default function submitEntry() {
           weight: aiSummary.weight || "",
           height: aiSummary.height || "",
           lifespan: aiSummary.lifespan || "",
+          habitat: aiSummary.habitat || "",
         });
       }
     } catch (error) {
@@ -117,6 +120,7 @@ export default function submitEntry() {
       environmentType: entryMetaData.environmentType,
       speciesType: entryMetaData.speciesType,
       rarity: entryMetaData.rarity,
+      habitat: entryMetaData.habitat,
       location: currentLocation,
       image: photo,
       description: entryMetaData.description,

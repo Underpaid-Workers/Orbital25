@@ -1,3 +1,5 @@
+import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
+import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
 import formatNumber from "@/hooks/formatNumber";
 import formatRarirtyToGradient from "@/hooks/formatRarityToGradient";
@@ -5,7 +7,6 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import SpeciesTag, { EnvironmentTag } from "./Tag";
 
 interface EntryCard {
   id: number;

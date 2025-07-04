@@ -23,6 +23,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
     species_type: string;
     env_type: string;
     rarity: string;
+    habitat: string;
     location: string;
     description: string;
     height: string;
@@ -60,6 +61,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
       species_type: entry.speciesType,
       env_type: entry.environmentType,
       rarity: entry.rarity,
+      habitat: entry.habitat,
       location: `POINT(${entry.location.long} ${entry.location.lat})`, //long is inserted first, then lat!, eg. "POINT(103.73124634847045 1.3582308673358716)"
       description: entry.description,
       height: entry.height,

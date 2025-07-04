@@ -1,6 +1,7 @@
+import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
-import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
+import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
 import { placeholderImage } from "@/constants/Image";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
@@ -79,6 +80,7 @@ export default function viewEntry() {
         <InfoBox title="Height" text={entry.height} />
         <InfoBox title="Weight" text={entry.weight} />
         <InfoBox title="Lifespan" text={entry.lifespan} />
+        <InfoBox title="Habitat" text={entry.habitat} />
         <Text style={styles.entryTextBoxTitle}>Observations</Text>
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{observations}</Text>
