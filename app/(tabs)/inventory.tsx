@@ -1,5 +1,6 @@
 import EntryCard from "@/components/entry/EntryCard";
 import FloatingInfoBar from "@/components/entry/FloatingInfoBar";
+import SearchBar from "@/components/entry/SearchBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
@@ -24,7 +25,10 @@ export default function inventory() {
   }, []);
 
   const [error, setError] = useState(false);
-
+  const [searchInput, setSearchInput] = useState("");
+  const filteredData = data.filter((entry) =>
+    entry.name.toLowerCase().includes(searchInput.toLowerCase())
+  );
   return (
     <>
       {loading ? (
@@ -61,30 +65,43 @@ export default function inventory() {
         </View>
       ) : (
         <View style={styles.container}>
+          <SearchBar
+            placeholderText="Find a species..."
+            onTextChange={setSearchInput}
+          />
+          <View style={{ height: 8 }}></View>
           <FloatingInfoBar
             species={speciesCount}
             entries={entryCount}
             score={score}
           />
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id.toString()}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-            ListHeaderComponent={<View style={{ height: 16 }} />}
-            renderItem={({ item }) => (
-              <EntryCard
-                id={item.id}
-                name={item.name}
-                image={item.image}
-                speciesType={item.speciesType}
-                envType={item.environmentType}
-                rarity={item.rarity}
-              />
-            )}
-            refreshControl={
-              <RefreshControl refreshing={false} onRefresh={getEntries} />
-            }
-          />
+          {filteredData.length > 0 ? (
+            <FlatList
+              data={filteredData}
+              keyExtractor={(item) => item.id.toString()}
+              ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+              ListHeaderComponent={<View style={{ height: 16 }} />}
+              renderItem={({ item }) => (
+                <EntryCard
+                  id={item.id}
+                  name={item.name}
+                  image={item.image}
+                  speciesType={item.speciesType}
+                  envType={item.environmentType}
+                  rarity={item.rarity}
+                />
+              )}
+              refreshControl={
+                <RefreshControl refreshing={false} onRefresh={getEntries} />
+              }
+            />
+          ) : (
+            <View style={styles.missingSearchContainer}>
+              <Text style={styles.missingSearchText}>
+                No Entries with name "{searchInput}"!
+              </Text>
+            </View>
+          )}
         </View>
       )}
     </>
@@ -131,5 +148,16 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "75%",
     transform: [{ translateY: "-50%" }],
+  },
+  missingSearchContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  missingSearchText: {
+    fontSize: 20,
+    textAlign: "center",
+    textAlignVertical: "center",
+    color: colors.text,
   },
 });

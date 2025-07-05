@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     width: 100,
-    borderColor: colors.primary,
-    borderWidth: 0,
+    borderColor: "black",
+    borderWidth: 0.5,
   },
   icon: {
     width: 20,

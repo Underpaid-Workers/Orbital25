@@ -1,6 +1,6 @@
 import formatDateTimeInsert from "@/hooks/formatDateTimeInsert";
 import supabase from "@/supabase/main";
-import Entry from "@/supabase/schema";
+import EntryLocal, { EntryDatabase } from "@/supabase/schema";
 import { Session } from "@supabase/supabase-js";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
@@ -13,24 +13,7 @@ import uuid from "react-native-uuid";
  * @param entry as Entry
  * @returns void
  */
-export default async function insertEntry(session: Session, entry: Entry) {
-  type EntryFormat = {
-    user_id: string;
-    entry_id: number;
-    name: string;
-    datetime: string;
-    image_url: string;
-    species_type: string;
-    env_type: string;
-    rarity: string;
-    habitat: string;
-    location: string;
-    description: string;
-    height: string;
-    weight: string;
-    lifespan: string;
-    observations: string;
-  };
+export default async function insertEntry(session: Session, entry: EntryLocal) {
   async function uploadPhoto(userId: string, entryId: number, image: string) {
     const imageEncoded = await FileSystem.readAsStringAsync(image, {
       encoding: "base64",
@@ -52,7 +35,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
   try {
     if (!session?.user) throw new Error("No user on the session!");
     const imageUrl = await uploadPhoto(session.user.id, entry.id, entry.image);
-    const inserted = <EntryFormat>{
+    const inserted = <EntryDatabase>{
       user_id: session.user.id,
       entry_id: entry.id,
       name: entry.name,
@@ -78,6 +61,7 @@ export default async function insertEntry(session: Session, entry: Entry) {
     }
     console.log("Entry inserted");
   } catch (error: any) {
-    Alert.alert(error.message);
+    Alert.alert("Error", error.message);
+    console.error("Insert failed:", error);
   }
 }

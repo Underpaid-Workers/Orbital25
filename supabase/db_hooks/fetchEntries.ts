@@ -1,6 +1,6 @@
 import { EntryData } from "@/providers/EntryDataProvider";
 import supabase from "@/supabase/main";
-import { Entry } from "@/supabase/schema";
+import EntryLocal from "@/supabase/schema";
 import { Session } from "@supabase/supabase-js";
 import { Alert } from "react-native";
 /**
@@ -12,7 +12,7 @@ export default async function fetchEntries(
   session: Session
 ): Promise<EntryData> {
   const result = <EntryData>{
-    data: <Entry[]>[],
+    data: <EntryLocal[]>[],
     entryCount: 0,
     speciesCount: 0,
     score: 0,
@@ -81,7 +81,7 @@ export default async function fetchEntries(
             .then((latlong) => (coord = latlong))
             .finally(() => {
               let image = fetchImage(entry.image_url).publicUrl;
-              let temp = <Entry>{
+              let temp = <EntryLocal>{
                 id: entry.entry_id,
                 name: entry.name,
                 datetime: entry.datetime,
@@ -112,10 +112,9 @@ export default async function fetchEntries(
         );
       }
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      Alert.alert(error.message);
-    }
+  } catch (error: any) {
+    Alert.alert(error.message);
+    console.error("Fetch entries failed");
   } finally {
     return result;
   }

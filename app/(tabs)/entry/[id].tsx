@@ -23,7 +23,8 @@ import MapView, { Marker } from "react-native-maps";
 
 export default function viewEntry() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, loading, removeEntry } = useEntryDataContext();
+  const { data, loading, removeEntry, updateEntryObservation } =
+    useEntryDataContext();
 
   //data is 0-indexed, while id is 1 indexed
   const entry = data[Number.parseInt(id) - 1];
@@ -32,15 +33,21 @@ export default function viewEntry() {
   let displayId = "#000";
   let observations = "Nothing written here...";
 
+  const router = useRouter();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  // const [observationsEdit, setObservationsEdit] =
+  //   useState<string>(observations);
+  // const [isObservationEditable, setIsObservationEditable] =
+  //   useState<boolean>(false);
+  // useEffect(() => {
+  //   setObservationsEdit(observations);
+  // }, [observations]);
   if (entry !== undefined) {
     datetime = formatDateTimeDisplay(entry.datetime);
     displayId = formatNumber(entry.id.toString());
     observations =
       entry.observations !== "" ? entry.observations : observations;
   }
-
-  const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
 
   const onDelete = () => {
     const onComplete = () => {
@@ -82,8 +89,36 @@ export default function viewEntry() {
         <InfoBox title="Lifespan" text={entry.lifespan} />
         <InfoBox title="Habitat" text={entry.habitat} />
         <Text style={styles.entryTextBoxTitle}>Observations</Text>
+
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{observations}</Text>
+          {/* {isObservationEditable ? (
+            <TextInput
+              style={styles.entryText}
+              autoFocus={isObservationEditable}
+              onChangeText={(text) => setObservationsEdit(text)}
+              value={observationsEdit}
+              onFocus={() => setObservationsEdit(observations)}
+              onBlur={() => {
+                console.log("SDFSDFSD");
+                setIsObservationEditable(false);
+              }}
+            />
+          ) : (
+            <Text style={styles.entryText}>{observationsEdit}</Text>
+          )}
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => {
+              setIsObservationEditable(true);
+            }}
+          >
+            <MaterialCommunityIcons
+              name="pencil"
+              size={24}
+              color={colors.gray}
+            />
+          </TouchableOpacity> */}
         </View>
         <Text style={styles.entryTextBoxTitle}>Location</Text>
         <View style={styles.mapBox}>
@@ -192,5 +227,10 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     fontSize: 20,
     textAlign: "center",
+  },
+  editButton: {
+    position: "absolute",
+    right: 8,
+    top: 8,
   },
 });

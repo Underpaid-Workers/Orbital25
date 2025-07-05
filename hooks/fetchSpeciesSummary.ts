@@ -39,12 +39,13 @@ export default async function fetchSpeciesSummary(
     "speciesType": "Plant" or "Animal",
     "environmentType": "Terrestrial", "Aquatic", or "Flying",
     "rarity": "Common", "Uncommon", "Rare", "Very Rare", or "Unique",
-    "habitat": "Forest", "Grassland", "Wetland", "Desert", "Coastal", "Urban"
+    "habitat": "Forest", "Grassland", "Wetland", "Desert", "Mountains", "Coastal", "Oceanic", "Freshwater", "Urban", "Caves", "Tundra"
   }
   
   Determine rarity based on the global population size. If its less than 10000, return "Unique". If its between 10000 and 500000, return "Very Rare".
   If its between 500000 and 1000000, return "Uncommon". Lastly, for greater than 1000000, return "Common".
   Be completely certain that the data is returned in the exact format as described. 
+  "habitat" must have at most 2 of the listed habitats in alphabetical order.
   Respond ONLY with this JSON and nothing else. Do not wrap it in code blocks or add any commentary.`;
 
       const response = await ai.models.generateContent({
@@ -72,7 +73,8 @@ export default async function fetchSpeciesSummary(
         lifespan: parsed.lifespan || "",
         speciesType: parsed.speciesType || "",
         environmentType: parsed.environmentType || "",
-        rarity: parsed.rarity,
+        rarity: parsed.rarity || "",
+        habitat: parsed.habitat || "",
       };
     } catch (error) {
       console.error("AI summary fetch error:", error);

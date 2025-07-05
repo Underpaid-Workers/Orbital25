@@ -198,7 +198,7 @@ export default function submitEntry() {
             }
             autoCorrect={false}
             autoCapitalize="words"
-            placeholderTextColor="gray"
+            placeholderTextColor={colors.gray}
           />
           <MaterialCommunityIcons
             name="cards-playing-diamond-multiple"
@@ -243,6 +243,7 @@ export default function submitEntry() {
         <InfoBox title="Height" text={entryMetaData.height} />
         <InfoBox title="Weight" text={entryMetaData.weight} />
         <InfoBox title="Lifespan" text={entryMetaData.lifespan} />
+        <InfoBox title="Habitat" text={entryMetaData.habitat} />
 
         <View style={styles.observationContainer}>
           <Text style={styles.observationBoxTitle}>Observations</Text>

@@ -2,6 +2,7 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import deleteEntry from "@/supabase/db_hooks/deleteEntry";
 import fetchEntries from "@/supabase/db_hooks/fetchEntries";
 import insertEntry from "@/supabase/db_hooks/insertEntry";
+import updateEntry from "@/supabase/db_hooks/updateEntry";
 import Entry from "@/supabase/schema";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
@@ -13,6 +14,11 @@ export type EntryData = {
   loading: boolean;
   getEntries: () => void;
   uploadEntry: (submitting: Entry, onComplete: () => void) => void;
+  updateEntryObservation: (
+    id: number,
+    observation: string,
+    onComplete: () => void
+  ) => void;
   removeEntry: (id: number, image: string, onComplete: () => void) => void;
 };
 
@@ -24,6 +30,7 @@ const EntryDataContext = createContext<EntryData>({
   loading: false,
   getEntries: () => {},
   uploadEntry: () => {},
+  updateEntryObservation: () => {},
   removeEntry: () => {},
 });
 
@@ -71,6 +78,7 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
       console.log("Session not detected, insert failed");
     }
   };
+
   const removeEntry = (id: number, image: string, onComplete: () => void) => {
     setLoading(true);
     if (session) {
@@ -82,6 +90,21 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
       console.log("Session not detected, delete failed");
     }
   };
+
+  const updateEntryObservation = (
+    id: number,
+    observation: string,
+    onComplete: () => void
+  ) => {
+    setLoading(true);
+    if (session) {
+      console.log("Session detected, updating entry");
+      updateEntry(session, id, observation).finally(() =>
+        getEntries().finally(() => onComplete())
+      );
+    }
+  };
+
   return (
     <EntryDataContext.Provider
       value={{
@@ -92,6 +115,7 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
         loading,
         getEntries,
         uploadEntry,
+        updateEntryObservation,
         removeEntry,
       }}
     >

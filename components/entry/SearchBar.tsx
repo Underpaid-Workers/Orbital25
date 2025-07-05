@@ -1,36 +1,31 @@
 import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 
 interface Search {
   placeholderText: string;
-  onTextChange?: () => void;
-  onSearch: () => void;
+  onTextChange: (text: string) => void;
 }
 
-export default function SearchBar({
-  placeholderText,
-  onTextChange,
-  onSearch,
-}: Search) {
+export default function SearchBar({ placeholderText, onTextChange }: Search) {
   return (
     <View style={styles.bar}>
       <TextInput
         style={styles.textBox}
         placeholder={placeholderText}
-        onChangeText={onTextChange}
+        onChangeText={(text) => onTextChange(text)}
       />
-      <TouchableOpacity onPress={onSearch} style={styles.searchButton}>
+      <View style={styles.searchButton}>
         <MaterialCommunityIcons name="magnify" size={28} />
-      </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   bar: {
-    height: 60,
-    width: "90%",
+    height: 50,
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 16,

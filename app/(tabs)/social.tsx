@@ -142,8 +142,7 @@ export default function social() {
             <TextInput
               style={styles.searchBar}
               placeholder={`Add new friends...`}
-              placeholderTextColor={"gray"}
-              value={searchInput}
+              placeholderTextColor={colors.gray}
               onChangeText={setSearchInput}
             />
             <TouchableOpacity
@@ -176,17 +175,23 @@ export default function social() {
               )
             ) : (
               <View style={styles.resultsContainer}>
-                {filteredFriends.map((friend, index) => (
-                  <View key={index} style={styles.friendRow}>
-                    <Text style={styles.friendName}>{friend.name}</Text>
-                    <TouchableOpacity
-                      style={styles.addFriendButton}
-                      onPress={() => handleAddFriend(friend)}
-                    >
-                      <Text style={styles.addFriendButtonText}>Add Friend</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
+                {filteredFriends.length > 0 ? (
+                  filteredFriends.map((friend, index) => (
+                    <View key={index} style={styles.friendRow}>
+                      <Text style={styles.friendName}>{friend.name}</Text>
+                      <TouchableOpacity
+                        style={styles.addFriendButton}
+                        onPress={() => handleAddFriend(friend)}
+                      >
+                        <Text style={styles.addFriendButtonText}>
+                          Add Friend
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.notFoundText}>User Not Found...</Text>
+                )}
               </View>
             )}
           </View>
@@ -284,6 +289,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 30,
+    color: colors.text,
+  },
+  notFoundText: {
+    fontSize: 20,
+    alignSelf: "center",
+    textAlign: "center",
+    textAlignVertical: "center",
     color: colors.text,
   },
   addFriendButton: {
