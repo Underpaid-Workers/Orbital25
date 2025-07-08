@@ -6,7 +6,8 @@ import { useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function settings() {
-  const { logOut, fetchUsername, updateUsername, loading } = useAuthContext();
+  const { logOut, fetchUsername, updateUsername, deleteAccount, loading } =
+    useAuthContext();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -47,6 +48,10 @@ export default function settings() {
         <Text style={styles.changeText}>Change Display Name</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={deleteAccount}>
+        <Text style={styles.deleteText}>Delete Account</Text>
+      </TouchableOpacity>
+
       <UsernameModal
         visible={modalVisible}
         onSubmit={onSubmitUsername}
@@ -61,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 16,
+    gap: 24,
   },
   text: {
     fontSize: 24,
@@ -70,6 +75,10 @@ const styles = StyleSheet.create({
   changeText: {
     fontSize: 24,
     color: "#007AFF",
-    marginTop: 8,
+  },
+  deleteText: {
+    fontSize: 24,
+    color: "#C70000",
+    fontWeight: "bold",
   },
 });

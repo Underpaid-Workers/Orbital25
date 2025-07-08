@@ -52,16 +52,11 @@ export default async function deleteEntry(
     console.log("Deleted image from storage");
 
     //call sql function to change idx
-    const { data, error } = await supabase.rpc(
-      "decrement_entry_ids_after_delete",
-      {
-        deleted_entry_id: entryId,
-        current_user_id: userId,
-      }
-    );
-    if (error) {
-      throw error;
-    }
+    const { error } = await supabase.rpc("decrement_entry_ids_after_delete", {
+      deleted_entry_id: entryId,
+      current_user_id: userId,
+    });
+    if (error) throw error;
     console.log("Called decrement_entry_ids_after_delete function");
 
     Alert.alert("Success", "Entry deleted and entry IDs updated.");

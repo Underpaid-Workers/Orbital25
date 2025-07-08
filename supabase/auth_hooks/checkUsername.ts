@@ -3,13 +3,13 @@ import { ResponseState } from "@/supabase/schema";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export default async function checkUsername(
-  trimmed: string
+  username: string
 ): Promise<ResponseState> {
   try {
     const { data, error } = await supabase
       .from("users")
       .select("id")
-      .eq("displayname", trimmed);
+      .eq("displayname", username);
 
     if (error) throw error;
 
@@ -19,7 +19,8 @@ export default async function checkUsername(
       return { success: true };
     }
   } catch (error) {
-    const fetchError = error as PostgrestError;
-    return { success: false, message: fetchError.message };
+    const errorMessage = error as PostgrestError;
+    console.log(errorMessage);
+    return { success: false, message: errorMessage.message };
   }
 }

@@ -54,6 +54,7 @@ export interface EntryDatabase {
 export type ResponseState = {
   success: boolean;
   message?: string;
+  data?: any;
 };
 
 export default EntryLocal;

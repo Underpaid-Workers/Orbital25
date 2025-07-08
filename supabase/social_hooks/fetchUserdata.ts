@@ -13,12 +13,10 @@ export default async function fetchUserdata(user_id: string): Promise<User> {
       .select(`displayname, email`)
       .eq("id", user_id)
       .single();
-    if (!error) {
-      result.email = data.email;
-      result.username = data.displayname;
-    } else {
-      throw error;
-    }
+
+    if (error) throw error;
+    result.email = data.email;
+    result.username = data.displayname;
   } catch (error) {
     console.log(error);
   } finally {

@@ -1,7 +1,6 @@
 import supabase from "@/supabase/main";
 import { ResponseState } from "@/supabase/schema";
 import { AuthError } from "@supabase/supabase-js";
-import { Alert } from "react-native";
 
 /**
  * @description Uses supabase authentication to attempt log in. Requires account that exists on auth.user
@@ -19,14 +18,12 @@ export default async function signIn(
       password: password,
     });
 
-    if (error) {
-      throw error;
-    } else {
-      return { success: true };
-    }
+    if (error) throw error;
+
+    return { success: true };
   } catch (error) {
     const errorMessage = error as AuthError;
-    Alert.alert(errorMessage.message);
+    console.log(errorMessage);
     return { success: false, message: errorMessage.message };
   }
 }

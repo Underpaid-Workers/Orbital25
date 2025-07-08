@@ -1,6 +1,5 @@
 import supabase from "@/supabase/main";
 import { AuthError } from "@supabase/supabase-js";
-import { Alert } from "react-native";
 import { ResponseState } from "../schema";
 
 /**
@@ -18,7 +17,6 @@ export default async function signOut(): Promise<ResponseState> {
     }
   } catch (error) {
     const errorMessage = error as AuthError;
-    Alert.alert("Error when signing out!");
     return { success: false, message: errorMessage.message };
   }
 }
