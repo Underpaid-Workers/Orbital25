@@ -47,8 +47,8 @@ export default function camera() {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
-      allowsEditing: true,
-      aspect: [9, 16],
+      allowsEditing: false, //enable this to allow cropping
+      aspect: [3, 4],
       quality: 0.3,
     });
 

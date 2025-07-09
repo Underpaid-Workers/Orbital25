@@ -28,7 +28,7 @@ export async function fetchFriendsSpecies(): Promise<FriendSpecies[]> {
   const userName = currentUserData?.displayname?.trim() || "anonymous"; //return "anonymous" if no displayname
 
   const { count: mySpeciesCount, error: mySpeciesErr } = await supabase
-    .from("entriestest")
+    .from("entries")
     .select("*", { count: "exact", head: true })
     .eq("user_id", userId);
 
@@ -69,7 +69,7 @@ export async function fetchFriendsSpecies(): Promise<FriendSpecies[]> {
     const name = userData.displayname?.trim() || "anonymous";
 
     const { count, error: entryErr } = await supabase
-      .from("entriestest")
+      .from("entries")
       .select("*", { count: "exact", head: true })
       .eq("user_id", friendId);
 

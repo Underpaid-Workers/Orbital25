@@ -1,7 +1,10 @@
 import checkEmailExists from "@/supabase/auth_hooks/checkEmail";
+import deleteAccount from "@/supabase/auth_hooks/deleteAccount";
 import signIn from "@/supabase/auth_hooks/signIn";
 import signOut from "@/supabase/auth_hooks/signOut";
 import signUp from "@/supabase/auth_hooks/signUp";
+import deleteEntryImages from "@/supabase/db_hooks/deleteEntryImages";
+import fetchEntryImages from "@/supabase/db_hooks/fetchEntryImages";
 import supabase from "@/supabase/main";
 import fetchUserdata from "@/supabase/social_hooks/fetchUserdata";
 import updateUserdata from "@/supabase/social_hooks/updateUserData";
@@ -26,7 +29,7 @@ type AuthData = {
   setIsNewUser: (flag: boolean) => void;
   fetchUsername: () => void;
   updateUsername: (newName: string) => void;
-  deleteAccount: () => void;
+  removeAccount: () => void;
 };
 
 const AuthContext = createContext<AuthData>({
@@ -40,7 +43,7 @@ const AuthContext = createContext<AuthData>({
   setIsNewUser: () => {},
   fetchUsername: () => {},
   updateUsername: () => {},
-  deleteAccount: () => {},
+  removeAccount: () => {},
 });
 
 export default function AuthProvider({ children }: PropsWithChildren) {
@@ -115,8 +118,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       .then((response) => {
         if (!response.success) {
           Alert.alert(response.message as string);
-        } else {
-          Alert.alert("Sign Out Successful!");
         }
       })
       .finally(() => setLoading(false));
@@ -145,7 +146,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       .finally(() => setLoading(false));
   };
 
-  const deleteAccount = () => {
+  const removeAccount = () => {
     //TODO: Create a custom modal for deletion
     Alert.alert(
       "Confirm Delete?",
@@ -159,7 +160,27 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           text: "Yes",
           style: "destructive",
           onPress: () => {
-            console.log("DELEITNG ACCOUNT");
+            let user_id = session?.user.id as string;
+            fetchEntryImages(user_id).then((response) => {
+              if (response.success) {
+                deleteEntryImages(response.data).then((response) => {
+                  if (response.success) {
+                    deleteAccount(user_id).then((response) => {
+                      if (response.success) {
+                        Alert.alert("Account deleted.");
+                        signOut();
+                      } else {
+                        Alert.alert(response.message as string);
+                      }
+                    });
+                  } else {
+                    Alert.alert(response.message as string);
+                  }
+                });
+              } else {
+                Alert.alert(response.message as string);
+              }
+            });
           },
         },
       ]
@@ -179,7 +200,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         setIsNewUser,
         fetchUsername,
         updateUsername,
-        deleteAccount,
+        removeAccount,
       }}
     >
       {children}

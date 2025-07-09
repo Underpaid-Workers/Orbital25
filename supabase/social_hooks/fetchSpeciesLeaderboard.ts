@@ -13,7 +13,7 @@ export async function fetchSpeciesLeaderboard() {
   const userData = await Promise.all(
     users.map(async (user) => {
       const { count, error: entryError } = await supabase
-        .from("entriestest")
+        .from("entries")
         .select("*", { count: "exact", head: true })
         .eq("user_id", user.id);
 

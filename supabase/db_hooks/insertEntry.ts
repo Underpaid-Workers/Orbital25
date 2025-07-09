@@ -52,10 +52,7 @@ export default async function insertEntry(session: Session, entry: EntryLocal) {
       lifespan: entry.lifespan,
       observations: entry.observations,
     };
-    const { error } = await supabase
-      .from("entriestest")
-      .insert(inserted)
-      .select();
+    const { error } = await supabase.from("entries").insert(inserted).select();
     if (error) {
       throw error;
     }

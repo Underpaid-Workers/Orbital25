@@ -3,6 +3,19 @@ export interface User {
   username: string;
 }
 
+export interface Badge {
+  code: string;
+  name: string;
+  description: string;
+  icon_url: string;
+  badge_type: string;
+  criteria: any; //TODO: change this to better fit the jsonb schema!
+}
+
+export interface UserBadges {
+  badges: Badge[];
+}
+
 //Full entry fetched to local
 export interface EntryLocal {
   id: number;

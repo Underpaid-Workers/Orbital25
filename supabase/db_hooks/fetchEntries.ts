@@ -40,7 +40,7 @@ export default async function fetchEntries(
       throw new Error("No user on the session!");
     } else {
       const { data, count, error } = await supabase
-        .from("entriestest")
+        .from("entries")
         .select(
           `
           entry_id,

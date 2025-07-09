@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function settings() {
-  const { logOut, fetchUsername, updateUsername, deleteAccount, loading } =
+  const { logOut, fetchUsername, updateUsername, removeAccount, loading } =
     useAuthContext();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -48,7 +48,7 @@ export default function settings() {
         <Text style={styles.changeText}>Change Display Name</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={deleteAccount}>
+      <TouchableOpacity onPress={removeAccount}>
         <Text style={styles.deleteText}>Delete Account</Text>
       </TouchableOpacity>
 

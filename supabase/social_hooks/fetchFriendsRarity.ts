@@ -37,7 +37,7 @@ export async function fetchFriendsRarity(): Promise<FriendRarity[]> {
   const userName = currentUserData?.displayname?.trim() || "anonymous";
 
   const { data: userEntries, error: userEntriesErr } = await supabase
-    .from("entriestest")
+    .from("entries")
     .select("rarity")
     .eq("user_id", userId);
 
@@ -80,7 +80,7 @@ export async function fetchFriendsRarity(): Promise<FriendRarity[]> {
     const name = userData.displayname?.trim() || "anonymous";
 
     const { data: entries, error: entriesErr } = await supabase
-      .from("entriestest")
+      .from("entries")
       .select("rarity")
       .eq("user_id", friendId);
 

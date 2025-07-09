@@ -17,7 +17,7 @@ export default async function updateEntryObservation(
     if (!session?.user) throw new Error("No user on the session!");
     const userId = session.user.id;
     const { error } = await supabase
-      .from("entriestest")
+      .from("entries")
       .update({ observation: observation })
       .eq("user_id", userId)
       .eq("entry_id", entryId);

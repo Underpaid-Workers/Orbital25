@@ -11,7 +11,7 @@ export default async function checkEmailExists(
     });
 
     if (error) throw error;
-    return { success: true, data: data };
+    return { success: true, data: data as boolean };
   } catch (error) {
     const errorMessage = error as PostgrestError;
     console.log(errorMessage);

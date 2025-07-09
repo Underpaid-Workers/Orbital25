@@ -3,7 +3,7 @@ import { Session } from "@supabase/supabase-js";
 import { Alert } from "react-native";
 
 /**
- * @description Delete entry from supabase entriestest table
+ * @description Delete entry from supabase entries table
  * @param session as Session
  * @param entryId as number
  * @param entryImageURL as string
@@ -35,7 +35,7 @@ export default async function deleteEntry(
 
     //delete row
     const { error: deleteError, data: deleteData } = await supabase
-      .from("entriestest")
+      .from("entries")
       .delete()
       .eq("user_id", userId)
       .eq("entry_id", entryId)
