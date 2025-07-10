@@ -1,5 +1,6 @@
 import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -26,6 +27,7 @@ export default function RarityLeaderboard({
   showDelete = false,
   onDelete,
 }: RarityLeaderboard) {
+  const router = useRouter();
   const sortedData = [...pulledData].sort(
     (a, b) => b.rarityScore - a.rarityScore
   );
@@ -37,11 +39,12 @@ export default function RarityLeaderboard({
     item: RarityLeaderboardItem;
     index: number;
   }) => (
-    <View
+    <TouchableOpacity
       style={[
         styles.container,
         { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
       ]}
+      onPress={() => router.push("/profile")}
     >
       <Text style={styles.rank}>{index + 1}</Text>
       <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
@@ -63,7 +66,7 @@ export default function RarityLeaderboard({
       ) : (
         <View style={styles.deletePlaceholder} />
       )}
-    </View>
+    </TouchableOpacity>
   );
 
   return (
