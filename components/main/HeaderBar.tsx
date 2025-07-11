@@ -1,15 +1,15 @@
 import colors from "@/constants/Colors";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function HeaderBar({
   headerProps,
-  username,
 }: {
   headerProps: BottomTabHeaderProps;
-  username: string;
 }) {
+  const { username } = useUserdataContext();
   return (
     <View style={styles.headerTab}>
       <Text style={styles.headerText}>EcoDex</Text>

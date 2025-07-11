@@ -3,7 +3,7 @@ import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 
 type Props = {
   visible: boolean;
-  onSubmit: (username: string) => Promise<void>;
+  onSubmit: (username: string) => void;
   onClose: () => void;
 };
 
@@ -12,7 +12,8 @@ export default function UsernameModal({ visible, onSubmit, onClose }: Props) {
 
   const handleSave = async () => {
     const trimmed = input.trim();
-    await onSubmit(trimmed);
+    console.log(trimmed);
+    onSubmit(trimmed);
     setInput("");
   };
 

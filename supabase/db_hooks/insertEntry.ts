@@ -1,7 +1,7 @@
 import formatDateTimeInsert from "@/hooks/formatDateTimeInsert";
 import supabase from "@/supabase/main";
 import EntryLocal, { EntryDatabase } from "@/supabase/schema";
-import { Session } from "@supabase/supabase-js";
+import { PostgrestError, Session } from "@supabase/supabase-js";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
 import { Alert } from "react-native";
@@ -33,7 +33,6 @@ export default async function insertEntry(session: Session, entry: EntryLocal) {
     }
   }
   try {
-    if (!session?.user) throw new Error("No user on the session!");
     const imageUrl = await uploadPhoto(session.user.id, entry.id, entry.image);
     const inserted = <EntryDatabase>{
       user_id: session.user.id,
@@ -53,12 +52,10 @@ export default async function insertEntry(session: Session, entry: EntryLocal) {
       observations: entry.observations,
     };
     const { error } = await supabase.from("entries").insert(inserted).select();
-    if (error) {
-      throw error;
-    }
-    console.log("Entry inserted");
+    if (error) throw error;
+    return { success: true };
   } catch (error: any) {
-    Alert.alert("Error", error.message);
-    console.error("Insert failed:", error);
+    const errorMessage = error as PostgrestError;
+    return { success: false, message: errorMessage.message };
   }
 }

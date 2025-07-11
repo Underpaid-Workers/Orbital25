@@ -1,19 +1,44 @@
+interface Stats {
+  rarity: {
+    rare: number;
+    common: number;
+    unique: number;
+    uncommon: number;
+    "very rare": number;
+  };
+  envType: { flying: number; aquatic: number; terrestrial: number };
+  streakDays: number;
+  speciesType: { plant: number; animal: number };
+}
+
 export interface User {
   email: string;
   username: string;
+  entrycount: number;
+  speciescount: number;
+  score: number;
+  stats: Stats;
 }
 
+type RarityKey = keyof Stats["rarity"]; // "rare"|"common"|...
+type EnvTypeKey = keyof Stats["envType"]; // "flying"|"aquatic"|"terrestrial"
+type SpeciesTypeKey = keyof Stats["speciesType"]; // "plant"|"animal"
+export type ProgressionCriteria =
+  | { score: number } // threshold on User.score
+  | { streakDays: number } // streakDays from Stats
+  | { rarity: RarityKey; count: number } // {"rarity":"rare","count":5}
+  | { envTypes: EnvTypeKey[] } // {"envTypes":["aquatic","flying"]}
+  | { speciesType: SpeciesTypeKey; count?: number }; // {"speciesType":"plant","count":10}
+
 export interface Badge {
+  id: string;
   code: string;
   name: string;
   description: string;
-  icon_url: string;
+  image_url: string;
   badge_type: string;
-  criteria: any; //TODO: change this to better fit the jsonb schema!
-}
-
-export interface UserBadges {
-  badges: Badge[];
+  earned_at: string | null;
+  criteria: ProgressionCriteria; //TODO: change this to better fit the jsonb schema!
 }
 
 //Full entry fetched to local

@@ -5,7 +5,6 @@ import formatNumber from "@/hooks/formatNumber";
 import formatRarirtyToGradient from "@/hooks/formatRarityToGradient";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface EntryCard {
@@ -15,6 +14,7 @@ interface EntryCard {
   rarity: string;
   speciesType: string;
   envType: string;
+  onClickDetails: (clicked_id: number) => void;
 }
 
 export default function EntryCard({
@@ -24,17 +24,10 @@ export default function EntryCard({
   rarity,
   speciesType,
   envType,
+  onClickDetails,
 }: EntryCard) {
-  const router = useRouter();
-  const onClickDetails = () => {
-    console.log(`Entry ${id} clicked`);
-    router.navigate({
-      pathname: "/(tabs)/entry/[id]",
-      params: { id },
-    });
-  };
   return (
-    <TouchableOpacity style={styles.card} onPress={onClickDetails}>
+    <TouchableOpacity style={styles.card} onPress={() => onClickDetails(id)}>
       <LinearGradient
         colors={formatRarirtyToGradient(rarity)}
         start={{ x: 0, y: 0.9 }}
