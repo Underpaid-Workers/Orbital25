@@ -1,9 +1,9 @@
-type SaveResult = {
+type Result = {
   success: boolean;
   error?: string;
 };
 
-export default function validateTrimmedUsername(trimmed: string): SaveResult {
+export default function validateTrimmedUsername(trimmed: string): Result {
   if (!trimmed) {
     return { success: false, error: "Username cannot be empty" };
   } //check if no user input

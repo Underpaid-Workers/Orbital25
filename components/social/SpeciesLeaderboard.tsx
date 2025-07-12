@@ -1,6 +1,5 @@
 import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -20,15 +19,15 @@ type SpeciesLeaderboard = {
   pulledData: SpeciesLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
+  onClick: (user: string) => void;
 };
 
 export default function SpeciesLeaderboard({
   pulledData,
   showDelete = false,
   onDelete,
+  onClick,
 }: SpeciesLeaderboard) {
-  const router = useRouter();
-
   const sortedData = [...pulledData].sort(
     (a, b) => b.speciesNum - a.speciesNum
   );
@@ -41,7 +40,7 @@ export default function SpeciesLeaderboard({
     index: number;
   }) => (
     <TouchableOpacity
-      onPress={() => router.push("/profile")}
+      onPress={() => onClick(item.name)}
       style={[
         styles.container,
         { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },

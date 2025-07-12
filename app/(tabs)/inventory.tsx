@@ -4,8 +4,10 @@ import SearchBar from "@/components/entry/SearchBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,21 +19,34 @@ import {
 } from "react-native";
 
 export default function inventory() {
-  const { data, entryCount, speciesCount, score, loading, getEntries } =
-    useEntryDataContext();
+  const { data, loading, getEntries } = useEntryDataContext();
+  const {
+    entryCount,
+    speciesCount,
+    score,
+    getUserdata,
+    getUserBadges,
+    userLoading,
+  } = useUserdataContext();
 
   useEffect(() => {
     getEntries();
+    getUserdata();
+    getUserBadges();
   }, []);
 
+  const router = useRouter();
   const [error, setError] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const filteredData = data.filter((entry) =>
-    entry.name.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  const filteredData =
+    searchInput !== ""
+      ? data.filter((entry) =>
+          entry.name.toLowerCase().includes(searchInput.toLowerCase())
+        )
+      : data;
   return (
     <>
-      {loading ? (
+      {loading || userLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.tabBar} />
         </View>
@@ -50,6 +65,11 @@ export default function inventory() {
             species={speciesCount}
             entries={entryCount}
             score={score}
+            onClick={() =>
+              router.navigate({
+                pathname: "/badges",
+              })
+            }
           />
           <Image
             source={emptyImage}
@@ -74,6 +94,11 @@ export default function inventory() {
             species={speciesCount}
             entries={entryCount}
             score={score}
+            onClick={() =>
+              router.navigate({
+                pathname: "/profile",
+              })
+            }
           />
           {filteredData.length > 0 ? (
             <FlatList
@@ -89,6 +114,13 @@ export default function inventory() {
                   speciesType={item.speciesType}
                   envType={item.environmentType}
                   rarity={item.rarity}
+                  onClickDetails={(id: number) => {
+                    console.log(`Entry ${item.id} clicked`);
+                    router.navigate({
+                      pathname: "/(tabs)/entry/[id]",
+                      params: { id },
+                    });
+                  }}
                 />
               )}
               refreshControl={

@@ -1,20 +1,26 @@
 import colors from "@/constants/Colors";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import InfoCounterBox from "./InfoCounterBox";
 
-interface Info {
+interface InfoBar {
   species: number;
   entries: number;
   score: number;
+  onClick: () => void;
 }
 
-export default function FloatingInfoBar({ species, entries, score }: Info) {
+export default function FloatingInfoBar({
+  species,
+  entries,
+  score,
+  onClick,
+}: InfoBar) {
   return (
-    <View style={styles.bar}>
+    <TouchableOpacity style={styles.bar} onPress={onClick}>
       <InfoCounterBox title="Species" count={species} />
       <InfoCounterBox title="Entries" count={entries} />
       <InfoCounterBox title="Score" count={score} />
-    </View>
+    </TouchableOpacity>
   );
 }
 
