@@ -22,6 +22,7 @@ type Userdata = {
   speciesCount: number;
   score: number;
   badges: Badge[];
+  stats: User["stats"];
   getUserdata: () => void;
   getUserBadges: () => void;
   updateUsername: (
@@ -31,6 +32,26 @@ type Userdata = {
   ) => void;
 };
 
+const defaultStats: User["stats"] = {
+  streakDays: 0,
+  rarity: {
+    common: 0,
+    uncommon: 0,
+    rare: 0,
+    "very rare": 0,
+    unique: 0,
+  },
+  envType: {
+    aquatic: 0,
+    terrestrial: 0,
+    flying: 0,
+  },
+  speciesType: {
+    animal: 0,
+    plant: 0,
+  },
+};
+
 const UserdataContext = createContext<Userdata>({
   userLoading: true,
   username: "",
@@ -38,6 +59,7 @@ const UserdataContext = createContext<Userdata>({
   speciesCount: 0,
   score: 0,
   badges: [],
+  stats: defaultStats,
   getUserdata: () => {},
   getUserBadges: () => {},
   updateUsername: () => {},
@@ -45,26 +67,6 @@ const UserdataContext = createContext<Userdata>({
 
 export default function UserdataProvider({ children }: PropsWithChildren) {
   const { session } = useAuthContext();
-
-  const defaultStats: User["stats"] = {
-    streakDays: 0,
-    rarity: {
-      common: 0,
-      uncommon: 0,
-      rare: 0,
-      "very rare": 0,
-      unique: 0,
-    },
-    envType: {
-      aquatic: 0,
-      terrestrial: 0,
-      flying: 0,
-    },
-    speciesType: {
-      animal: 0,
-      plant: 0,
-    },
-  };
 
   const [userLoading, setUserLoading] = useState<boolean>(true);
   const [username, setUsername] = useState<string>("");
@@ -111,7 +113,9 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
         .then((response) => {
           if (response.success) {
             console.log(`${response.data.length} badges fetched`);
-            setBadges(sortBadges(response.data));
+            let processed = sortBadges(response.data);
+            processed = processed.filter((badge) => badge.earned_at);
+            setBadges(processed);
           } else {
             Alert.alert("Fetch Error", response.message);
           }
@@ -122,6 +126,9 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
       setUserLoading(false);
     }
   };
+
+  //TODO: Get other users data??
+  // const getSpecificUserdata = (user_id:string) =>{}
 
   const updateUsername = (
     newName: string,
@@ -182,10 +189,10 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
         speciesCount,
         score,
         badges,
+        stats,
         getUserdata,
         getUserBadges,
         updateUsername,
-        // updateUserBadges,
       }}
     >
       {children}

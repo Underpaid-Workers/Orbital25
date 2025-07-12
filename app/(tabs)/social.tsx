@@ -22,6 +22,7 @@ export default function social() {
   const [board, setBoard] = useState<1 | 2>(1);
   const [searchInput, setSearchInput] = useState("");
   const [showRarity, setShowRarity] = useState(false);
+  const [profileVisible, setProfileVisible] = useState<boolean>(false);
 
   const [speciesLeaderboardData, setSpeciesLeaderboardData] = useState<
     { name: string; speciesNum: number }[]
@@ -113,6 +114,11 @@ export default function social() {
     );
   };
 
+  const onClickProfile = (user: string) => {
+    //TODO: handle profile click here
+    console.log(`${user}'s profile clicked`);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonRow}>
@@ -165,12 +171,14 @@ export default function social() {
                   pulledData={friendsListRarity}
                   showDelete
                   onDelete={deleteFriend}
+                  onClick={onClickProfile}
                 />
               ) : (
                 <SpeciesLeaderboard
                   pulledData={friendsListSpecies}
                   showDelete
                   onDelete={deleteFriend}
+                  onClick={onClickProfile}
                 />
               )
             ) : (
@@ -197,9 +205,15 @@ export default function social() {
           </View>
         </View>
       ) : showRarity ? (
-        <RarityLeaderboard pulledData={rarityLeaderboardData} />
+        <RarityLeaderboard
+          pulledData={rarityLeaderboardData}
+          onClick={onClickProfile}
+        />
       ) : (
-        <SpeciesLeaderboard pulledData={speciesLeaderboardData} />
+        <SpeciesLeaderboard
+          pulledData={speciesLeaderboardData}
+          onClick={onClickProfile}
+        />
       )}
     </View>
   );

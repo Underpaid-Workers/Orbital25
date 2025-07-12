@@ -96,7 +96,7 @@ export default function inventory() {
             score={score}
             onClick={() =>
               router.navigate({
-                pathname: "/badges",
+                pathname: "/profile",
               })
             }
           />

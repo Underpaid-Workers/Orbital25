@@ -11,12 +11,7 @@ export default function BadgeCard({
   badge_type, //id and code are not used atm
 }: Badge) {
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: earned_at ? colors.primary : "lightgrey" },
-      ]}
-    >
+    <View style={styles.card}>
       <View
         style={{
           flex: 4,
@@ -26,12 +21,11 @@ export default function BadgeCard({
       >
         <Text style={styles.title}>{name}</Text>
         <Text style={styles.description}>{description}</Text>
-        {earned_at ? (
-          <Text style={styles.earnedAt}>
-            Received: {formatDateTimeDisplay(earned_at)}
-          </Text>
-        ) : null}
+        <Text style={styles.earnedAt}>
+          Received: {formatDateTimeDisplay(earned_at as string)}
+        </Text>
       </View>
+      {/* temp image view */}
       <View
         style={{
           height: "100%",
@@ -59,8 +53,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 100,
     minWidth: "100%",
-    padding: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     alignContent: "space-between",
+    backgroundColor: colors.primary,
   },
   title: {
     fontSize: 20,

@@ -98,7 +98,6 @@ export default function ProtectedLayout() {
           {/* custom settings for submit and view entry to remove default header tab. A different header tab is used */}
           <Tabs.Screen name="entry/submitEntry" />
           <Tabs.Screen name="entry/[id]" />
-          <Tabs.Screen name="badges" />
         </Tabs>
       </EntryDataProvider>
     </UserdataProvider>

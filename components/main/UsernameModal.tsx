@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 
-type Props = {
+type ModalProps = {
   visible: boolean;
   onSubmit: (username: string) => void;
   onClose: () => void;
 };
 
-export default function UsernameModal({ visible, onSubmit, onClose }: Props) {
+export default function UsernameModal({
+  visible,
+  onSubmit,
+  onClose,
+}: ModalProps) {
   const [input, setInput] = useState("");
 
   const handleSave = async () => {
