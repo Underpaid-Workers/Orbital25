@@ -1,4 +1,4 @@
-interface Stats {
+export interface Stats {
   rarity: {
     rare: number;
     common: number;
@@ -20,9 +20,10 @@ export interface User {
   stats: Stats;
 }
 
-type RarityKey = keyof Stats["rarity"]; // "rare"|"common"|...
-type EnvTypeKey = keyof Stats["envType"]; // "flying"|"aquatic"|"terrestrial"
-type SpeciesTypeKey = keyof Stats["speciesType"]; // "plant"|"animal"
+export type RarityKey = keyof Stats["rarity"]; // "rare"|"common"|...
+export type EnvTypeKey = keyof Stats["envType"]; // "flying"|"aquatic"|"terrestrial"
+export type SpeciesTypeKey = keyof Stats["speciesType"]; // "plant"|"animal"
+
 export type ProgressionCriteria =
   | { score: number } // threshold on User.score
   | { streakDays: number } // streakDays from Stats

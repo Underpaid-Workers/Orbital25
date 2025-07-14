@@ -4,6 +4,7 @@ import { Badge } from "@/supabase/schema";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 export default function BadgeCard({
+  //TODO: index is an input just to appease the .map function
   name,
   description,
   image_url,
@@ -51,9 +52,9 @@ export default function BadgeCard({
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    height: 100,
+    height: 120,
     minWidth: "100%",
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     alignContent: "space-between",
     backgroundColor: colors.primary,
@@ -69,6 +70,9 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   earnedAt: {
+    flex: 1,
+    verticalAlign: "bottom",
+    alignSelf: "baseline",
     fontSize: 14,
     color: "dimgrey",
   },

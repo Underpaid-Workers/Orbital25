@@ -167,10 +167,12 @@ export default function AuthProvider({ children }: PropsWithChildren) {
  * @description (auth)-wide context for managing authentication sessions
  * @param session the user session as Session | null
  * @param loading the boolean of loading state. True when doing authentication. else False
+ * @param isNewUser the boolean of new user flag. True when user signs up for the first time, else false
  * @param logIn a function which initiates a log in request with supabase auth
  * @param logOut a function which initiates a log out request with supabase auth
  * @param signUpWithEmail a function which initiates a sign up request with supabase auth
  * @param setIsNewUser a function which sets the flag representing a new user, true or false
+ * @param removeAccount a function which initiates a delete account request on supabase
  * @example const { session, loading, logIn } = useAuthContext();
  */
 export const useAuthContext = () => useContext(AuthContext);
