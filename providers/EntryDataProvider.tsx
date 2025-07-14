@@ -134,11 +134,11 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
 /**
  * @description (tabs)-wide context for managing entry data
  * @param data the entry data as Entry[]
- * @param entryCount the number of entries fetched
- * @param speciesCount the number of unique entry species
- * @param score the total score of entries
  * @param loading the boolean of loading state. true when fetching data, false otherwise
- * @param getData a function which initiates a data fetch from supabase
- * @example const { data, count, loading, getData } = useEntryDataContext();
+ * @param getEntries a function which fetches user's entries from supabase
+ * @param uploadEntry a function which uploads a user's new entry to supabase
+ * @param updateEntryObservation a function which updates a user entry's observation in supabase
+ * @param removeEntry a function which deletes a user's existing entry from supabase
+ * @example const { data, loading, getEntries } = useEntryDataContext();
  */
 export const useEntryDataContext = () => useContext(EntryDataContext);

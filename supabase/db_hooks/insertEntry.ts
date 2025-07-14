@@ -28,7 +28,6 @@ export default async function insertEntry(session: Session, entry: EntryLocal) {
     if (error) {
       Alert.alert(error.message);
     } else {
-      console.log(data.path);
       return data.path;
     }
   }

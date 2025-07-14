@@ -5,7 +5,8 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function profile() {
-  const { username, badges, speciesCount, score, stats } = useUserdataContext();
+  const { username, userBadges, speciesCount, score, stats } =
+    useUserdataContext();
 
   return (
     <ScrollView
@@ -47,11 +48,14 @@ export default function profile() {
       </View>
       <Text style={styles.sectionTitle}>Badges</Text>
 
-      {badges.length <= 0 ? (
-        <Text>Collect more badges to see them here!</Text>
+      {userBadges.length <= 0 ? (
+        <Text style={styles.statLabel}>
+          Collect more badges to see them here!
+        </Text>
       ) : (
-        badges.map((item) => (
+        userBadges.map((item, index) => (
           <BadgeCard
+            key={index}
             name={item.name}
             description={item.description}
             image_url={item.image_url}
@@ -74,6 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     paddingTop: 32,
+    paddingBottom: 50,
     gap: 20,
   },
   closeIcon: {
