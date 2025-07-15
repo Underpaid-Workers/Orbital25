@@ -1,30 +1,55 @@
 import EventCard from "@/components/events/EventCard";
-import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import formatDateTimeDifference from "@/hooks/formatDateTimeDifference";
+import { useAuthContext } from "@/providers/AuthProvider";
+import { useEventsContext } from "@/providers/EventsProvider";
+import React, { useEffect } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
 
 export default function events() {
+  const { session } = useAuthContext();
+  const { events, currentTime, getEvents } = useEventsContext();
+
+  useEffect(() => {
+    getEvents();
+  }, [session]);
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <EventCard
-        title="Explorer's Warm-Up"
-        timeLeft="23h"
-        current={1}
-        total={5}
-        description="Log 5 species of any rarity to kickstart your day's discoveries."
+    <View style={styles.container}>
+      <FlatList
+        data={events}
+        keyExtractor={(item) => item.id.toString()}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        ListHeaderComponent={<View style={{ height: 16 }} />}
+        renderItem={({ item }) => {
+          const differenceInMinutes = formatDateTimeDifference(
+            currentTime,
+            item.end_time
+          );
+
+          if (differenceInMinutes > 0) {
+            return (
+              <EventCard
+                title={item.title}
+                timeLeft={differenceInMinutes}
+                current={1}
+                total={5}
+                description={item.description}
+              />
+            );
+          }
+          return null;
+        }}
       />
-      <EventCard
-        title="Forest BirdWatch"
-        timeLeft="6d21h"
-        current={4}
-        total={5}
-        description="Log 5 distinct bird species in nature reserves (e.g. pink-necked green pigeon, crimson sunbird)."
-      />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
+    height: "100%",
+    width: "100%",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    alignItems: "center",
   },
 });

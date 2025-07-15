@@ -1,8 +1,8 @@
 import colors from "@/constants/Colors";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { Modal, StyleSheet, Text, TouchableOpacity } from "react-native";
 
-export default function NewBadgePopup({
+const NewBadgePopup = ({
   isVisible,
   onDismiss,
   badgeCount,
@@ -10,7 +10,8 @@ export default function NewBadgePopup({
   isVisible: boolean;
   onDismiss: () => void;
   badgeCount: number;
-}) {
+}) => {
+  const router = useRouter();
   return (
     //using double TouchableOpacity as a workaround for allowing click to
     //dismiss outside of modal
@@ -22,14 +23,19 @@ export default function NewBadgePopup({
       >
         <TouchableOpacity style={styles.content} activeOpacity={1}>
           <Text style={styles.text}>{badgeCount} badges earned!</Text>
-          <Link href="/(tabs)/profile">
+          <TouchableOpacity
+            onPress={() => {
+              router.navigate("/(tabs)/profile");
+              onDismiss();
+            }}
+          >
             <Text style={styles.link}>Check Profile</Text>
-          </Link>
+          </TouchableOpacity>
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>
   );
-}
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -62,3 +68,5 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+
+export default NewBadgePopup;

@@ -3,7 +3,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-export default function CameraPreview({
+const CameraPreview = ({
   photo,
   retakePicture,
   savePicture,
@@ -11,7 +11,7 @@ export default function CameraPreview({
   photo: string;
   retakePicture: () => void;
   savePicture: () => void;
-}) {
+}) => {
   return (
     <View style={styles.container}>
       <Image source={photo} style={styles.image} />
@@ -25,7 +25,7 @@ export default function CameraPreview({
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -52,3 +52,5 @@ const styles = StyleSheet.create({
   },
   image: { height: "100%", width: "100%" },
 });
+
+export default CameraPreview;

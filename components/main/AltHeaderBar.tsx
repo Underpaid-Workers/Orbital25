@@ -3,7 +3,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function AltHeaderTab({ navigation }: BottomTabHeaderProps) {
+const AltHeaderBar = ({ navigation }: BottomTabHeaderProps) => {
   const onBack = () => {
     navigation.canGoBack()
       ? navigation.goBack()
@@ -18,7 +18,7 @@ export default function AltHeaderTab({ navigation }: BottomTabHeaderProps) {
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerTab: {
@@ -40,3 +40,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default AltHeaderBar;

@@ -4,11 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { BottomTabHeaderProps } from "@react-navigation/bottom-tabs";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function HeaderBar({
-  headerProps,
-}: {
-  headerProps: BottomTabHeaderProps;
-}) {
+const HeaderBar = ({ headerProps }: { headerProps: BottomTabHeaderProps }) => {
   const { username } = useUserdataContext();
   return (
     <View style={styles.headerTab}>
@@ -25,7 +21,7 @@ export default function HeaderBar({
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerTab: {
@@ -51,3 +47,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
   },
 });
+
+export default HeaderBar;

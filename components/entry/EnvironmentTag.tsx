@@ -14,7 +14,7 @@ const EnvironmentColors = {
   undefined: "#E0DD9E",
 };
 
-export function EnvironmentTag({ env }: { env: string }) {
+const EnvironmentTag = ({ env }: { env: string }) => {
   let image;
   let color;
   let tag = env;
@@ -42,7 +42,7 @@ export function EnvironmentTag({ env }: { env: string }) {
       <Text style={styles.text}>{tag}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   tag: {
@@ -67,3 +67,5 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
 });
+
+export default EnvironmentTag;

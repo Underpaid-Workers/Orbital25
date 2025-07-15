@@ -28,14 +28,14 @@ type ModalProps = {
   onClose: () => void;
 };
 
-export default function ProfileModal({
+const ProfileModal = ({
   username,
   speciesCount,
   score,
   badges,
   visible,
   onClose,
-}: ModalProps) {
+}: ModalProps) => {
   const [tab, setTab] = useState<"badges" | "recentCaptures">("badges");
 
   return (
@@ -159,7 +159,7 @@ export default function ProfileModal({
       </View>
     </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   centered: {
@@ -283,3 +283,5 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
 });
+
+export default ProfileModal;

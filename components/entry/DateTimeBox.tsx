@@ -8,12 +8,7 @@ interface dateTimeFormat {
   time: string;
 }
 
-export default function DateTimeBox({
-  day,
-  month,
-  year,
-  time,
-}: dateTimeFormat) {
+const DateTimeBox = ({ day, month, year, time }: dateTimeFormat) => {
   return (
     <View style={styles.box}>
       <Text style={styles.text}>{day}</Text>
@@ -25,7 +20,7 @@ export default function DateTimeBox({
       <Text style={styles.text}>{time}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   box: {
@@ -49,3 +44,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export default DateTimeBox;

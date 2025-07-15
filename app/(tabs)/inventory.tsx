@@ -59,7 +59,7 @@ export default function inventory() {
           />
           <Text style={styles.missingText}>Error : Unable to load</Text>
         </View>
-      ) : entryCount === 0 ? (
+      ) : filteredData.length === 0 ? (
         <View style={styles.container}>
           <FloatingInfoBar
             species={speciesCount}

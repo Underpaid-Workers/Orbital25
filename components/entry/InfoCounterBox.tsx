@@ -5,14 +5,14 @@ interface Counter {
   title: string;
 }
 
-export default function InfoCounterBox({ count, title }: Counter) {
+const InfoCounterBox = ({ count, title }: Counter) => {
   return (
     <View style={styles.box}>
       <Text style={styles.countText}>{count}</Text>
       <Text style={styles.titleText}>{title}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   box: {
@@ -32,3 +32,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default InfoCounterBox;

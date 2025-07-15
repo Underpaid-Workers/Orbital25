@@ -9,12 +9,7 @@ interface InfoBar {
   onClick: () => void;
 }
 
-export default function FloatingInfoBar({
-  species,
-  entries,
-  score,
-  onClick,
-}: InfoBar) {
+const FloatingInfoBar = ({ species, entries, score, onClick }: InfoBar) => {
   return (
     <TouchableOpacity style={styles.bar} onPress={onClick}>
       <InfoCounterBox title="Species" count={species} />
@@ -22,7 +17,7 @@ export default function FloatingInfoBar({
       <InfoCounterBox title="Score" count={score} />
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   bar: {
@@ -37,3 +32,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
 });
+
+export default FloatingInfoBar;

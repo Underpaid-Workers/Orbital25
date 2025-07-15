@@ -1,9 +1,10 @@
-import AltHeaderTab from "@/components/main/AltHeaderBar";
+import AltHeaderBar from "@/components/main/AltHeaderBar";
 import HeaderBar from "@/components/main/HeaderBar";
 import TabBar from "@/components/main/TabBar";
 import { loginImage } from "@/constants/Image";
 import { useAuthContext } from "@/providers/AuthProvider";
 import EntryDataProvider from "@/providers/EntryDataProvider";
+import EventsProvider from "@/providers/EventsProvider";
 import UserdataProvider from "@/providers/UserdataProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -34,71 +35,73 @@ export default function ProtectedLayout() {
   return (
     <UserdataProvider>
       <EntryDataProvider>
-        <Tabs
-          //set initial route as Inventory page
-          initialRouteName="inventory"
-          backBehavior="history"
-          //custom TabBar used in place of pre-defined Tab
-          tabBar={(props) => <TabBar {...props} />}
-          screenOptions={{
-            tabBarLabelStyle: { fontWeight: "bold" },
-            header: (props) =>
-              altHeaderTabs.includes(props.route.name) ? (
-                <AltHeaderTab {...props} />
-              ) : (
-                <HeaderBar headerProps={props} />
-              ),
-          }}
-        >
-          <Tabs.Screen
-            name="social"
-            options={{
-              title: "Social",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="user" size={size} color={color} />
-              ),
+        <EventsProvider>
+          <Tabs
+            //set initial route as Inventory page
+            initialRouteName="inventory"
+            backBehavior="history"
+            //custom TabBar used in place of pre-defined Tab
+            tabBar={(props) => <TabBar {...props} />}
+            screenOptions={{
+              tabBarLabelStyle: { fontWeight: "bold" },
+              header: (props) =>
+                altHeaderTabs.includes(props.route.name) ? (
+                  <AltHeaderBar {...props} />
+                ) : (
+                  <HeaderBar headerProps={props} />
+                ),
             }}
-          />
-          <Tabs.Screen
-            name="maps"
-            options={{
-              title: "Maps",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="map" size={size} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="camera"
-            options={{
-              title: "Camera",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="camera" size={size} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="inventory"
-            options={{
-              title: "Inventory",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="archive" size={size} color={color} />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="events"
-            options={{
-              title: "Events",
-              tabBarIcon: ({ color, size }) => (
-                <FontAwesome name="calendar-o" size={size} color={color} />
-              ),
-            }}
-          />
-          {/* custom settings for submit and view entry to remove default header tab. A different header tab is used */}
-          <Tabs.Screen name="entry/submitEntry" />
-          <Tabs.Screen name="entry/[id]" />
-        </Tabs>
+          >
+            <Tabs.Screen
+              name="social"
+              options={{
+                title: "Social",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesome name="user" size={size} color={color} />
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="maps"
+              options={{
+                title: "Maps",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesome name="map" size={size} color={color} />
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="camera"
+              options={{
+                title: "Camera",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesome name="camera" size={size} color={color} />
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="inventory"
+              options={{
+                title: "Inventory",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesome name="archive" size={size} color={color} />
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="events"
+              options={{
+                title: "Events",
+                tabBarIcon: ({ color, size }) => (
+                  <FontAwesome name="calendar-o" size={size} color={color} />
+                ),
+              }}
+            />
+            {/* custom settings for submit and view entry to remove default header tab. A different header tab is used */}
+            <Tabs.Screen name="entry/submitEntry" />
+            <Tabs.Screen name="entry/[id]" />
+          </Tabs>
+        </EventsProvider>
       </EntryDataProvider>
     </UserdataProvider>
   );

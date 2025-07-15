@@ -1,5 +1,5 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
-import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
+import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import NewBadgePopup from "@/components/entry/NewBadgesPopup";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
@@ -34,8 +34,12 @@ import MapView, { Marker } from "react-native-maps";
 export default function submitEntry() {
   const router = useRouter();
   const { loading, uploadEntry } = useEntryDataContext();
-  const { entryCount, updateUserProgressionBadges, getUserdata } =
-    useUserdataContext();
+  const {
+    entryCount,
+    updateUserProgressionBadges,
+    getUserdata,
+    getUserBadges,
+  } = useUserdataContext();
 
   let id = entryCount + 1;
   const { photo, datetime } = useLocalSearchParams<{
@@ -138,18 +142,19 @@ export default function submitEntry() {
     };
 
     const onComplete = () => {
+      getUserdata();
       updateUserProgressionBadges((badges) => {
         setBadgeCount(badges);
+        getUserBadges();
+        setTimeout(() => {
+          setProcessingModalVisible(false);
+          if (badges > 0) {
+            setBadgeModalVisible(true);
+          }
+        }, 300);
+
+        router.replace("/(tabs)/inventory");
       });
-
-      getUserdata();
-
-      setTimeout(() => {
-        setProcessingModalVisible(false);
-        setBadgeModalVisible(true);
-      }, 300);
-
-      router.replace("/(tabs)/inventory");
     };
 
     setProcessingModalVisible(true);

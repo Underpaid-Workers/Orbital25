@@ -5,11 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 //returns a custom TabBar
 //
 
-export default function TabBar({
-  state,
-  descriptors,
-  navigation,
-}: BottomTabBarProps) {
+const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
   //temporary workaround for hiding "entry" folder from TabBar.
   //change this if changing tab routes
   const tabs = ["social", "maps", "camera", "inventory", "events"];
@@ -84,7 +80,7 @@ export default function TabBar({
         })}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -106,3 +102,5 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
 });
+
+export default TabBar;
