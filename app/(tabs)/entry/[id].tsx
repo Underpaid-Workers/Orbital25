@@ -1,4 +1,4 @@
-import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
+import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag from "@/components/entry/SpeciesTag";

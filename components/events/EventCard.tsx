@@ -3,20 +3,36 @@ import { StyleSheet, Text, View } from "react-native";
 
 type EventParams = {
   title: string;
-  timeLeft: string;
+  timeLeft: number;
   current: number;
   total: number;
   description: string;
 };
 
-const EventCard = ({ title, timeLeft, current, total, description }: EventParams) => {
+const EventCard = ({
+  title,
+  timeLeft,
+  current,
+  total,
+  description,
+}: EventParams) => {
   const progress = current / total;
-
+  const days = Math.floor(timeLeft / (24 * 60));
+  let remaining = timeLeft % (24 * 60);
+  const hours = Math.floor(remaining / 60);
+  remaining = remaining % 60;
+  const minutes = Math.floor(remaining);
+  const displayTimeLeft =
+    days > 0
+      ? `${days}D ${hours}H`
+      : hours > 0
+      ? `${hours}H ${minutes}M`
+      : `${minutes}M`;
   return (
     <View style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.time}>{timeLeft} Left</Text>
+        <Text style={styles.time}>{displayTimeLeft} left</Text>
       </View>
 
       <Text style={styles.progressText}>{`${current}/${total} captured`}</Text>
@@ -36,8 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#E9F9EC",
     borderRadius: 12,
     padding: 30,
-    marginVertical: 8,
-    marginHorizontal: 16,
   },
   header: {
     flexDirection: "row",

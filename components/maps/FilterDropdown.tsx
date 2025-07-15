@@ -12,12 +12,7 @@ interface Dropdown {
   onReset: boolean;
 }
 
-export default function FilterDropdown({
-  title,
-  data,
-  onSelect,
-  onReset,
-}: Dropdown) {
+const FilterDropdown = ({ title, data, onSelect, onReset }: Dropdown) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>("");
 
@@ -54,7 +49,7 @@ export default function FilterDropdown({
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   dropdown: {
@@ -73,3 +68,5 @@ const styles = StyleSheet.create({
   },
   icon: { paddingRight: 4 },
 });
+
+export default FilterDropdown;

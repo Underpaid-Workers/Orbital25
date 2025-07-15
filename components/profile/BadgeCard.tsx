@@ -3,14 +3,14 @@ import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import { Badge } from "@/supabase/schema";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-export default function BadgeCard({
+const BadgeCard = ({
   //TODO: index is an input just to appease the .map function
   name,
   description,
   image_url,
   earned_at,
   badge_type, //id and code are not used atm
-}: Badge) {
+}: Badge) => {
   return (
     <View style={styles.card}>
       <View
@@ -47,7 +47,7 @@ export default function BadgeCard({
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -77,3 +77,5 @@ const styles = StyleSheet.create({
     color: "dimgrey",
   },
 });
+
+export default BadgeCard;

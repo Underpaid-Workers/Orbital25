@@ -7,11 +7,7 @@ type ModalProps = {
   onClose: () => void;
 };
 
-export default function UsernameModal({
-  visible,
-  onSubmit,
-  onClose,
-}: ModalProps) {
+const UsernameModal = ({ visible, onSubmit, onClose }: ModalProps) => {
   const [input, setInput] = useState("");
 
   const handleSave = async () => {
@@ -43,7 +39,7 @@ export default function UsernameModal({
       </View>
     </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   overlay: {
@@ -71,3 +67,5 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 });
+
+export default UsernameModal;

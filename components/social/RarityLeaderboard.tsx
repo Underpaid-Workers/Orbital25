@@ -15,19 +15,19 @@ type RarityLeaderboardItem = {
   isSelf?: boolean;
 };
 
-type RarityLeaderboard = {
+type RarityLeaderboardProps = {
   pulledData: RarityLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
   onClick: (user: string) => void;
 };
 
-export default function RarityLeaderboard({
+const RarityLeaderboard = ({
   pulledData,
   showDelete = false,
   onDelete,
   onClick,
-}: RarityLeaderboard) {
+}: RarityLeaderboardProps) => {
   const sortedData = [...pulledData].sort(
     (a, b) => b.rarityScore - a.rarityScore
   );
@@ -76,7 +76,7 @@ export default function RarityLeaderboard({
       keyExtractor={(item, index) => index.toString()}
     />
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -124,3 +124,5 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
 });
+
+export default RarityLeaderboard;

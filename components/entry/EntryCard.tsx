@@ -1,4 +1,4 @@
-import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
+import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
 import formatNumber from "@/hooks/formatNumber";

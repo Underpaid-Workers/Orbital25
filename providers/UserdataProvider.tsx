@@ -29,6 +29,19 @@ const defaultStats: Stats = {
     animal: 0,
     plant: 0,
   },
+  habitat: {
+    forest: 0,
+    grassland: 0,
+    wetland: 0,
+    desert: 0,
+    mountains: 0,
+    coastal: 0,
+    oceanic: 0,
+    freshwater: 0,
+    urban: 0,
+    caves: 0,
+    tundra: 0,
+  },
 };
 
 type Userdata = {

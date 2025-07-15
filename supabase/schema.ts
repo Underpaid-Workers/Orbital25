@@ -9,6 +9,19 @@ export interface Stats {
   envType: { flying: number; aquatic: number; terrestrial: number };
   streakDays: number;
   speciesType: { plant: number; animal: number };
+  habitat: {
+    forest: number;
+    grassland: number;
+    wetland: number;
+    desert: number;
+    mountains: number;
+    coastal: number;
+    oceanic: number;
+    freshwater: number;
+    urban: number;
+    caves: number;
+    tundra: number;
+  };
 }
 
 export interface User {
@@ -20,16 +33,18 @@ export interface User {
   stats: Stats;
 }
 
-export type RarityKey = keyof Stats["rarity"]; // "rare"|"common"|...
-export type EnvTypeKey = keyof Stats["envType"]; // "flying"|"aquatic"|"terrestrial"
-export type SpeciesTypeKey = keyof Stats["speciesType"]; // "plant"|"animal"
+export type RarityKey = keyof Stats["rarity"];
+export type EnvTypeKey = keyof Stats["envType"];
+export type SpeciesTypeKey = keyof Stats["speciesType"];
+export type HabitatKey = keyof Stats["habitat"];
 
 export type ProgressionCriteria =
   | { score: number } // threshold on User.score
   | { streakDays: number } // streakDays from Stats
   | { rarity: RarityKey; count: number } // {"rarity":"rare","count":5}
   | { envTypes: EnvTypeKey[] } // {"envTypes":["aquatic","flying"]}
-  | { speciesType: SpeciesTypeKey; count?: number }; // {"speciesType":"plant","count":10}
+  | { speciesType: SpeciesTypeKey; count?: number } // {"speciesType":"plant","count":10}
+  | { habitat: HabitatKey; count?: number };
 
 export interface Badge {
   id: string;
@@ -40,6 +55,15 @@ export interface Badge {
   badge_type: string;
   earned_at: string | null;
   criteria: ProgressionCriteria; //TODO: change this to better fit the jsonb schema!
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  end_time: string;
+  frequency: string;
+  image: string;
 }
 
 //Full entry fetched to local
