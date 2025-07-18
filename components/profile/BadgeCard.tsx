@@ -1,4 +1,5 @@
 import colors from "@/constants/Colors";
+import { placeholderImage } from "@/constants/Image";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import { Badge } from "@/supabase/schema";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -26,7 +27,6 @@ const BadgeCard = ({
           Received: {formatDateTimeDisplay(earned_at as string)}
         </Text>
       </View>
-      {/* temp image view */}
       <View
         style={{
           height: "100%",
@@ -35,15 +35,11 @@ const BadgeCard = ({
           justifyContent: "center",
         }}
       >
-        <Image
-          src={
-            "https://plus.unsplash.com/premium_photo-1714138490043-40cbd9d982dc?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFkZ2V8ZW58MHx8MHx8fDA%3D"
-          }
-          style={{
-            width: 60,
-            height: 60,
-          }}
-        />
+        {image_url !== "" ? (
+          <Image src={image_url} resizeMode="contain" style={styles.image} />
+        ) : (
+          <Image source={placeholderImage} style={styles.image} />
+        )}
       </View>
     </View>
   );
@@ -76,6 +72,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "dimgrey",
   },
+  image: { height: "80%", aspectRatio: 1 },
 });
 
 export default BadgeCard;

@@ -1,6 +1,7 @@
 import supabase from "@/supabase/main";
 import EntryLocal, { ResponseState } from "@/supabase/schema";
 import { PostgrestError, Session } from "@supabase/supabase-js";
+import fetchImage from "./fetchImage";
 /**
  * @description Fetches entries from the public.entries table.
  * @param session as Session
@@ -15,10 +16,6 @@ export default async function fetchEntries(
     lat: number;
     long: number;
   };
-
-  function fetchImage(image_url: string) {
-    return supabase.storage.from("entry-images").getPublicUrl(image_url).data;
-  }
 
   try {
     const { data, error } = await supabase
@@ -59,8 +56,8 @@ export default async function fetchEntries(
 
         await convertToLatLong()
           .then((latlong) => (coord = latlong))
-          .finally(() => {
-            let image = fetchImage(entry.image_url).publicUrl;
+          .finally(async () => {
+            let image = await fetchImage("entry-images", entry.image_url);
             let temp = <EntryLocal>{
               id: entry.entry_id,
               name: entry.name,

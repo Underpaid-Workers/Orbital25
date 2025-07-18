@@ -90,12 +90,6 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
   const [userBadges, setUserBadges] = useState<Badge[]>([]);
   const [stats, setStats] = useState<Stats>(defaultStats);
 
-  //IINR this is not needed
-  // useEffect(() => {
-  //   getUserdata();
-  //   getUserBadges();
-  // }, [session]);
-
   const getUserdata = () => {
     setUserLoading(true);
     if (session) {
@@ -151,6 +145,7 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
     onComplete?: (badgeCount: number) => void
   ) => {
     setUserLoading(true);
+    getUserdata();
     console.log("Updating progression badges...");
     if (session) {
       const ownedBadges = new Set(userBadges.map((b) => b.code));

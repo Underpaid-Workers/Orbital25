@@ -42,7 +42,6 @@ export default function EventsProvider({ children }: PropsWithChildren) {
   const getEvents = () => {
     setEventsLoading(true);
     if (session) {
-      console.log(currentTime);
       fetchEvents(currentTime)
         .then((response) => {
           if (response.success) {
@@ -77,4 +76,12 @@ export default function EventsProvider({ children }: PropsWithChildren) {
   );
 }
 
+/**
+ * @description (tabs)-wide context for managing event data
+ * @param events the list of events as Event[]
+ * @param currentTime the current time updated every 5 seconds as ISO6801 string
+ * @param getEvents a function which fetches all events from supabase
+ * @param updateUserEventBadges a function which updates user badges based on user's event progress
+ * @example const { events, getEvents } = useEventsContext()
+ */
 export const useEventsContext = () => useContext(EventContext);

@@ -1,5 +1,6 @@
 import EntryCard from "@/components/entry/EntryCard";
 import FloatingInfoBar from "@/components/entry/FloatingInfoBar";
+import NewBadgePopup from "@/components/entry/NewBadgesPopup";
 import SearchBar from "@/components/entry/SearchBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
@@ -26,14 +27,25 @@ export default function inventory() {
     score,
     getUserdata,
     getUserBadges,
+    updateUserProgressionBadges,
     userLoading,
   } = useUserdataContext();
+  const [badgeCount, setBadgeCount] = useState<number>(0);
+  const [badgeModalVisible, setBadgeModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries();
     getUserdata();
     getUserBadges();
   }, []);
+
+  useEffect(() => {
+    updateUserProgressionBadges((badges) => {
+      setBadgeCount(badges);
+      getUserBadges();
+      setBadgeModalVisible(true);
+    });
+  }, [entryCount]);
 
   const router = useRouter();
   const [error, setError] = useState(false);
@@ -135,6 +147,13 @@ export default function inventory() {
             </View>
           )}
         </View>
+      )}
+      {true && (
+        <NewBadgePopup
+          isVisible={badgeModalVisible}
+          onDismiss={() => setBadgeModalVisible(false)}
+          badgeCount={badgeCount}
+        />
       )}
     </>
   );
