@@ -1,7 +1,6 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
 import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
-import NewBadgePopup from "@/components/entry/NewBadgesPopup";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
@@ -34,12 +33,7 @@ import MapView, { Marker } from "react-native-maps";
 export default function submitEntry() {
   const router = useRouter();
   const { loading, uploadEntry } = useEntryDataContext();
-  const {
-    entryCount,
-    updateUserProgressionBadges,
-    getUserdata,
-    getUserBadges,
-  } = useUserdataContext();
+  const { entryCount } = useUserdataContext();
 
   let id = entryCount + 1;
   const { photo, datetime } = useLocalSearchParams<{
@@ -49,8 +43,7 @@ export default function submitEntry() {
 
   const [processingModalVisible, setProcessingModalVisible] =
     useState<boolean>(false);
-  const [badgeModalVisible, setBadgeModalVisible] = useState<boolean>(false);
-  const [badgeCount, setBadgeCount] = useState<number>(0);
+
   const parsedDateTime = datetime.split(",");
   const [isFetchingAPI, setIsFetchingAPI] = useState<boolean>(false);
   const [observations, setObservations] = useState<string>("");
@@ -142,19 +135,10 @@ export default function submitEntry() {
     };
 
     const onComplete = () => {
-      getUserdata();
-      updateUserProgressionBadges((badges) => {
-        setBadgeCount(badges);
-        getUserBadges();
-        setTimeout(() => {
-          setProcessingModalVisible(false);
-          if (badges > 0) {
-            setBadgeModalVisible(true);
-          }
-        }, 300);
-
+      setTimeout(() => {
+        setProcessingModalVisible(false);
         router.replace("/(tabs)/inventory");
-      });
+      }, 300);
     };
 
     setProcessingModalVisible(true);
@@ -323,13 +307,6 @@ export default function submitEntry() {
           isLoading={loading}
           processingMessage="Registering Entry..."
           processedMessage="Entry Registered!"
-        />
-      )}
-      {true && (
-        <NewBadgePopup
-          isVisible={badgeModalVisible}
-          onDismiss={() => setBadgeModalVisible(false)}
-          badgeCount={badgeCount}
         />
       )}
     </ScrollView>
