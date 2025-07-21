@@ -6,8 +6,6 @@ import signUp from "@/supabase/auth_hooks/signUp";
 import deleteEntryImages from "@/supabase/db_hooks/deleteEntryImages";
 import fetchEntryImages from "@/supabase/db_hooks/fetchEntryImages";
 import supabase from "@/supabase/main";
-import fetchUserdata from "@/supabase/social_hooks/fetchUserdata";
-import updateUserdata from "@/supabase/social_hooks/updateUserData";
 import { Session } from "@supabase/supabase-js";
 import {
   createContext,
@@ -22,13 +20,10 @@ type AuthData = {
   session: Session | null;
   loading: boolean;
   isNewUser: boolean;
-  username: string;
   logIn: (email: string, password: string) => void;
   logOut: () => void;
   signUpWithEmail: (email: string, password: string) => void;
   setIsNewUser: (flag: boolean) => void;
-  fetchUsername: () => void;
-  updateUsername: (newName: string) => void;
   removeAccount: () => void;
 };
 
@@ -36,13 +31,10 @@ const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
   isNewUser: false,
-  username: "",
   logIn: () => {},
   logOut: () => {},
   signUpWithEmail: () => {},
   setIsNewUser: () => {},
-  fetchUsername: () => {},
-  updateUsername: () => {},
   removeAccount: () => {},
 });
 
@@ -59,35 +51,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     setLoading(false);
   };
 
-  const fetchUsername = async () => {
-    setLoading(true);
-    if (session) {
-      console.log("Fetching username...");
-      //TODO: unsure how to handle error for hook with a result response
-      const user = await fetchUserdata(session.user.id);
-      setUsername(user.username);
-    }
-    setLoading(false);
-  };
-
-  const updateUsername = async (newName: string) => {
-    const trimmed = newName.trim();
-    setLoading(true);
-    if (session) {
-      console.log("Updating username...");
-      await updateUserdata(session.user.id, trimmed)
-        .then((response) => {
-          if (!response.success) {
-            Alert.alert(response.message as string);
-          } else {
-            Alert.alert("Username Updated!");
-          }
-        })
-        .finally(() => fetchUsername());
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
     //fetch the user session for when login/signup
     fetchSession();
@@ -95,11 +58,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       setSession(session);
     });
   }, []);
-
-  //used to fetch userdata on session start/change
-  useEffect(() => {
-    fetchUsername();
-  }, [session]);
 
   const logIn = (email: string, password: string) => {
     setLoading(true);
@@ -193,13 +151,10 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         session,
         loading,
         isNewUser,
-        username,
         logIn,
         logOut,
         signUpWithEmail,
         setIsNewUser,
-        fetchUsername,
-        updateUsername,
         removeAccount,
       }}
     >
@@ -212,12 +167,12 @@ export default function AuthProvider({ children }: PropsWithChildren) {
  * @description (auth)-wide context for managing authentication sessions
  * @param session the user session as Session | null
  * @param loading the boolean of loading state. True when doing authentication. else False
+ * @param isNewUser the boolean of new user flag. True when user signs up for the first time, else false
  * @param logIn a function which initiates a log in request with supabase auth
  * @param logOut a function which initiates a log out request with supabase auth
  * @param signUpWithEmail a function which initiates a sign up request with supabase auth
  * @param setIsNewUser a function which sets the flag representing a new user, true or false
- * @param fetchUsername a function which gets the username of the user in the current session
- * @param updateUsername a function which updates the username of the user in the current session
+ * @param removeAccount a function which initiates a delete account request on supabase
  * @example const { session, loading, logIn } = useAuthContext();
  */
 export const useAuthContext = () => useContext(AuthContext);

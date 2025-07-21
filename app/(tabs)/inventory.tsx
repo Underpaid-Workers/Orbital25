@@ -1,11 +1,14 @@
 import EntryCard from "@/components/entry/EntryCard";
 import FloatingInfoBar from "@/components/entry/FloatingInfoBar";
+import NewBadgePopup from "@/components/entry/NewBadgesPopup";
 import SearchBar from "@/components/entry/SearchBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,21 +20,45 @@ import {
 } from "react-native";
 
 export default function inventory() {
-  const { data, entryCount, speciesCount, score, loading, getEntries } =
-    useEntryDataContext();
+  const { data, loading, getEntries } = useEntryDataContext();
+  const {
+    entryCount,
+    speciesCount,
+    score,
+    getUserdata,
+    getUserBadges,
+    updateUserProgressionBadges,
+    userLoading,
+  } = useUserdataContext();
+  const [badgeCount, setBadgeCount] = useState<number>(0);
+  const [badgeModalVisible, setBadgeModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries();
+    getUserdata();
+    getUserBadges();
   }, []);
 
+  useEffect(() => {
+    updateUserProgressionBadges((badges) => {
+      setBadgeCount(badges);
+      getUserBadges();
+      setBadgeModalVisible(true);
+    });
+  }, [entryCount]);
+
+  const router = useRouter();
   const [error, setError] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const filteredData = data.filter((entry) =>
-    entry.name.toLowerCase().includes(searchInput.toLowerCase())
-  );
+  const filteredData =
+    searchInput !== ""
+      ? data.filter((entry) =>
+          entry.name.toLowerCase().includes(searchInput.toLowerCase())
+        )
+      : data;
   return (
     <>
-      {loading ? (
+      {loading || userLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.tabBar} />
         </View>
@@ -44,12 +71,17 @@ export default function inventory() {
           />
           <Text style={styles.missingText}>Error : Unable to load</Text>
         </View>
-      ) : entryCount === 0 ? (
+      ) : filteredData.length === 0 ? (
         <View style={styles.container}>
           <FloatingInfoBar
             species={speciesCount}
             entries={entryCount}
             score={score}
+            onClick={() =>
+              router.navigate({
+                pathname: "/profile",
+              })
+            }
           />
           <Image
             source={emptyImage}
@@ -74,6 +106,11 @@ export default function inventory() {
             species={speciesCount}
             entries={entryCount}
             score={score}
+            onClick={() =>
+              router.navigate({
+                pathname: "/profile",
+              })
+            }
           />
           {filteredData.length > 0 ? (
             <FlatList
@@ -89,6 +126,13 @@ export default function inventory() {
                   speciesType={item.speciesType}
                   envType={item.environmentType}
                   rarity={item.rarity}
+                  onClickDetails={(id: number) => {
+                    console.log(`Entry ${item.id} clicked`);
+                    router.navigate({
+                      pathname: "/(tabs)/entry/[id]",
+                      params: { id },
+                    });
+                  }}
                 />
               )}
               refreshControl={
@@ -103,6 +147,13 @@ export default function inventory() {
             </View>
           )}
         </View>
+      )}
+      {true && (
+        <NewBadgePopup
+          isVisible={badgeModalVisible}
+          onDismiss={() => setBadgeModalVisible(false)}
+          badgeCount={badgeCount}
+        />
       )}
     </>
   );

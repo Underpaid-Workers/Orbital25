@@ -62,7 +62,7 @@ export default async function fetchSpeciesSummary(
       if (!match) throw new Error("No valid JSON block found in response");
 
       const parsed = JSON.parse(match[0]);
-      // console.log(parsed);
+      console.log(parsed);
 
       if (!parsed || typeof parsed !== "object") return null;
 

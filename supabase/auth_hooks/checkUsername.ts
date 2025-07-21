@@ -8,11 +8,12 @@ export default async function checkUsername(
   try {
     const { data, error } = await supabase
       .from("users")
-      .select("id")
+      .select("id, displayname")
       .eq("displayname", username);
 
     if (error) throw error;
-
+    console.log(username);
+    console.log(data);
     if (data && data.length > 0) {
       return { success: false, message: "Username already taken" }; //check if username is already in use
     } else {

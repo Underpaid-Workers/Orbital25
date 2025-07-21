@@ -1,5 +1,5 @@
 import DateTimeBox from "@/components/entry/DateTimeBox";
-import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
+import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag from "@/components/entry/SpeciesTag";
@@ -10,6 +10,7 @@ import fetchSpeciesSummary from "@/hooks/fetchSpeciesSummary";
 import formatNumber from "@/hooks/formatNumber";
 import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { location } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
 import Entry, { EntryMetadata } from "@/supabase/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -31,7 +32,8 @@ import MapView, { Marker } from "react-native-maps";
 
 export default function submitEntry() {
   const router = useRouter();
-  const { entryCount, loading, uploadEntry } = useEntryDataContext();
+  const { loading, uploadEntry } = useEntryDataContext();
+  const { entryCount } = useUserdataContext();
 
   let id = entryCount + 1;
   const { photo, datetime } = useLocalSearchParams<{
@@ -39,7 +41,9 @@ export default function submitEntry() {
     datetime: string;
   }>();
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [processingModalVisible, setProcessingModalVisible] =
+    useState<boolean>(false);
+
   const parsedDateTime = datetime.split(",");
   const [isFetchingAPI, setIsFetchingAPI] = useState<boolean>(false);
   const [observations, setObservations] = useState<string>("");
@@ -129,19 +133,19 @@ export default function submitEntry() {
       lifespan: entryMetaData.lifespan,
       observations: observations,
     };
-    console.log(submitting);
 
     const onComplete = () => {
-      setModalVisible(false);
-      router.replace("/(tabs)/inventory");
+      setTimeout(() => {
+        setProcessingModalVisible(false);
+        router.replace("/(tabs)/inventory");
+      }, 300);
     };
 
-    setModalVisible(true);
+    setProcessingModalVisible(true);
     uploadEntry(submitting, onComplete);
   };
 
   let mapRef = React.createRef<MapView | null>();
-  //TODO: Location set to center of singapore for now
   const [currentLocation, setCurrentLocation] = useState<location>({
     lat: 1.3518865175286692,
     long: 103.79266088828444,
@@ -299,7 +303,7 @@ export default function submitEntry() {
       </View>
       {true && (
         <ProcessingPopup
-          isVisible={modalVisible}
+          isVisible={processingModalVisible}
           isLoading={loading}
           processingMessage="Registering Entry..."
           processedMessage="Entry Registered!"

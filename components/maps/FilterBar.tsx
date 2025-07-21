@@ -28,12 +28,12 @@ interface Filter {
   filterReset: () => void;
 }
 
-export default function FilterBar({
+const FilterBar = ({
   filterRarity,
   filterSpecies,
   filterEnv,
   filterReset,
-}: Filter) {
+}: Filter) => {
   const [isReset, setIsReset] = useState<boolean>(false);
 
   return (
@@ -78,7 +78,7 @@ export default function FilterBar({
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   bar: {
@@ -100,3 +100,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
 });
+
+export default FilterBar;

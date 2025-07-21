@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 
-type Props = {
+type ModalProps = {
   visible: boolean;
-  onSubmit: (username: string) => Promise<void>;
+  onSubmit: (username: string) => void;
   onClose: () => void;
 };
 
-export default function UsernameModal({ visible, onSubmit, onClose }: Props) {
+const UsernameModal = ({ visible, onSubmit, onClose }: ModalProps) => {
   const [input, setInput] = useState("");
 
   const handleSave = async () => {
     const trimmed = input.trim();
-    await onSubmit(trimmed);
+    console.log(trimmed);
+    onSubmit(trimmed);
     setInput("");
   };
 
@@ -38,7 +39,7 @@ export default function UsernameModal({ visible, onSubmit, onClose }: Props) {
       </View>
     </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   overlay: {
@@ -66,3 +67,5 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 });
+
+export default UsernameModal;

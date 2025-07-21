@@ -1,4 +1,4 @@
-import { EnvironmentTag } from "@/components/entry/EnvironmentTag";
+import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag from "@/components/entry/SpeciesTag";
@@ -8,6 +8,7 @@ import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import formatNumber from "@/hooks/formatNumber";
 import formatRarityToGradient from "@/hooks/formatRarityToGradient";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -25,6 +26,7 @@ export default function viewEntry() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, loading, removeEntry, updateEntryObservation } =
     useEntryDataContext();
+  const { getUserdata } = useUserdataContext();
 
   //data is 0-indexed, while id is 1 indexed
   const entry = data[Number.parseInt(id) - 1];
@@ -52,6 +54,7 @@ export default function viewEntry() {
   const onDelete = () => {
     const onComplete = () => {
       setModalVisible(false);
+      getUserdata();
       router.replace("/(tabs)/inventory");
     };
 

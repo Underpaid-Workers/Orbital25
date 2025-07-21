@@ -1,6 +1,6 @@
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
 import { AuthError } from "@supabase/supabase-js";
-import { ResponseState } from "../schema";
 
 /**
  * @description Uses supabase authentication to sign out

@@ -1,6 +1,5 @@
 import colors from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import React from "react";
 import {
   FlatList,
@@ -16,18 +15,19 @@ type RarityLeaderboardItem = {
   isSelf?: boolean;
 };
 
-type RarityLeaderboard = {
+type RarityLeaderboardProps = {
   pulledData: RarityLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
+  onClick: (user: string) => void;
 };
 
-export default function RarityLeaderboard({
+const RarityLeaderboard = ({
   pulledData,
   showDelete = false,
   onDelete,
-}: RarityLeaderboard) {
-  const router = useRouter();
+  onClick,
+}: RarityLeaderboardProps) => {
   const sortedData = [...pulledData].sort(
     (a, b) => b.rarityScore - a.rarityScore
   );
@@ -44,7 +44,7 @@ export default function RarityLeaderboard({
         styles.container,
         { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
       ]}
-      onPress={() => router.push("/profile")}
+      onPress={() => onClick(item.name)}
     >
       <Text style={styles.rank}>{index + 1}</Text>
       <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
@@ -76,7 +76,7 @@ export default function RarityLeaderboard({
       keyExtractor={(item, index) => index.toString()}
     />
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -124,3 +124,5 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
 });
+
+export default RarityLeaderboard;

@@ -7,7 +7,7 @@ interface Search {
   onTextChange: (text: string) => void;
 }
 
-export default function SearchBar({ placeholderText, onTextChange }: Search) {
+const SearchBar = ({ placeholderText, onTextChange }: Search) => {
   return (
     <View style={styles.bar}>
       <TextInput
@@ -20,7 +20,7 @@ export default function SearchBar({ placeholderText, onTextChange }: Search) {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   bar: {
@@ -49,3 +49,5 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
 });
+
+export default SearchBar;

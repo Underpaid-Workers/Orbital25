@@ -12,7 +12,7 @@ const SpeciesColors = {
   undefined: "#E0DD9E",
 };
 
-export default function SpeciesTag({ species }: { species: string }) {
+const SpeciesTag = ({ species }: { species: string }) => {
   let image;
   let color;
   let tag = species;
@@ -37,7 +37,7 @@ export default function SpeciesTag({ species }: { species: string }) {
       <Text style={styles.text}>{tag}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   tag: {
@@ -62,3 +62,5 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
 });
+
+export default SpeciesTag;

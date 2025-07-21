@@ -1,4 +1,5 @@
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
 import { PostgrestError } from "@supabase/supabase-js";
 
 /**
@@ -6,7 +7,10 @@ import { PostgrestError } from "@supabase/supabase-js";
  * @param user_id
  * @param newName
  */
-export default async function updateUserdata(user_id: string, newName: string) {
+export default async function updateUserdata(
+  user_id: string,
+  newName: string
+): Promise<ResponseState> {
   try {
     const { error } = await supabase
       .from("users")
@@ -17,7 +21,6 @@ export default async function updateUserdata(user_id: string, newName: string) {
     return { success: true };
   } catch (error) {
     const errorMessage = error as PostgrestError;
-    console.log(errorMessage);
     return { success: false, message: errorMessage.message };
   }
 }

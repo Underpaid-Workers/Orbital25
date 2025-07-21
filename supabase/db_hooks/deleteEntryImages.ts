@@ -11,7 +11,6 @@ export default async function deleteEntryImages(
       .remove(images);
 
     if (error) throw error;
-    console.log(data);
     return { success: true };
   } catch (error) {
     const errorMessage = error as PostgrestError;
