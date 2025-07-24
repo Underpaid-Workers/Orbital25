@@ -16,7 +16,6 @@ const EventCard = ({
   total,
   description,
 }: EventParams) => {
-  const progress = current / total;
   const days = Math.floor(timeLeft / (24 * 60));
   let remaining = timeLeft % (24 * 60);
   const hours = Math.floor(remaining / 60);
@@ -28,27 +27,45 @@ const EventCard = ({
       : hours > 0
       ? `${hours}H ${minutes}M`
       : `${minutes}M`;
+  //
   return (
     <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.time}>{displayTimeLeft} left</Text>
+      <View style={{ opacity: current > total && total !== 0 ? 0.3 : 1 }}>
+        <View style={styles.header}>
+          <Text style={styles.title}>{title}</Text>
+          <Text
+            style={[
+              styles.time,
+              { color: timeLeft > 60 ? "darkgreen" : "#FF0707" },
+            ]}
+          >
+            {displayTimeLeft} left
+          </Text>
+        </View>
+
+        <Text style={styles.progressText}>
+          {current} / {total}
+        </Text>
+
+        <View style={styles.progressBar}>
+          <View style={[styles.progressFill, { flex: current }]} />
+          <View style={{ flex: total - current }} />
+        </View>
+
+        <Text style={styles.description}>{description}</Text>
       </View>
-
-      <Text style={styles.progressText}>{`${current}/${total} captured`}</Text>
-
-      <View style={styles.progressBar}>
-        <View style={[styles.progressFill, { flex: progress }]} />
-        <View style={{ flex: 1 - progress }} />
-      </View>
-
-      <Text style={styles.description}>{description}</Text>
+      {current > total && total !== 0 ? (
+        <View style={styles.completedBox}>
+          <Text style={styles.completedText}>Completed!</Text>
+        </View>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
+    width: "100%",
     backgroundColor: "#E9F9EC",
     borderRadius: 12,
     padding: 30,
@@ -60,14 +77,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
+    maxWidth: "70%",
     fontSize: 20,
+    flexWrap: "wrap",
   },
   time: {
-    color: "#FF0707",
-    fontWeight: "600",
+    maxWidth: "30%",
+    fontWeight: "bold",
     fontSize: 16,
   },
   progressText: {
+    textAlign: "right",
     fontSize: 12,
     marginBottom: 4,
     color: "#4EB46B",
@@ -87,6 +107,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "black",
     textAlign: "center",
+  },
+  completedBox: {
+    zIndex: 100,
+    position: "absolute",
+    height: "110%",
+    width: "110%",
+    alignSelf: "center",
+    top: "20%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  completedText: {
+    fontSize: 28,
+    transform: [{ rotate: "-10deg" }],
+    color: "red",
   },
 });
 

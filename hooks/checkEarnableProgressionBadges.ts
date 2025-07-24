@@ -34,7 +34,7 @@ export default function checkEarnableProgressionBadges(
   score: number,
   stats: Stats,
   badges: Badge[]
-) {
+): string[] {
   //Currently 4 types of progression badges
   //{"streakDays": 1}, code: streak_{number}
   //{"score": 500}, code: score_{number}

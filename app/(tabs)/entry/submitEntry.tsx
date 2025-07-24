@@ -4,15 +4,18 @@ import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
+import checkEarnableEventProgression from "@/hooks/checkEarnableEventProgression";
 import fetchLocation from "@/hooks/fetchLocation";
 import fetchSpeciesName from "@/hooks/fetchSpeciesName";
 import fetchSpeciesSummary from "@/hooks/fetchSpeciesSummary";
 import formatNumber from "@/hooks/formatNumber";
 import formatRarityToGradient from "@/hooks/formatRarityToGradient";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useEventsContext } from "@/providers/EventsProvider";
 import { useUserdataContext } from "@/providers/UserdataProvider";
 import { location } from "@/supabase/db_hooks/fetchGlobalEntriesByLocation";
-import Entry, { EntryMetadata } from "@/supabase/schema";
+import Entry, { EntryMetadata, HabitatKey, RarityKey } from "@/supabase/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
@@ -32,8 +35,10 @@ import MapView, { Marker } from "react-native-maps";
 
 export default function submitEntry() {
   const router = useRouter();
+  const { session } = useAuthContext();
   const { loading, uploadEntry } = useEntryDataContext();
-  const { entryCount } = useUserdataContext();
+  const { entryCount, getUserdata } = useUserdataContext();
+  const { events, rawEvents, updateUserEventProgression } = useEventsContext();
 
   let id = entryCount + 1;
   const { photo, datetime } = useLocalSearchParams<{
@@ -135,8 +140,18 @@ export default function submitEntry() {
     };
 
     const onComplete = () => {
+      let eventProgression = checkEarnableEventProgression(
+        session?.user.id as string,
+        true,
+        1,
+        entryMetaData.rarity.toLowerCase() as RarityKey,
+        entryMetaData.habitat.toLowerCase() as HabitatKey,
+        rawEvents
+      );
+      updateUserEventProgression(eventProgression);
       setTimeout(() => {
         setProcessingModalVisible(false);
+        getUserdata();
         router.replace("/(tabs)/inventory");
       }, 300);
     };

@@ -3,14 +3,14 @@ import { ResponseState } from "@/supabase/schema";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export default async function fetchEvents(
+  user_id: string,
   currentTime: string
 ): Promise<ResponseState> {
   try {
-    const { data, error } = await supabase
-      .from("events")
-      .select(`id, title, description, end_time, frequency, image`)
-      .gt("end_time", currentTime)
-      .order("end_time", { ascending: true });
+    const { data, error } = await supabase.rpc("fetch_user_events", {
+      p_current_time: currentTime,
+      p_user_id: user_id,
+    });
     if (error) throw error;
     return { success: true, data: data };
   } catch (error) {

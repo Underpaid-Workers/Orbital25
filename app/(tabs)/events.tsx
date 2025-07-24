@@ -46,14 +46,15 @@ export default function events() {
             currentTime,
             event.end_time
           );
+
           if (differenceInMinutes > 0) {
             return (
               <EventCard
                 key={index}
                 title={event.title}
                 timeLeft={differenceInMinutes}
-                current={1}
-                total={5}
+                current={event.current}
+                total={event.total}
                 description={event.description}
               />
             );
@@ -76,8 +77,8 @@ export default function events() {
                 key={index}
                 title={event.title}
                 timeLeft={differenceInMinutes}
-                current={1}
-                total={5}
+                current={event.current}
+                total={event.total}
                 description={event.description}
               />
             );
@@ -100,8 +101,8 @@ export default function events() {
                 key={index}
                 title={event.title}
                 timeLeft={differenceInMinutes}
-                current={1}
-                total={5}
+                current={event.current}
+                total={event.total}
                 description={event.description}
               />
             );
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
   },
-  scrollContainer: { alignItems: "center", gap: 16 },
+  scrollContainer: { alignItems: "center", gap: 16, paddingBottom: 80 },
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",

@@ -1,3 +1,4 @@
+import OtherUserProfile from "@/components/profile/OtherUserProfile";
 import RarityLeaderboard from "@/components/social/RarityLeaderboard";
 import SpeciesLeaderboard from "@/components/social/SpeciesLeaderboard";
 import colors from "@/constants/Colors";
@@ -6,7 +7,9 @@ import { fetchFriendsRarity } from "@/supabase/social_hooks/fetchFriendsRarity";
 import { fetchFriendsSpecies } from "@/supabase/social_hooks/fetchFriendsSpecies";
 import { fetchRarityScoreLeaderboard } from "@/supabase/social_hooks/fetchRarityScoreLeaderboard";
 import { fetchSpeciesLeaderboard } from "@/supabase/social_hooks/fetchSpeciesLeaderboard";
+import { fetchUserIdByDisplayName } from "@/supabase/social_hooks/fetchUserIdByDisplayName"; // import the new function
 import removeFriend from "@/supabase/social_hooks/removeFriend";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
@@ -18,11 +21,10 @@ import {
   View,
 } from "react-native";
 
-export default function social() {
+export default function Social() {
   const [board, setBoard] = useState<1 | 2>(1);
   const [searchInput, setSearchInput] = useState("");
   const [showRarity, setShowRarity] = useState(false);
-  const [profileVisible, setProfileVisible] = useState<boolean>(false);
 
   const [speciesLeaderboardData, setSpeciesLeaderboardData] = useState<
     { name: string; speciesNum: number }[]
@@ -36,6 +38,8 @@ export default function social() {
   const [friendsListRarity, setFriendsListRarity] = useState<
     { name: string; rarityScore: number }[]
   >([]);
+
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,10 +118,35 @@ export default function social() {
     );
   };
 
-  const onClickProfile = (user: string) => {
-    //TODO: handle profile click here
-    console.log(`${user}'s profile clicked`);
+  const onClickProfile = async (displayname: string) => {
+    console.log(`${displayname}'s profile clicked`);
+    try {
+      const response = await fetchUserIdByDisplayName(displayname);
+      if (response.success) {
+        setSelectedUserId(response.data);
+      } else {
+        Alert.alert("Error", response.message);
+      }
+    } catch (err) {
+      console.error("Error fetching user ID:", err);
+      Alert.alert("Error", "An unexpected error occurred.");
+    }
   };
+
+  if (selectedUserId) {
+    return (
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setSelectedUserId(null)}
+        >
+          <Text style={styles.backButtonText}>← Back</Text>
+        </TouchableOpacity>
+
+        <OtherUserProfile userId={selectedUserId} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -321,5 +350,23 @@ const styles = StyleSheet.create({
   addFriendButtonText: {
     color: colors.text,
     fontWeight: "bold",
+  },
+  viewProfileButton: {
+    backgroundColor: "#2196f3",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginLeft: 10,
+  },
+  viewProfileButtonText: {
+    color: colors.text,
+    fontWeight: "bold",
+  },
+  backButton: {
+    padding: 10,
+    backgroundColor: "#ddd",
+  },
+  backButtonText: {
+    fontSize: 16,
   },
 });
