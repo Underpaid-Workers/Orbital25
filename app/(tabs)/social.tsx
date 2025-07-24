@@ -224,6 +224,14 @@ export default function Social() {
                           Add Friend
                         </Text>
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.viewProfileButton}
+                        onPress={() => onClickProfile(friend.name)}
+                      >
+                        <Text style={styles.viewProfileButtonText}>
+                          View Profile
+                        </Text>
+                      </TouchableOpacity>
                     </View>
                   ))
                 ) : (

@@ -90,51 +90,61 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
   const [userBadges, setUserBadges] = useState<Badge[]>([]);
   const [stats, setStats] = useState<Stats>(defaultStats);
 
-  const getUserdata = () => {
+  // Fetch user data for any given user ID
+  const getUserdataById = (userId: string) => {
     setUserLoading(true);
+    fetchUserdata(userId)
+      .then((response) => {
+        if (response.success) {
+          const user = response.data;
+          setUsername(user.username);
+          setEntryCount(user.entrycount);
+          setSpeciesCount(user.speciescount);
+          setScore(user.score);
+          setStats(user.stats);
+        } else {
+          console.error(response.message);
+          Alert.alert("Fetch Error", response.message);
+        }
+      })
+      .finally(() => setUserLoading(false));
+  };
+
+  // Fetch user data for current session user
+  const getUserdata = () => {
     if (session) {
-      console.log("Fetching username...");
-      fetchUserdata(session.user.id)
-        .then((response) => {
-          if (response.success) {
-            const user = response.data;
-            setUsername(user.username);
-            setEntryCount(user.entrycount);
-            setSpeciesCount(user.speciescount);
-            setScore(user.score);
-            setStats(user.stats);
-          } else {
-            console.error(response.message);
-            Alert.alert("Fetch Error", response.message);
-          }
-        })
-        .finally(() => setUserLoading(false));
+      getUserdataById(session.user.id);
     } else {
       console.error("No session detected");
       setUserLoading(false);
     }
   };
 
-  const getUserBadges = () => {
+  // Fetch badges for any given user ID
+  const getUserBadgesById = (userId: string) => {
     setUserLoading(true);
     console.log("Fetching badges...");
-    if (session) {
-      fetchAllUserBadges(session.user.id)
-        .then((response) => {
-          if (response.success) {
-            console.log(`${response.data.length} badges fetched`);
+    fetchAllUserBadges(userId)
+      .then((response) => {
+        if (response.success) {
+          console.log(`${response.data.length} badges fetched`);
+          let processed = sortBadges(response.data);
+          setBadges(response.data);
+          processed = processed.filter((badge) => badge.earned_at);
+          setUserBadges(processed);
+        } else {
+          Alert.alert("Fetch Error", response.message);
+        }
+      })
+      .finally(() => {
+        setUserLoading(false);
+      });
+  };
 
-            let processed = sortBadges(response.data);
-            setBadges(response.data);
-            processed = processed.filter((badge) => badge.earned_at);
-            setUserBadges(processed);
-          } else {
-            Alert.alert("Fetch Error", response.message);
-          }
-        })
-        .finally(() => {
-          setUserLoading(false);
-        });
+  // Fetch badges for current session user
+  const getUserBadges = () => {
+    if (session) {
+      getUserBadgesById(session.user.id);
     } else {
       console.error("No session detected");
       setUserLoading(false);
@@ -181,9 +191,6 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
       setUserLoading(false);
     }
   };
-
-  //TODO: Get other users data??
-  // const getSpecificUserdata = (user_id:string) =>{}
 
   const updateUsername = (
     newName: string,
@@ -272,3 +279,4 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
  * @example const { userLoading, username, updateUsername } = useUserdataContext();
  */
 export const useUserdataContext = () => useContext(UserdataContext);
+

@@ -91,7 +91,7 @@ export default function OtherUserProfile({ userId }: OtherUserProfileProps) {
     fetchOtherUserBadges();
   }, [userId]);
 
-  if (loading) {
+ if (loading) {
     return (
       <View
         style={[
