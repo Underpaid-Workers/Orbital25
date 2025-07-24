@@ -28,6 +28,15 @@ const handleDiversity: Handler = ({ criteria, stats }) => {
   return criteria.envTypes.every((t) => stats.envType[t] > 0);
 };
 
+/**
+ * @description A function that takes in user stats and available badges, and returns earnable badges as their badge codes
+ * @param entryCount as number
+ * @param speciesCount as number
+ * @param score as number
+ * @param stats as Stats
+ * @param badges as Badge[]
+ * @returns string[]
+ */
 export default function checkEarnableProgressionBadges(
   entryCount: number,
   speciesCount: number,

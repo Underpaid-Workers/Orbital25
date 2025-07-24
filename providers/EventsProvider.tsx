@@ -58,6 +58,15 @@ export default function EventsProvider({ children }: PropsWithChildren) {
           if (response.success) {
             console.log(`${response.data.length} events fetched`);
             const eventsData = response.data as EventDatabase[];
+            //ensures only first 2 events are active
+            eventsData.splice(
+              0,
+              eventsData.length,
+              ...["daily", "weekly", "monthly"].flatMap((freq) =>
+                eventsData.filter((e) => e.frequency === freq).slice(0, 2)
+              )
+            );
+            //end of temp fix
             const events = eventsData.map(
               ({ criteria, progress, ...event }) => {
                 const formattedProgress = formatEventCriteria(
@@ -130,6 +139,7 @@ export default function EventsProvider({ children }: PropsWithChildren) {
  * @param currentTime the current time updated every 5 seconds as ISO6801 string
  * @param getEvents a function which fetches all events from supabase
  * @param updateUserEventBadges a function which updates user badges based on user's event progress
+ * @param updateUserEventProgression a function which updates the user's progression towards the events
  * @example const { events, getEvents } = useEventsContext()
  */
 export const useEventsContext = () => useContext(EventContext);

@@ -82,6 +82,16 @@ const handleHabitatCount: Handler = ({ isInserting, habitat, progress }) => {
   }
 };
 
+/**
+ * @description A function that takes in various details of a new entry submission and returns updated progress for any applicable events
+ * @param user_id as string
+ * @param isInserting as boolean
+ * @param entryCount as number
+ * @param rarity as RarityKey
+ * @param habitat as HabitatKey
+ * @param events as EventDatabase[]
+ * @returns UserEventProgressUpdate[]
+ */
 export default function checkEarnableEventProgression(
   user_id: string,
   isInserting: boolean,
@@ -90,6 +100,11 @@ export default function checkEarnableEventProgression(
   habitat: HabitatKey,
   events: EventDatabase[]
 ): UserEventProgressUpdate[] {
+  //Currently 4 types of criteria/progress
+  //{"score": 500}
+  //{"count":5}
+  //{"count": [5], "rarity": ["common"]}
+  //{"count": [3], "habitat": ["tundra"]}
   const handlers: Handler[] = [
     handleScore,
     handleCount,

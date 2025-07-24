@@ -48,6 +48,12 @@ const formatHabitatCount: Formatter = ({ criteria, progress }) => {
   }
 };
 
+/**
+ * @description A function that takes in an event's criteria and its user's progress in that event, and returns a current, total object for display on EntryCard
+ * @param criteria as EventCriteria
+ * @param progress as EventCriteria
+ * @returns formatted object as {current:number; total:number}
+ */
 export default function formatEventCriteria(
   criteria: EventCriteria,
   progress: EventCriteria
