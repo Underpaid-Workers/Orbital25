@@ -43,7 +43,7 @@ export default async function fetchSpeciesSummary(
   }
   
   Determine rarity based on the global population size. If its less than 10000, return "Unique". If its between 10000 and 500000, return "Very Rare".
-  If its between 500000 and 1000000, return "Uncommon". Lastly, for greater than 1000000, return "Common".
+  If its between 500000 and 5000000, return "Uncommon". Lastly, for greater than 5000000, return "Common".
   Be completely certain that the data is returned in the exact format as described. 
   "habitat" must have at most 2 of the listed habitats in alphabetical order.
   Respond ONLY with this JSON and nothing else. Do not wrap it in code blocks or add any commentary.`;

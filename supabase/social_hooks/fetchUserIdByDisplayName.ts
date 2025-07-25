@@ -1,6 +1,9 @@
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
 
-export async function fetchUserIdByDisplayName(displayname: string): Promise<{ success: boolean; id?: string; message?: string }> {
+export async function fetchUserIdByDisplayName(
+  displayname: string
+): Promise<ResponseState> {
   const { data, error } = await supabase
     .from("users")
     .select("id")
@@ -17,5 +20,6 @@ export async function fetchUserIdByDisplayName(displayname: string): Promise<{ s
     return { success: false, message: "User not found" };
   }
 
-  return { success: true, id: data.id };
+  return { success: true, data: data.id };
 }
+

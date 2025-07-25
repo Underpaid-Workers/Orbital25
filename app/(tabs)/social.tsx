@@ -122,18 +122,16 @@ export default function Social() {
     console.log(`${displayname}'s profile clicked`);
     try {
       const response = await fetchUserIdByDisplayName(displayname);
-      console.log("fetchUserIdByDisplayName response:", response);
-
-    if (response && response.success && response.id) {
-      setSelectedUserId(response.id);
-    } else {
-      Alert.alert("Error", response?.message || "Could not find user ID");
+      if (response.success) {
+        setSelectedUserId(response.data);
+      } else {
+        Alert.alert("Error", response.message);
+      }
+    } catch (err) {
+      console.error("Error fetching user ID:", err);
+      Alert.alert("Error", "An unexpected error occurred.");
     }
-  } catch (err) {
-    console.error("Error fetching user ID:", err);
-    Alert.alert("Error", "An unexpected error occurred.");
-  }
-};
+  };
 
   if (selectedUserId) {
     return (

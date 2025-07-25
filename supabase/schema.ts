@@ -46,6 +46,13 @@ export type ProgressionCriteria =
   | { speciesType: SpeciesTypeKey; count?: number } // {"speciesType":"plant","count":10}
   | { habitat: HabitatKey; count?: number };
 
+export type EventCriteria =
+  | { score: number }
+  | { rarity: RarityKey[]; count: number[] }
+  | { habitat: HabitatKey[]; count: number[] }
+  | { species: number }
+  | { count: number };
+
 export interface Badge {
   id: string;
   code: string;
@@ -54,7 +61,24 @@ export interface Badge {
   image_url: string;
   badge_type: string;
   earned_at: string | null;
-  criteria: ProgressionCriteria; //TODO: change this to better fit the jsonb schema!
+  criteria: ProgressionCriteria;
+}
+
+export interface EventDatabase {
+  id: string;
+  title: string;
+  description: string;
+  end_time: string;
+  frequency: string;
+  image: string;
+  criteria: EventCriteria;
+  progress: EventCriteria;
+}
+
+export interface UserEventProgressUpdate {
+  event_id: string;
+  user_id: string;
+  progress: EventCriteria;
 }
 
 export interface Event {
@@ -64,6 +88,8 @@ export interface Event {
   end_time: string;
   frequency: string;
   image: string;
+  current: number;
+  total: number;
 }
 
 //Full entry fetched to local

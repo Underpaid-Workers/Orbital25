@@ -1,5 +1,10 @@
 import { Badge } from "@/supabase/schema";
 
+/**
+ * @description A function that takes in a list of badges and returns the list sorted by owned progression, owned event, unowned progression, unowned event
+ * @param badges as Badge[]
+ * @returns Badge[]
+ */
 export default function sortBadges(badges: Badge[]): Badge[] {
   const ownedProg: Badge[] = [];
   const ownedEvent: Badge[] = [];

@@ -4,7 +4,9 @@ import NewBadgePopup from "@/components/entry/NewBadgesPopup";
 import SearchBar from "@/components/entry/SearchBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useEventsContext } from "@/providers/EventsProvider";
 import { useUserdataContext } from "@/providers/UserdataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -30,6 +32,8 @@ export default function inventory() {
     updateUserProgressionBadges,
     userLoading,
   } = useUserdataContext();
+  const { session } = useAuthContext();
+  const { getEvents, eventsLoading } = useEventsContext();
   const [badgeCount, setBadgeCount] = useState<number>(0);
   const [badgeModalVisible, setBadgeModalVisible] = useState<boolean>(false);
 
@@ -37,7 +41,8 @@ export default function inventory() {
     getEntries();
     getUserdata();
     getUserBadges();
-  }, []);
+    getEvents();
+  }, [session]);
 
   useEffect(() => {
     updateUserProgressionBadges((badges) => {
@@ -58,7 +63,7 @@ export default function inventory() {
       : data;
   return (
     <>
-      {loading || userLoading ? (
+      {loading || userLoading || eventsLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.tabBar} />
         </View>

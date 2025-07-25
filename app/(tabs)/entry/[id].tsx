@@ -4,11 +4,15 @@ import ProcessingPopup from "@/components/entry/ProcessingPopup";
 import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
 import { placeholderImage } from "@/constants/Image";
+import checkEarnableEventProgression from "@/hooks/checkEarnableEventProgression";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import formatNumber from "@/hooks/formatNumber";
 import formatRarityToGradient from "@/hooks/formatRarityToGradient";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useEventsContext } from "@/providers/EventsProvider";
 import { useUserdataContext } from "@/providers/UserdataProvider";
+import { HabitatKey, RarityKey } from "@/supabase/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -24,9 +28,11 @@ import MapView, { Marker } from "react-native-maps";
 
 export default function viewEntry() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { session } = useAuthContext();
   const { data, loading, removeEntry, updateEntryObservation } =
     useEntryDataContext();
   const { getUserdata } = useUserdataContext();
+  const { events, rawEvents, updateUserEventProgression } = useEventsContext();
 
   //data is 0-indexed, while id is 1 indexed
   const entry = data[Number.parseInt(id) - 1];
@@ -53,9 +59,20 @@ export default function viewEntry() {
 
   const onDelete = () => {
     const onComplete = () => {
-      setModalVisible(false);
-      getUserdata();
-      router.replace("/(tabs)/inventory");
+      let eventProgression = checkEarnableEventProgression(
+        session?.user.id as string,
+        false,
+        1,
+        entry.rarity.toLowerCase() as RarityKey,
+        entry.habitat.toLowerCase() as HabitatKey,
+        rawEvents
+      );
+      updateUserEventProgression(eventProgression);
+      setTimeout(() => {
+        setModalVisible(false);
+        getUserdata();
+        router.replace("/(tabs)/inventory");
+      }, 300);
     };
 
     setModalVisible(true);

@@ -1,5 +1,11 @@
 import moment from "moment";
 
+/**
+ * @description A function that takes in a moment().format() start and end time and returns the difference in minutes
+ * @param startTime as string
+ * @param endTime as string
+ * @returns Time difference in minutes as number
+ */
 export default function formatDateTimeDifference(
   startTime: string,
   endTime: string

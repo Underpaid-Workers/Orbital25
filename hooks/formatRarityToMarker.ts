@@ -15,6 +15,11 @@ const markers = {
   unique: MapMarkerUnique,
 };
 
+/**
+ * @description A function that takes in a rarity and returns the corresponding marker image
+ * @param rarity as string
+ * @returns marker image as ImageURISource
+ */
 export default function formatRarityToMapMarker(
   rarity: string
 ): ImageURISource {

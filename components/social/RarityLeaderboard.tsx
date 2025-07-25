@@ -53,7 +53,7 @@ const RarityLeaderboard = ({
 
       <View style={styles.speciesContainer}>
         <Text style={styles.score}>{item.rarityScore}</Text>
-        <Text style={styles.rarityScore}>rarity score</Text>
+        <Text style={styles.rarityScore}>score</Text>
       </View>
 
       {showDelete && !!onDelete && !item.isSelf ? (

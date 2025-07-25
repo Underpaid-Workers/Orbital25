@@ -1,11 +1,12 @@
 import signIn from "@/supabase/auth_hooks/signIn";
 import fetchEntries from "@/supabase/db_hooks/fetchEntries";
 import supabase from "@/supabase/main";
+import { ResponseState } from "@/supabase/schema";
 import { Session } from "@supabase/supabase-js";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("Check entries fetching", () => {
-  let result: { success: boolean; error?: string } = { success: false };
+  let result: ResponseState = { success: false };
   beforeAll(
     async () =>
       (result = await signIn("underpaidworker@gmail.com", "orbital25")),
@@ -17,8 +18,9 @@ describe("Check entries fetching", () => {
 
   test("Response with correct number of entries", async () => {
     const sessionData = await supabase.auth.getSession();
-    const data = await fetchEntries(sessionData.data.session as Session);
-    expect(data).toBeTruthy();
-    expect(data).toMatchObject({ entryCount: 2 });
+    result = await fetchEntries(sessionData.data.session as Session);
+    expect(result).toBeTruthy();
+    expect(result).toMatchObject({ success: true });
+    expect(result.data).toHaveLength(2);
   });
 });

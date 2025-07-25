@@ -91,16 +91,24 @@ export default function OtherUserProfile({ userId }: OtherUserProfileProps) {
     fetchOtherUserBadges();
   }, [userId]);
 
-  if (loading) {
+ if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <Text>Loading...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContainer}
+    >
       <View style={styles.avatarContainer}>
         <MaterialCommunityIcons name="account-circle" size={80} color="black" />
       </View>
@@ -142,7 +150,7 @@ export default function OtherUserProfile({ userId }: OtherUserProfileProps) {
       <Text style={styles.sectionTitle}>Badges</Text>
 
       {userBadges.length <= 0 ? (
-        <Text style={styles.statLabel}>Collect more badges to see them here!</Text>
+        <Text style={styles.statLabel}>This user has no badges...</Text>
       ) : (
         userBadges.map((item, index) => (
           <BadgeCard
