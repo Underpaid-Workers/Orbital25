@@ -58,15 +58,6 @@ export default function EventsProvider({ children }: PropsWithChildren) {
           if (response.success) {
             console.log(`${response.data.length} events fetched`);
             const eventsData = response.data as EventDatabase[];
-            //ensures only first 2 events are active
-            eventsData.splice(
-              0,
-              eventsData.length,
-              ...["daily", "weekly", "monthly"].flatMap((freq) =>
-                eventsData.filter((e) => e.frequency === freq).slice(0, 2)
-              )
-            );
-            //end of temp fix
             const events = eventsData.map(
               ({ criteria, progress, ...event }) => {
                 const formattedProgress = formatEventCriteria(
