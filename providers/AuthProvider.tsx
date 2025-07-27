@@ -105,7 +105,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const removeAccount = () => {
-    //TODO: Create a custom modal for deletion
     Alert.alert(
       "Confirm Delete?",
       "This action CANNOT be reversed! Are you absolutely sure?",

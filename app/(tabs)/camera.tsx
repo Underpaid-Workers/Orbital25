@@ -23,7 +23,7 @@ export default function camera() {
   const getNowDateTimeFormatted = () => moment().format("D,M,YYYY,h:mm A");
 
   //Resets photo information on leaving camera screen
-  //TODO: Causes delay when opening camera though, since setting state causes delays? FIX
+  //Causes delay when opening camera though, since setting state causes delays?
   useFocusEffect(
     useCallback(() => {
       setIsFocused(true);

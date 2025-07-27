@@ -26,7 +26,7 @@ const SpeciesTag = ({ species }: { species: string }) => {
       color = SpeciesColors.plant;
       break;
     default:
-      image = placeholderImage; //TODO: replace with proper empty icon image
+      image = placeholderImage;
       color = SpeciesColors.undefined;
       tag = "Undefined";
   }

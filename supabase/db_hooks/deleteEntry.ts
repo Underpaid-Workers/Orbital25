@@ -14,7 +14,6 @@ export default async function deleteEntry(
   entryId: number,
   entryImageURL: string
 ): Promise<ResponseState> {
-  //TODO: Handle delete photo error throwing
   async function deletePhoto(imageURL: string) {
     const imageName = imageURL.slice(imageURL.lastIndexOf("/") + 1);
     const { error } = await supabase.storage

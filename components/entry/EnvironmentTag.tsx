@@ -32,7 +32,7 @@ const EnvironmentTag = ({ env }: { env: string }) => {
       color = EnvironmentColors.flying;
       break;
     default:
-      image = placeholderImage; //TODO: replace with proper empty icon image
+      image = placeholderImage;
       color = EnvironmentColors.undefined;
       tag = "Undefined";
   }
