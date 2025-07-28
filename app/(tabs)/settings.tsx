@@ -1,12 +1,13 @@
 import UsernameModal from "@/components/main/UsernameModal";
-import validateTrimmedUsername from "@/hooks/validateTrimmedUsername";
 import { useAuthContext } from "@/providers/AuthProvider";
-import checkUsername from "@/supabase/auth_hooks/checkUsername";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function settings() {
-  const { logOut, fetchUsername, updateUsername, loading } = useAuthContext();
+  const { logOut, removeAccount, loading } = useAuthContext();
+
+  const { updateUsername } = useUserdataContext();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -14,27 +15,12 @@ export default function settings() {
     setModalVisible(true);
   };
 
-  const onSubmitUsername = async (username: string) => {
-    const trimmed = username.trim();
-    const validation = validateTrimmedUsername(trimmed);
-    if (!validation.success && validation.error) {
-      Alert.alert("Username Error", validation.error || "Invalid username");
-      return;
-    }
-
-    const result = await checkUsername(trimmed);
-    if (!result.success) {
-      Alert.alert("Username Error", result.message || "Invalid username");
-      return;
-    }
-
-    updateUsername(username);
-    //TODO: Do not display alert when updateUsername error
-    if (!loading) {
-      Alert.alert("Success", "Display name updated!");
-      fetchUsername();
+  const onSubmitUsername = (username: string) => {
+    const onFail = () => {};
+    const onSuccess = () => {
       setModalVisible(false);
-    }
+    };
+    updateUsername(username, onFail, onSuccess);
   };
 
   return (
@@ -44,7 +30,11 @@ export default function settings() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onUsernameChange}>
-        <Text style={styles.changeText}>Change Display Name</Text>
+        <Text style={styles.changeText}>Change Username</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={removeAccount}>
+        <Text style={styles.deleteText}>Delete Account</Text>
       </TouchableOpacity>
 
       <UsernameModal
@@ -61,7 +51,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 16,
+    gap: 24,
   },
   text: {
     fontSize: 24,
@@ -70,6 +60,10 @@ const styles = StyleSheet.create({
   changeText: {
     fontSize: 24,
     color: "#007AFF",
-    marginTop: 8,
+  },
+  deleteText: {
+    fontSize: 24,
+    color: "#C70000",
+    fontWeight: "bold",
   },
 });

@@ -1,10 +1,16 @@
 import EntryCard from "@/components/entry/EntryCard";
 import FloatingInfoBar from "@/components/entry/FloatingInfoBar";
+import NewBadgePopup from "@/components/entry/NewBadgesPopup";
+import SearchBar from "@/components/entry/SearchBar";
 import colors from "@/constants/Colors";
 import { emptyImage, missingImage } from "@/constants/Image";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useEventsContext } from "@/providers/EventsProvider";
+import { useUserdataContext } from "@/providers/UserdataProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -16,18 +22,48 @@ import {
 } from "react-native";
 
 export default function inventory() {
-  const { data, entryCount, speciesCount, score, loading, getEntries } =
-    useEntryDataContext();
+  const { data, loading, getEntries } = useEntryDataContext();
+  const {
+    entryCount,
+    speciesCount,
+    score,
+    getUserdata,
+    getUserBadges,
+    updateUserProgressionBadges,
+    userLoading,
+  } = useUserdataContext();
+  const { session } = useAuthContext();
+  const { getEvents, eventsLoading } = useEventsContext();
+  const [badgeCount, setBadgeCount] = useState<number>(0);
+  const [badgeModalVisible, setBadgeModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries();
-  }, []);
+    getUserdata();
+    getUserBadges();
+    getEvents();
+  }, [session]);
 
+  useEffect(() => {
+    updateUserProgressionBadges((badges) => {
+      setBadgeCount(badges);
+      getUserBadges();
+      setBadgeModalVisible(true);
+    });
+  }, [entryCount]);
+
+  const router = useRouter();
   const [error, setError] = useState(false);
-
+  const [searchInput, setSearchInput] = useState("");
+  const filteredData =
+    searchInput !== ""
+      ? data.filter((entry) =>
+          entry.name.toLowerCase().includes(searchInput.toLowerCase())
+        )
+      : data;
   return (
     <>
-      {loading ? (
+      {loading || userLoading || eventsLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.tabBar} />
         </View>
@@ -40,12 +76,17 @@ export default function inventory() {
           />
           <Text style={styles.missingText}>Error : Unable to load</Text>
         </View>
-      ) : entryCount === 0 ? (
+      ) : filteredData.length === 0 ? (
         <View style={styles.container}>
           <FloatingInfoBar
             species={speciesCount}
             entries={entryCount}
             score={score}
+            onClick={() =>
+              router.navigate({
+                pathname: "/profile",
+              })
+            }
           />
           <Image
             source={emptyImage}
@@ -61,31 +102,63 @@ export default function inventory() {
         </View>
       ) : (
         <View style={styles.container}>
+          <SearchBar
+            placeholderText="Find a species..."
+            onTextChange={setSearchInput}
+          />
+          <View style={{ height: 8 }}></View>
           <FloatingInfoBar
             species={speciesCount}
             entries={entryCount}
             score={score}
-          />
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id.toString()}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-            ListHeaderComponent={<View style={{ height: 16 }} />}
-            renderItem={({ item }) => (
-              <EntryCard
-                id={item.id}
-                name={item.name}
-                image={item.image}
-                speciesType={item.speciesType}
-                envType={item.environmentType}
-                rarity={item.rarity}
-              />
-            )}
-            refreshControl={
-              <RefreshControl refreshing={false} onRefresh={getEntries} />
+            onClick={() =>
+              router.navigate({
+                pathname: "/profile",
+              })
             }
           />
+          {filteredData.length > 0 ? (
+            <FlatList
+              data={filteredData}
+              keyExtractor={(item) => item.id.toString()}
+              ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+              ListHeaderComponent={<View style={{ height: 16 }} />}
+              renderItem={({ item }) => (
+                <EntryCard
+                  id={item.id}
+                  name={item.name}
+                  image={item.image}
+                  speciesType={item.speciesType}
+                  envType={item.environmentType}
+                  rarity={item.rarity}
+                  onClickDetails={(id: number) => {
+                    console.log(`Entry ${item.id} clicked`);
+                    router.navigate({
+                      pathname: "/(tabs)/entry/[id]",
+                      params: { id },
+                    });
+                  }}
+                />
+              )}
+              refreshControl={
+                <RefreshControl refreshing={false} onRefresh={getEntries} />
+              }
+            />
+          ) : (
+            <View style={styles.missingSearchContainer}>
+              <Text style={styles.missingSearchText}>
+                No Entries with name "{searchInput}"!
+              </Text>
+            </View>
+          )}
         </View>
+      )}
+      {true && (
+        <NewBadgePopup
+          isVisible={badgeModalVisible}
+          onDismiss={() => setBadgeModalVisible(false)}
+          badgeCount={badgeCount}
+        />
       )}
     </>
   );
@@ -131,5 +204,16 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "75%",
     transform: [{ translateY: "-50%" }],
+  },
+  missingSearchContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  missingSearchText: {
+    fontSize: 20,
+    textAlign: "center",
+    textAlignVertical: "center",
+    color: colors.text,
   },
 });

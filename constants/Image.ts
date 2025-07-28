@@ -12,3 +12,10 @@ export const plantSpeciesTag = require("../assets/images/Tags/plant.png");
 export const flyingEnvTag = require("../assets/images/Tags/flying.png");
 export const aquaticEnvTag = require("../assets/images/Tags/aquatic.png");
 export const terrestrialEnvTag = require("../assets/images/Tags/terrestrial.png");
+
+//Marker Icons
+export const MapMarkerCommon = require("../assets/custom_icons/MapMarkerCommon.png");
+export const MapMarkerUncommon = require("../assets/custom_icons/MapMarkerUncommon.png");
+export const MapMarkerRare = require("../assets/custom_icons/MapMarkerRare.png");
+export const MapMarkerVeryRare = require("../assets/custom_icons/MapMarkerVeryRare.png");
+export const MapMarkerUnique = require("../assets/custom_icons/MapMarkerUnique.png");

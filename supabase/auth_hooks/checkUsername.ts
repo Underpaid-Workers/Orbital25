@@ -3,23 +3,26 @@ import { ResponseState } from "@/supabase/schema";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export default async function checkUsername(
-  trimmed: string
+  username: string
 ): Promise<ResponseState> {
   try {
+    console.log("SDGDSGDGDSG");
     const { data, error } = await supabase
       .from("users")
-      .select("id")
-      .eq("displayname", trimmed);
+      .select("id, displayname")
+      .eq("displayname", username);
 
     if (error) throw error;
-
+    console.log(username);
+    console.log(data);
     if (data && data.length > 0) {
       return { success: false, message: "Username already taken" }; //check if username is already in use
     } else {
       return { success: true };
     }
   } catch (error) {
-    const fetchError = error as PostgrestError;
-    return { success: false, message: fetchError.message };
+    const errorMessage = error as PostgrestError;
+    console.log(errorMessage);
+    return { success: false, message: errorMessage.message };
   }
 }

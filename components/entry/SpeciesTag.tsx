@@ -1,74 +1,55 @@
 import colors from "@/constants/Colors";
 import {
   animalSpeciesTag,
-  aquaticEnvTag,
-  flyingEnvTag,
   placeholderImage,
   plantSpeciesTag,
-  terrestrialEnvTag,
 } from "@/constants/Image";
 import { Image, StyleSheet, Text, View } from "react-native";
 
-export default function SpeciesTag({ species }: { species: string }) {
+const SpeciesColors = {
+  animal: "#D7B0A5",
+  plant: "#A0E0D4",
+  undefined: "#E0DD9E",
+};
+
+const SpeciesTag = ({ species }: { species: string }) => {
   let image;
+  let color;
   let tag = species;
   switch (species) {
     case "Animal":
       image = animalSpeciesTag;
+      color = SpeciesColors.animal;
       break;
     case "Plant":
       image = plantSpeciesTag;
+      color = SpeciesColors.plant;
       break;
     default:
-      image = placeholderImage; //TODO: replace with proper empty icon image
+      image = placeholderImage;
+      color = SpeciesColors.undefined;
       tag = "Undefined";
   }
 
   return (
-    <View style={styles.tag}>
+    <View style={[styles.tag, { backgroundColor: color }]}>
       <Image source={image} style={styles.icon} />
       <Text style={styles.text}>{tag}</Text>
     </View>
   );
-}
-
-export function EnvironmentTag({ env }: { env: string }) {
-  let image;
-  let tag = env;
-  switch (env) {
-    case "Aquatic":
-      image = aquaticEnvTag;
-      break;
-    case "Terrestrial":
-      image = terrestrialEnvTag;
-      break;
-    case "Flying":
-      image = flyingEnvTag;
-      break;
-    default:
-      image = placeholderImage; //TODO: replace with proper empty icon image
-      tag = "Undefined";
-  }
-  return (
-    <View style={styles.tag}>
-      <Image source={image} style={styles.icon} />
-      <Text style={styles.text}>{tag}</Text>
-    </View>
-  );
-}
+};
 
 const styles = StyleSheet.create({
   tag: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: colors.tag,
     borderRadius: 20,
     paddingVertical: 6,
     paddingHorizontal: 8,
     width: 100,
-    borderColor: colors.primary,
-    borderWidth: 0,
+    borderColor: "black",
+    borderWidth: 0.5,
   },
   icon: {
     width: 20,
@@ -81,3 +62,5 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
 });
+
+export default SpeciesTag;

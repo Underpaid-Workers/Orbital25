@@ -6,7 +6,7 @@ interface info {
   text: string;
 }
 
-export default function InfoBox({ title, text }: info) {
+const InfoBox = ({ title, text }: info) => {
   return (
     <View style={styles.box}>
       <Text style={styles.title}>{title}</Text>
@@ -14,7 +14,7 @@ export default function InfoBox({ title, text }: info) {
       <Text style={styles.text}>{text}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   box: {
@@ -46,3 +46,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export default InfoBox;

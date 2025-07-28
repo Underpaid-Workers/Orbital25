@@ -15,17 +15,19 @@ type SpeciesLeaderboardItem = {
   isSelf?: boolean;
 };
 
-type SpeciesLeaderboard = {
+type SpeciesLeaderboardProps = {
   pulledData: SpeciesLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
+  onClick: (user: string) => void;
 };
 
-export default function SpeciesLeaderboard({
+const SpeciesLeaderboard = ({
   pulledData,
   showDelete = false,
   onDelete,
-}: SpeciesLeaderboard) {
+  onClick,
+}: SpeciesLeaderboardProps) => {
   const sortedData = [...pulledData].sort(
     (a, b) => b.speciesNum - a.speciesNum
   );
@@ -37,7 +39,8 @@ export default function SpeciesLeaderboard({
     item: SpeciesLeaderboardItem;
     index: number;
   }) => (
-    <View
+    <TouchableOpacity
+      onPress={() => onClick(item.name)}
       style={[
         styles.container,
         { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
@@ -63,7 +66,7 @@ export default function SpeciesLeaderboard({
       ) : (
         <View style={styles.deletePlaceholder} />
       )}
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -73,7 +76,7 @@ export default function SpeciesLeaderboard({
       keyExtractor={(item, index) => index.toString()}
     />
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -121,3 +124,5 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
 });
+
+export default SpeciesLeaderboard;

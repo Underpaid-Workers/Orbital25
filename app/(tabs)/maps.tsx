@@ -2,6 +2,7 @@ import FilterBar from "@/components/maps/FilterBar";
 import colors from "@/constants/Colors";
 import fetchLocation from "@/hooks/fetchLocation";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
+import formatRarityToMapMarker from "@/hooks/formatRarityToMarker";
 import { useAuthContext } from "@/providers/AuthProvider";
 import fetchGlobalEntriesByLocation, {
   location,
@@ -127,18 +128,21 @@ export default function maps() {
           coordinate={{ latitude: entry.lat, longitude: entry.long }}
           title={entry.name}
           description={`Captured: ${formatDateTimeDisplay(entry.datetime)}`}
+          icon={formatRarityToMapMarker(entry.rarity)}
         >
           {/* TODO: Callout does not work as intended as of now, due to EXPO and react-native-maps package compatibility issues
           Currently only can display capture time and name, until fix/workaround made to display custom callout */}
-          {/* <View style={{ width: 100, height: 100 }}>
-            <Text>{entry.name}</Text>
-            <Text>
-              Captured: {formatDateTimeDisplay(entry.datetime)}
-              Rarity: {entry.rarity}
-              Species: {entry.species_type}
-              Environment: {entry.env_type}
-            </Text>
-          </View> */}
+          {/* <Callout tooltip>
+            <View>
+              <Text>{entry.name}</Text>
+              <Text>
+                Captured: {formatDateTimeDisplay(entry.datetime)}
+                  Rarity: {entry.rarity}
+                  Species: {entry.species_type}
+                  Environment: {entry.env_type}
+              </Text>
+            </View>
+          </Callout> */}
         </Marker>
       );
     });
@@ -233,6 +237,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  mapMarker: {},
   crosshair: {
     position: "absolute",
     left: "50%",

@@ -1,9 +1,9 @@
 import supabase from "@/supabase/main";
-import { Session } from "@supabase/supabase-js";
-import { Alert } from "react-native";
+import { ResponseState } from "@/supabase/schema";
+import { PostgrestError, Session } from "@supabase/supabase-js";
 
 /**
- * @description Delete entry from supabase entriestest table
+ * @description Delete entry from supabase entries table
  * @param session as Session
  * @param entryId as number
  * @param entryImageURL as string
@@ -13,7 +13,7 @@ export default async function deleteEntry(
   session: Session,
   entryId: number,
   entryImageURL: string
-) {
+): Promise<ResponseState> {
   async function deletePhoto(imageURL: string) {
     const imageName = imageURL.slice(imageURL.lastIndexOf("/") + 1);
     const { error } = await supabase.storage
@@ -23,7 +23,6 @@ export default async function deleteEntry(
   }
 
   try {
-    if (!session?.user) throw new Error("No user on the session!");
     const userId = session.user.id;
 
     console.log(
@@ -35,16 +34,13 @@ export default async function deleteEntry(
 
     //delete row
     const { error: deleteError, data: deleteData } = await supabase
-      .from("entriestest")
+      .from("entries")
       .delete()
       .eq("user_id", userId)
       .eq("entry_id", entryId)
       .select();
 
-    if (deleteError) {
-      console.error("Delete error:", deleteError);
-      throw deleteError;
-    }
+    if (deleteError) throw deleteError;
     console.log("Deleted entry row:", deleteData);
 
     //delete image frm storage
@@ -52,26 +48,16 @@ export default async function deleteEntry(
     console.log("Deleted image from storage");
 
     //call sql function to change idx
-    const { data: rpcData, error: rpcError } = await supabase.rpc(
-      "decrement_entry_ids_after_delete",
-      {
-        deleted_entry_id: entryId,
-        current_user_id: userId,
-      }
-    );
+    const { error } = await supabase.rpc("decrement_entry_ids_after_delete", {
+      deleted_entry_id: entryId,
+      current_user_id: userId,
+    });
+    if (error) throw error;
+    console.log("Called decrement_entry_ids_after_delete function");
 
-    if (rpcError) {
-      console.error("RPC error:", rpcError);
-      throw rpcError;
-    }
-    console.log(
-      "Called decrement_entry_ids_after_delete function, result:",
-      rpcData
-    );
-
-    Alert.alert("Success", "Entry deleted and entry IDs updated.");
+    return { success: true };
   } catch (error: any) {
-    Alert.alert("Error", error.message);
-    console.error("Delete failed:", error);
+    const errorMessage = error as PostgrestError;
+    return { success: false, message: errorMessage.message };
   }
 }

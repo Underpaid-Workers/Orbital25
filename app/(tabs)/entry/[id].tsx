@@ -1,12 +1,18 @@
+import EnvironmentTag from "@/components/entry/EnvironmentTag";
 import InfoBox from "@/components/entry/InfoBox";
 import ProcessingPopup from "@/components/entry/ProcessingPopup";
-import SpeciesTag, { EnvironmentTag } from "@/components/entry/Tag";
+import SpeciesTag from "@/components/entry/SpeciesTag";
 import colors from "@/constants/Colors";
 import { placeholderImage } from "@/constants/Image";
+import checkEarnableEventProgression from "@/hooks/checkEarnableEventProgression";
 import formatDateTimeDisplay from "@/hooks/formatDateTimeDisplay";
 import formatNumber from "@/hooks/formatNumber";
 import formatRarityToGradient from "@/hooks/formatRarityToGradient";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { useEntryDataContext } from "@/providers/EntryDataProvider";
+import { useEventsContext } from "@/providers/EventsProvider";
+import { useUserdataContext } from "@/providers/UserdataProvider";
+import { HabitatKey, RarityKey } from "@/supabase/schema";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -22,7 +28,11 @@ import MapView, { Marker } from "react-native-maps";
 
 export default function viewEntry() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, loading, removeEntry } = useEntryDataContext();
+  const { session } = useAuthContext();
+  const { data, loading, removeEntry, updateEntryObservation } =
+    useEntryDataContext();
+  const { getUserdata } = useUserdataContext();
+  const { events, rawEvents, updateUserEventProgression } = useEventsContext();
 
   //data is 0-indexed, while id is 1 indexed
   const entry = data[Number.parseInt(id) - 1];
@@ -31,6 +41,15 @@ export default function viewEntry() {
   let displayId = "#000";
   let observations = "Nothing written here...";
 
+  const router = useRouter();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  // const [observationsEdit, setObservationsEdit] =
+  //   useState<string>(observations);
+  // const [isObservationEditable, setIsObservationEditable] =
+  //   useState<boolean>(false);
+  // useEffect(() => {
+  //   setObservationsEdit(observations);
+  // }, [observations]);
   if (entry !== undefined) {
     datetime = formatDateTimeDisplay(entry.datetime);
     displayId = formatNumber(entry.id.toString());
@@ -38,13 +57,22 @@ export default function viewEntry() {
       entry.observations !== "" ? entry.observations : observations;
   }
 
-  const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
-
   const onDelete = () => {
     const onComplete = () => {
-      setModalVisible(false);
-      router.replace("/(tabs)/inventory");
+      let eventProgression = checkEarnableEventProgression(
+        session?.user.id as string,
+        false,
+        1,
+        entry.rarity.toLowerCase() as RarityKey,
+        entry.habitat.toLowerCase() as HabitatKey,
+        rawEvents
+      );
+      updateUserEventProgression(eventProgression);
+      setTimeout(() => {
+        setModalVisible(false);
+        getUserdata();
+        router.replace("/(tabs)/inventory");
+      }, 300);
     };
 
     setModalVisible(true);
@@ -79,9 +107,38 @@ export default function viewEntry() {
         <InfoBox title="Height" text={entry.height} />
         <InfoBox title="Weight" text={entry.weight} />
         <InfoBox title="Lifespan" text={entry.lifespan} />
+        <InfoBox title="Habitat" text={entry.habitat} />
         <Text style={styles.entryTextBoxTitle}>Observations</Text>
+
         <View style={styles.entryTextBox}>
           <Text style={styles.entryText}>{observations}</Text>
+          {/* {isObservationEditable ? (
+            <TextInput
+              style={styles.entryText}
+              autoFocus={isObservationEditable}
+              onChangeText={(text) => setObservationsEdit(text)}
+              value={observationsEdit}
+              onFocus={() => setObservationsEdit(observations)}
+              onBlur={() => {
+                console.log("SDFSDFSD");
+                setIsObservationEditable(false);
+              }}
+            />
+          ) : (
+            <Text style={styles.entryText}>{observationsEdit}</Text>
+          )}
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => {
+              setIsObservationEditable(true);
+            }}
+          >
+            <MaterialCommunityIcons
+              name="pencil"
+              size={24}
+              color={colors.gray}
+            />
+          </TouchableOpacity> */}
         </View>
         <Text style={styles.entryTextBoxTitle}>Location</Text>
         <View style={styles.mapBox}>
@@ -190,5 +247,10 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     fontSize: 20,
     textAlign: "center",
+  },
+  editButton: {
+    position: "absolute",
+    right: 8,
+    top: 8,
   },
 });

@@ -21,7 +21,7 @@ export async function fetchRarityScoreLeaderboard() {
   const userData = await Promise.all(
     users.map(async (user) => {
       const { data: entries, error: entryError } = await supabase
-        .from("entriestest")
+        .from("entries")
         .select("rarity")
         .eq("user_id", user.id);
 

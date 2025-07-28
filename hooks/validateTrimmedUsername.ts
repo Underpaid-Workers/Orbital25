@@ -1,9 +1,14 @@
-type SaveResult = {
+type Result = {
   success: boolean;
   error?: string;
 };
 
-export default function validateTrimmedUsername(trimmed: string): SaveResult {
+/**
+ * @description A function that takes in a string and checks that it is not empty, not contain spaces, and not more than 20 characters
+ * @param trimmed as string
+ * @returns check result as Result
+ */
+export default function validateTrimmedUsername(trimmed: string): Result {
   if (!trimmed) {
     return { success: false, error: "Username cannot be empty" };
   } //check if no user input

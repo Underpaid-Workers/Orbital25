@@ -15,17 +15,19 @@ type RarityLeaderboardItem = {
   isSelf?: boolean;
 };
 
-type RarityLeaderboard = {
+type RarityLeaderboardProps = {
   pulledData: RarityLeaderboardItem[];
   showDelete?: boolean;
   onDelete?: (name: string) => void;
+  onClick: (user: string) => void;
 };
 
-export default function RarityLeaderboard({
+const RarityLeaderboard = ({
   pulledData,
   showDelete = false,
   onDelete,
-}: RarityLeaderboard) {
+  onClick,
+}: RarityLeaderboardProps) => {
   const sortedData = [...pulledData].sort(
     (a, b) => b.rarityScore - a.rarityScore
   );
@@ -37,11 +39,12 @@ export default function RarityLeaderboard({
     item: RarityLeaderboardItem;
     index: number;
   }) => (
-    <View
+    <TouchableOpacity
       style={[
         styles.container,
         { backgroundColor: index % 2 === 0 ? "#D9D9D9" : colors.background },
       ]}
+      onPress={() => onClick(item.name)}
     >
       <Text style={styles.rank}>{index + 1}</Text>
       <Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
@@ -50,7 +53,7 @@ export default function RarityLeaderboard({
 
       <View style={styles.speciesContainer}>
         <Text style={styles.score}>{item.rarityScore}</Text>
-        <Text style={styles.rarityScore}>rarity score</Text>
+        <Text style={styles.rarityScore}>score</Text>
       </View>
 
       {showDelete && !!onDelete && !item.isSelf ? (
@@ -63,7 +66,7 @@ export default function RarityLeaderboard({
       ) : (
         <View style={styles.deletePlaceholder} />
       )}
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -73,7 +76,7 @@ export default function RarityLeaderboard({
       keyExtractor={(item, index) => index.toString()}
     />
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -121,3 +124,5 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
 });
+
+export default RarityLeaderboard;

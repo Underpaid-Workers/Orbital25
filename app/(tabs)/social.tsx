@@ -1,3 +1,4 @@
+import OtherUserProfile from "@/components/profile/OtherUserProfile";
 import RarityLeaderboard from "@/components/social/RarityLeaderboard";
 import SpeciesLeaderboard from "@/components/social/SpeciesLeaderboard";
 import colors from "@/constants/Colors";
@@ -6,7 +7,9 @@ import { fetchFriendsRarity } from "@/supabase/social_hooks/fetchFriendsRarity";
 import { fetchFriendsSpecies } from "@/supabase/social_hooks/fetchFriendsSpecies";
 import { fetchRarityScoreLeaderboard } from "@/supabase/social_hooks/fetchRarityScoreLeaderboard";
 import { fetchSpeciesLeaderboard } from "@/supabase/social_hooks/fetchSpeciesLeaderboard";
+import { fetchUserIdByDisplayName } from "@/supabase/social_hooks/fetchUserIdByDisplayName"; // import the new function
 import removeFriend from "@/supabase/social_hooks/removeFriend";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
@@ -18,7 +21,7 @@ import {
   View,
 } from "react-native";
 
-export default function social() {
+export default function Social() {
   const [board, setBoard] = useState<1 | 2>(1);
   const [searchInput, setSearchInput] = useState("");
   const [showRarity, setShowRarity] = useState(false);
@@ -35,6 +38,8 @@ export default function social() {
   const [friendsListRarity, setFriendsListRarity] = useState<
     { name: string; rarityScore: number }[]
   >([]);
+
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,6 +118,36 @@ export default function social() {
     );
   };
 
+  const onClickProfile = async (displayname: string) => {
+    console.log(`${displayname}'s profile clicked`);
+    try {
+      const response = await fetchUserIdByDisplayName(displayname);
+      if (response.success) {
+        setSelectedUserId(response.data);
+      } else {
+        Alert.alert("Error", response.message);
+      }
+    } catch (err) {
+      console.error("Error fetching user ID:", err);
+      Alert.alert("Error", "An unexpected error occurred.");
+    }
+  };
+
+  if (selectedUserId) {
+    return (
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setSelectedUserId(null)}
+        >
+          <Text style={styles.backButtonText}>← Back</Text>
+        </TouchableOpacity>
+
+        <OtherUserProfile userId={selectedUserId} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonRow}>
@@ -142,8 +177,7 @@ export default function social() {
             <TextInput
               style={styles.searchBar}
               placeholder={`Add new friends...`}
-              placeholderTextColor={"gray"}
-              value={searchInput}
+              placeholderTextColor={colors.gray}
               onChangeText={setSearchInput}
             />
             <TouchableOpacity
@@ -166,35 +200,57 @@ export default function social() {
                   pulledData={friendsListRarity}
                   showDelete
                   onDelete={deleteFriend}
+                  onClick={onClickProfile}
                 />
               ) : (
                 <SpeciesLeaderboard
                   pulledData={friendsListSpecies}
                   showDelete
                   onDelete={deleteFriend}
+                  onClick={onClickProfile}
                 />
               )
             ) : (
               <View style={styles.resultsContainer}>
-                {filteredFriends.map((friend, index) => (
-                  <View key={index} style={styles.friendRow}>
-                    <Text style={styles.friendName}>{friend.name}</Text>
-                    <TouchableOpacity
-                      style={styles.addFriendButton}
-                      onPress={() => handleAddFriend(friend)}
-                    >
-                      <Text style={styles.addFriendButtonText}>Add Friend</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
+                {filteredFriends.length > 0 ? (
+                  filteredFriends.map((friend, index) => (
+                    <View key={index} style={styles.friendRow}>
+                      <Text style={styles.friendName}>{friend.name}</Text>
+                      <TouchableOpacity
+                        style={styles.addFriendButton}
+                        onPress={() => handleAddFriend(friend)}
+                      >
+                        <Text style={styles.addFriendButtonText}>
+                          Add Friend
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.viewProfileButton}
+                        onPress={() => onClickProfile(friend.name)}
+                      >
+                        <Text style={styles.viewProfileButtonText}>
+                          View Profile
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.notFoundText}>User Not Found...</Text>
+                )}
               </View>
             )}
           </View>
         </View>
       ) : showRarity ? (
-        <RarityLeaderboard pulledData={rarityLeaderboardData} />
+        <RarityLeaderboard
+          pulledData={rarityLeaderboardData}
+          onClick={onClickProfile}
+        />
       ) : (
-        <SpeciesLeaderboard pulledData={speciesLeaderboardData} />
+        <SpeciesLeaderboard
+          pulledData={speciesLeaderboardData}
+          onClick={onClickProfile}
+        />
       )}
     </View>
   );
@@ -286,6 +342,13 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     color: colors.text,
   },
+  notFoundText: {
+    fontSize: 20,
+    alignSelf: "center",
+    textAlign: "center",
+    textAlignVertical: "center",
+    color: colors.text,
+  },
   addFriendButton: {
     backgroundColor: "#4EB46B",
     paddingHorizontal: 12,
@@ -295,5 +358,23 @@ const styles = StyleSheet.create({
   addFriendButtonText: {
     color: colors.text,
     fontWeight: "bold",
+  },
+  viewProfileButton: {
+    backgroundColor: "#2196f3",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginLeft: 10,
+  },
+  viewProfileButtonText: {
+    color: colors.text,
+    fontWeight: "bold",
+  },
+  backButton: {
+    padding: 10,
+    backgroundColor: "#ddd",
+  },
+  backButtonText: {
+    fontSize: 16,
   },
 });

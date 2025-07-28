@@ -3,7 +3,7 @@ import { successImage } from "@/constants/Image";
 import { Image } from "expo-image";
 import { ActivityIndicator, Modal, StyleSheet, Text, View } from "react-native";
 
-export default function ProcessingPopup({
+const ProcessingPopup = ({
   isVisible,
   isLoading,
   processingMessage,
@@ -13,7 +13,7 @@ export default function ProcessingPopup({
   isLoading: boolean;
   processingMessage: string;
   processedMessage: string;
-}) {
+}) => {
   return (
     <Modal animationType="fade" transparent={true} visible={isVisible}>
       <View style={styles.background}>
@@ -40,7 +40,7 @@ export default function ProcessingPopup({
       </View>
     </Modal>
   );
-}
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -67,3 +67,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default ProcessingPopup;

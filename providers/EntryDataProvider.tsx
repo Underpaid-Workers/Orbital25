@@ -2,96 +2,127 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import deleteEntry from "@/supabase/db_hooks/deleteEntry";
 import fetchEntries from "@/supabase/db_hooks/fetchEntries";
 import insertEntry from "@/supabase/db_hooks/insertEntry";
-import Entry from "@/supabase/schema";
+import updateEntry from "@/supabase/db_hooks/updateEntry";
+import EntryLocal from "@/supabase/schema";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
+import { Alert } from "react-native";
 
 export type EntryData = {
-  data: Entry[];
-  entryCount: number;
-  speciesCount: number;
-  score: number;
+  data: EntryLocal[];
   loading: boolean;
   getEntries: () => void;
-  uploadEntry: (submitting: Entry, onComplete: () => void) => void;
+  uploadEntry: (submitting: EntryLocal, onComplete: () => void) => void;
+  updateEntryObservation: (
+    id: number,
+    observation: string,
+    onComplete: () => void
+  ) => void;
   removeEntry: (id: number, image: string, onComplete: () => void) => void;
 };
 
 const EntryDataContext = createContext<EntryData>({
   data: [],
-  entryCount: 0,
-  speciesCount: 0,
-  score: 0,
   loading: false,
   getEntries: () => {},
   uploadEntry: () => {},
+  updateEntryObservation: () => {},
   removeEntry: () => {},
 });
 
 export default function EntryDataProvider({ children }: PropsWithChildren) {
   const { session } = useAuthContext();
-  const [data, setData] = useState<Entry[]>([]);
-  const [entryCount, setEntryCount] = useState<number>(0);
-  const [speciesCount, setSpeciesCount] = useState<number>(0);
-  const [score, setScore] = useState<number>(0);
+  const [data, setData] = useState<EntryLocal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const getEntries = async () => {
+  const getEntries = () => {
+    setLoading(true);
     if (session) {
       console.log("Fetching data...");
-      setLoading(true);
       fetchEntries(session)
-        .then(
-          (result) => {
-            //onSuccess
-            setData(result.data);
-            setEntryCount(result.entryCount);
-            setSpeciesCount(result.speciesCount);
-            setScore(result.score);
-            console.log(`${result.entryCount} entries fetched`);
-          },
-          () => {
-            //onFail
-            console.log("Fetch failed");
+        .then((response) => {
+          if (response.success) {
+            setData(response.data);
+            console.log(`${response.data.length} entries fetched`);
+          } else {
+            console.error(response.message);
+            Alert.alert("Fetch Error", response.message);
           }
-        )
+        })
         .finally(() => {
           setLoading(false);
         });
     }
   };
 
-  const uploadEntry = (submitting: Entry, onComplete: () => void) => {
+  const uploadEntry = (submitting: EntryLocal, onComplete: () => void) => {
     setLoading(true);
     if (session) {
       console.log("Session detected, inserting entry");
-      insertEntry(session, submitting).finally(() =>
-        getEntries().finally(() => onComplete())
-      );
+      insertEntry(session, submitting)
+        .then((response) => {
+          if (response.success) {
+            //nothing
+          } else {
+            console.error(response.message);
+            Alert.alert("Insert Error", response.message);
+          }
+        })
+        .finally(() => {
+          getEntries();
+          onComplete();
+          setLoading(false);
+        });
     } else {
       console.log("Session not detected, insert failed");
     }
   };
+
   const removeEntry = (id: number, image: string, onComplete: () => void) => {
     setLoading(true);
     if (session) {
       console.log("Session detected, deleting entry");
-      deleteEntry(session, id, image).finally(() =>
-        getEntries().finally(() => onComplete())
-      );
+      deleteEntry(session, id, image)
+        .then((response) => {
+          if (response.success) {
+            Alert.alert("Success", "Entry deleted and entry IDs updated.");
+          } else {
+            console.error(response.message);
+            Alert.alert("Delete Error", response.message);
+          }
+        })
+        .finally(() => {
+          getEntries();
+          onComplete();
+          setLoading(false);
+        });
     } else {
       console.log("Session not detected, delete failed");
     }
   };
+
+  const updateEntryObservation = (
+    id: number,
+    observation: string,
+    onComplete: () => void
+  ) => {
+    setLoading(true);
+    if (session) {
+      console.log("Session detected, updating entry");
+      updateEntry(session, id, observation).finally(() => {
+        getEntries();
+        onComplete();
+      });
+    }
+  };
+
   return (
     <EntryDataContext.Provider
       value={{
         data,
-        entryCount,
-        speciesCount,
-        score,
         loading,
         getEntries,
         uploadEntry,
+        updateEntryObservation,
         removeEntry,
       }}
     >
@@ -103,11 +134,11 @@ export default function EntryDataProvider({ children }: PropsWithChildren) {
 /**
  * @description (tabs)-wide context for managing entry data
  * @param data the entry data as Entry[]
- * @param entryCount the number of entries fetched
- * @param speciesCount the number of unique entry species
- * @param score the total score of entries
  * @param loading the boolean of loading state. true when fetching data, false otherwise
- * @param getData a function which initiates a data fetch from supabase
- * @example const { data, count, loading, getData } = useEntryDataContext();
+ * @param getEntries a function which fetches user's entries from supabase
+ * @param uploadEntry a function which uploads a user's new entry to supabase
+ * @param updateEntryObservation a function which updates a user entry's observation in supabase
+ * @param removeEntry a function which deletes a user's existing entry from supabase
+ * @example const { data, loading, getEntries } = useEntryDataContext();
  */
 export const useEntryDataContext = () => useContext(EntryDataContext);

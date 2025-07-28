@@ -16,7 +16,7 @@ import {
 
 export default function setupProfile() {
   const router = useRouter();
-  const { session, updateUsername } = useAuthContext();
+  const { setNewUsername, initaliseUserEventProgress } = useAuthContext();
   const [username, setUsername] = useState<string>("");
 
   return (
@@ -42,10 +42,16 @@ export default function setupProfile() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            updateUsername(username);
-            router.replace("/(tabs)/inventory");
-          }}
+          onPress={() =>
+            setNewUsername(
+              username,
+              () => {},
+              () => {
+                initaliseUserEventProgress();
+                router.replace("/(tabs)/inventory");
+              }
+            )
+          }
         >
           <Text style={styles.buttonText}>I'm Ready!</Text>
         </TouchableOpacity>
