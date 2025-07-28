@@ -1,11 +1,15 @@
+import validateTrimmedUsername from "@/hooks/validateTrimmedUsername";
 import checkEmailExists from "@/supabase/auth_hooks/checkEmail";
+import checkUsername from "@/supabase/auth_hooks/checkUsername";
 import deleteAccount from "@/supabase/auth_hooks/deleteAccount";
 import signIn from "@/supabase/auth_hooks/signIn";
 import signOut from "@/supabase/auth_hooks/signOut";
 import signUp from "@/supabase/auth_hooks/signUp";
 import deleteEntryImages from "@/supabase/db_hooks/deleteEntryImages";
 import fetchEntryImages from "@/supabase/db_hooks/fetchEntryImages";
+import initialiseUserEventProgress from "@/supabase/event_hooks/initialiseUserEventProgress";
 import supabase from "@/supabase/main";
+import updateUserdata from "@/supabase/social_hooks/updateUserData";
 import { Session } from "@supabase/supabase-js";
 import {
   createContext,
@@ -24,6 +28,12 @@ type AuthData = {
   logOut: () => void;
   signUpWithEmail: (email: string, password: string) => void;
   setIsNewUser: (flag: boolean) => void;
+  setNewUsername: (
+    newName: string,
+    onFail: () => void,
+    onComplete: () => void
+  ) => void;
+  initaliseUserEventProgress: () => void;
   removeAccount: () => void;
 };
 
@@ -35,6 +45,12 @@ const AuthContext = createContext<AuthData>({
   logOut: () => {},
   signUpWithEmail: () => {},
   setIsNewUser: () => {},
+  setNewUsername: (
+    newName: string,
+    onFail: () => void,
+    onComplete: () => void
+  ) => {},
+  initaliseUserEventProgress: () => {},
   removeAccount: () => {},
 });
 
@@ -89,7 +105,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           if (checkEmailResponse.data === false) {
             signUp(email, password).then((SignUpResponse) => {
               if (SignUpResponse.success) {
-                Alert.alert("Sign Up Successful!");
               } else {
                 Alert.alert(SignUpResponse.message as string);
               }
@@ -102,6 +117,22 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         }
       })
       .finally(() => setLoading(false));
+  };
+
+  const initaliseUserEventProgress = () => {
+    setLoading(true);
+    if (session) {
+      initialiseUserEventProgress(session.user.id).then((response) => {
+        if (response.success) {
+          console.log("User events initialised");
+        } else {
+          Alert.alert(response.message as string);
+        }
+      });
+    } else {
+      console.error("No session detected");
+      setLoading(false);
+    }
   };
 
   const removeAccount = () => {
@@ -120,20 +151,31 @@ export default function AuthProvider({ children }: PropsWithChildren) {
             let user_id = session?.user.id as string;
             fetchEntryImages(user_id).then((response) => {
               if (response.success) {
-                deleteEntryImages(response.data).then((response) => {
-                  if (response.success) {
-                    deleteAccount(user_id).then((response) => {
-                      if (response.success) {
-                        Alert.alert("Account deleted.");
-                        signOut();
-                      } else {
-                        Alert.alert(response.message as string);
-                      }
-                    });
-                  } else {
-                    Alert.alert(response.message as string);
-                  }
-                });
+                if (response.data.length > 0) {
+                  deleteEntryImages(response.data).then((response) => {
+                    if (response.success) {
+                      deleteAccount(user_id).then((response) => {
+                        if (response.success) {
+                          Alert.alert("Account deleted.");
+                          signOut();
+                        } else {
+                          Alert.alert(response.message as string);
+                        }
+                      });
+                    } else {
+                      Alert.alert(response.message as string);
+                    }
+                  });
+                } else {
+                  deleteAccount(user_id).then((response) => {
+                    if (response.success) {
+                      Alert.alert("Account deleted.");
+                      signOut();
+                    } else {
+                      Alert.alert(response.message as string);
+                    }
+                  });
+                }
               } else {
                 Alert.alert(response.message as string);
               }
@@ -142,6 +184,55 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         },
       ]
     );
+  };
+
+  const setNewUsername = (
+    newName: string,
+    onFail: () => void,
+    onComplete: () => void
+  ) => {
+    const actualUpdate = () => {
+      if (session) {
+        console.log("Updating username...");
+        updateUserdata(session.user.id, trimmed)
+          .then((response) => {
+            if (response.success) {
+              Alert.alert("Welcome!", "Username set, welcome to EcoDex!");
+            } else {
+              console.error(response.message);
+              Alert.alert("Update Error", response.message);
+            }
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      } else {
+        console.error("No session detected");
+        setLoading(false);
+      }
+    };
+
+    setLoading(true);
+    const trimmed = newName.trim();
+    console.log("Validating Username...");
+    const validation = validateTrimmedUsername(trimmed);
+    if (validation.success) {
+      checkUsername(trimmed)
+        .then((response) => {
+          if (response.success) {
+            actualUpdate();
+            onComplete();
+          } else {
+            console.error(response.message);
+            Alert.alert("Username Error", response.message);
+            onFail();
+          }
+        })
+        .finally(() => setLoading(false));
+    } else {
+      Alert.alert("Username Error", validation.error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -154,6 +245,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         logOut,
         signUpWithEmail,
         setIsNewUser,
+        setNewUsername,
+        initaliseUserEventProgress,
         removeAccount,
       }}
     >

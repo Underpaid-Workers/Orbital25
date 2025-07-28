@@ -17,7 +17,6 @@ export default async function signUp(
       email: email,
       password: password,
     });
-
     if (error) throw error;
 
     return { success: true };

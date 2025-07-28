@@ -201,9 +201,12 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
     const trimmed = newName.trim();
     console.log("Validating Username...");
     const validation = validateTrimmedUsername(trimmed);
+    console.log("heii");
     if (validation.success) {
+      console.log(1);
       checkUsername(trimmed)
         .then((response) => {
+          console.log(2);
           if (response.success) {
             actualUpdate();
             onComplete();
@@ -279,4 +282,3 @@ export default function UserdataProvider({ children }: PropsWithChildren) {
  * @example const { userLoading, username, updateUsername } = useUserdataContext();
  */
 export const useUserdataContext = () => useContext(UserdataContext);
-

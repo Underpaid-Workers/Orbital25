@@ -1,6 +1,6 @@
 import colors from "@/constants/Colors";
 import { logoTransparent } from "@/constants/Image";
-import { useUserdataContext } from "@/providers/UserdataProvider";
+import { useAuthContext } from "@/providers/AuthProvider";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -16,7 +16,7 @@ import {
 
 export default function setupProfile() {
   const router = useRouter();
-  const { updateUsername } = useUserdataContext();
+  const { setNewUsername, initaliseUserEventProgress } = useAuthContext();
   const [username, setUsername] = useState<string>("");
 
   return (
@@ -42,13 +42,16 @@ export default function setupProfile() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            updateUsername(
+          onPress={() =>
+            setNewUsername(
               username,
               () => {},
-              () => router.replace("/(tabs)/inventory")
-            );
-          }}
+              () => {
+                initaliseUserEventProgress();
+                router.replace("/(tabs)/inventory");
+              }
+            )
+          }
         >
           <Text style={styles.buttonText}>I'm Ready!</Text>
         </TouchableOpacity>

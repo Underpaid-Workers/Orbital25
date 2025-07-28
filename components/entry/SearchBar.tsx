@@ -13,6 +13,7 @@ const SearchBar = ({ placeholderText, onTextChange }: Search) => {
       <TextInput
         style={styles.textBox}
         placeholder={placeholderText}
+        placeholderTextColor="gray"
         onChangeText={(text) => onTextChange(text)}
       />
       <View style={styles.searchButton}>

@@ -30,7 +30,7 @@ export default function settings() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onUsernameChange}>
-        <Text style={styles.changeText}>Change Display Name</Text>
+        <Text style={styles.changeText}>Change Username</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={removeAccount}>

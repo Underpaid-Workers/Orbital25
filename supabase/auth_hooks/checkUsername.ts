@@ -6,6 +6,7 @@ export default async function checkUsername(
   username: string
 ): Promise<ResponseState> {
   try {
+    console.log("SDGDSGDGDSG");
     const { data, error } = await supabase
       .from("users")
       .select("id, displayname")
