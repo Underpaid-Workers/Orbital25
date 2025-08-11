@@ -2,7 +2,7 @@
 EcoDex is a nature discovery app that combines automated species identification with a Pokédex-style inventory, rarity-based scoring, and social features to make biodiversity exploration educational, gamified, and community-driven.
 
 ## How to use
-**Android Users** can download the following apk for testing: [EcoDex_Milestone2](https://drive.google.com/file/d/1Eia5uSv5JmlyR9LZ7INyslp70VUvKBp2/view?usp=drive_link)
+**Android Users** can download the following apk for testing: [EcoDex_Milestone2](https://drive.google.com/file/d/15ttaom5Dj3v8iySPyEZYj9TUBjgSXl8q/view?usp=drive_link)
 
 ## Features
 ### User Account Management
